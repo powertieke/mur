@@ -53,7 +53,7 @@ def syncscreamer(udpport_sync, syncmessage):
 
 def tell_client_to_sync(pi, movie, waitforitqueue):
 	waitforitqueue.get()
-	message_to_pi(pi, ("sync:" + movie).encode("utf-8"))
+	message_to_pi(pi, ("sync:" + movie))
 	waitforitqueue.task_done()
 	
 			
