@@ -99,6 +99,8 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 		if syncmessage == "pause":
 			interruptor("pause")
 			player.stop()
+		elif syncmessage == "end":
+			interruptor("pause") # Run main loop
 		else:
 			masterposition = int(syncmessage)
 			if masterposition + tolerance > player.position:
