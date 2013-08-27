@@ -10,13 +10,13 @@ import player
 import glob
 
 def message_to_pi(pi, message):
-	pi[1].sendall(message.encode("utf-8"))
-	pi[1].settimeout(5)
+	pi[0].sendall(message.encode("utf-8"))
+	pi[0].settimeout(5)
 	try:
-		result = pi[1].recvall(1024).decode("utf-8")
+		result = pi[0].recvall(1024).decode("utf-8")
 	except socket.timeout:
 		result = "TIMEOUT"
-	pi[1].settimeout(None)
+	pi[0].settimeout(None)
 	return result
 	
 def play_sync(moviefile, clients, UDPPort_sync):
