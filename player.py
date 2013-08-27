@@ -85,7 +85,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 def play_synced_movie(moviefile, controllermessage, udpport_sync):
 	syncqueue = queue.Queue()
 	
-	syncThread = SyncThread(udpport_sync)
+	syncThread = SyncThread(udpport_sync, syncqueue)
 	syncThread.start()
 	
 	player = ready_player(glob.glob(moviefile + "*.mp4")[0])
