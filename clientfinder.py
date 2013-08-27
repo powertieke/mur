@@ -46,6 +46,7 @@ def clientfinder(udpport, tcpport):
 	clientFinderThread.start()
 	makeControlSocketThread = MakeControlSocketThread(socketdict, discovered, tcpport, "socketmaker")
 	makeControlSocketThread.start()
+	discovered.join()
 	return socketdict
 
 def test():
