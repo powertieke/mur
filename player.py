@@ -64,7 +64,7 @@ def interruptor(message, argument=None):
 	else:
 		messagequeue.put((message, argument))
 
-def controller(incoming_from_controller, outgoing_to_controller, connection):
+def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync):
 	syncre = re.compile(r'^sync:(.*)')
 	message = connection.recv(1024).decode("utf-8")
 	print(message)
@@ -73,7 +73,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection):
 		connection.sendall(outgoing_to_controller.get().encode("utf-8"))
 	elif syncre.match(message):
 		moviefile = syncre.match(message).groups()[0]
-		play_synced_movie(moviefile, outgoing_to_controller)
+		play_synced_movie(moviefile, outgoing_to_controller, udpport_sync)
 		connection.sendall(outgoing_to_controller.get().encode('utf-8'))
 	elif message == "pause":
 		incoming_from_controller.put(message)
@@ -82,7 +82,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection):
 		connection.sendall("error".encode('utf-8'))
 	
 		
-def play_synced_movie(moviefile, controllermessage):
+def play_synced_movie(moviefile, controllermessage, udpport_sync):
 	syncqueue = queue.Queue()
 	
 	syncThread = SyncThread(udpport_sync)
