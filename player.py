@@ -8,6 +8,7 @@ import collections
 import glob
 import queue
 import re
+import socket
 
 messagequeue = queue.Queue()
 
