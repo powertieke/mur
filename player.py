@@ -51,7 +51,12 @@ def loop_single_movies(moviefolder):
 			i = nextmovieindex
 		
 			
-		
+class LoopSingleMoviesThread(threading.Thread):
+	def __init__(self, moviefolder, name='threadmeister'):
+		threading.Thread.__init__(self, name=name)
+		self.moviefolder = moviefolder
+	def run(self):
+		loop_single_movies(self.moviefolder)
 		
 def interruptor(message, argument=None):
 	if argument == None:

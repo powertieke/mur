@@ -62,7 +62,8 @@ def main():
 		interface.interface(foundclients, udpport_sync)
 		
 	if args.slave :
-		player.loop_single_movies(args.moviepath)
+		loopSingleMoviesThread = player.LoopSingleMoviesThread(args.moviepath)
+		loopSingleMoviesThread.start()
 		clientsocket = client.find_controller(args.clientname, udpport_discovery, tcpport)
 		
 		
