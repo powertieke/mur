@@ -29,7 +29,7 @@ def play_sync(moviefile, clients, UDPPort_sync):
 	for client in clients:
 		waitforitqueue.put(True)
 	for client in clients:
-		tellClientsToSyncThread = TellClientsToSyncThread(client[0], client, moviefile, waitforitqueue)
+		tellClientsToSyncThread = TellClientsToSyncThread(client[0], clients[client], moviefile, waitforitqueue)
 		tellClientsToSyncThread.start()
 	waitforitqueue.join()
 	syncScreamerThread = SyncScreamerThread("SCREAMFORME", UDPPort_sync, syncmessage)
