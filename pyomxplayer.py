@@ -33,7 +33,6 @@ class OMXPlayer(object):
         self.audio = dict()
         # Get file properties
         self._process.readline()
-        self._process.readline()
         # file_props = self._FILEPROP_REXP.match(self._process.readline()).groups()
         # (self.audio['streams'], self.video['streams'],
         #  self.chapters, self.subtitles) = [int(x) for x in file_props]
@@ -49,9 +48,9 @@ class OMXPlayer(object):
         (self.audio['channels'], self.audio['rate'],
          self.audio['bps']) = [int(x) for x in audio_props[1:]]
 
-        if self.audio['streams'] > 0:
-            self.current_audio_stream = 1
-            self.current_volume = 0.0
+        # if self.audio['streams'] > 0:
+        #    self.current_audio_stream = 1
+        #    self.current_volume = 0.0
 
         self._process.readline()
         self._position_thread = Thread(target=self._get_position)
