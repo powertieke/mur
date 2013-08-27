@@ -24,7 +24,8 @@ udpport_sync = 50665
 
 # Shared Queue's
 slaves = queue.Queue()
-
+incoming_from_controller = queue.Queue()
+outgoing_to_controller = queue.Queue()
 
 
 
@@ -65,6 +66,7 @@ def main():
 		loopSingleMoviesThread = player.LoopSingleMoviesThread(args.moviepath)
 		loopSingleMoviesThread.start()
 		clientsocket = client.find_controller(args.clientname, udpport_discovery, tcpport)
+		player.controller(incoming_from_controller, outgoing_to_controller, clientsocket)
 		
 		
 	
