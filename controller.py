@@ -42,7 +42,7 @@ def play_sync(moviefile, clients, UDPPort_sync):
 		else:
 			break
 
-def syncscreamer(UDPPort_sync, syncmessage):
+def syncscreamer(udpport_sync, syncmessage):
 	syncscreamer = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	syncscreamer.sendto("go".encode('utf-8'), ("224.0.0.1", udpport_sync))
 	while True:
