@@ -19,7 +19,7 @@ def message_to_pi(pi, message):
 	pi[1].settimeout(None)
 	return result
 	
-def play_sync(movie, clients, UDPPort_sync):
+def play_sync(moviefile, clients, UDPPort_sync):
 	interval = 5
 	syncmessage = queue.Queue()
 	syncqueue = queue.Queue()
