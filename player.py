@@ -88,7 +88,7 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 	syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
 	syncThread.start()
 	
-	player = ready_player(glob.glob(moviefile + "*.mp4")[0])
+	player = ready_player(glob.glob(moviefile + "*.mp4")[0], syncqueue)
 	controllermessage.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
