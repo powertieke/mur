@@ -21,6 +21,7 @@ def message_to_pi(pi, message):
 	
 def play_sync(moviefile, clients, UDPPort_sync):
 	interval = 5
+	waitforitqueue = queue.Queue()
 	syncmessage = queue.Queue()
 	syncqueue = queue.Queue()
 	syncplayer = player.ready_player(glob.glob(moviefile + "*.mp4")[0], syncqueue)
