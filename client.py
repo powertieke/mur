@@ -14,7 +14,6 @@ def listener(port):
 	s.bind(("", port))
 	s.listen(1)
 	conn, addr = s.accept()
-	message = s.recv(1024).decode('utf-8')
 	s.sendall('ok'.encode('utf-8'))
 	return conn
 
