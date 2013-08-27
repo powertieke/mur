@@ -1,0 +1,74 @@
+#!/usr/bin/python3
+
+import sys
+import os
+import socket
+import threading
+import time
+import queue
+import player
+
+def message_to_pi(pi, message):
+	pi[1].sendall(message.encode("utf-8"))
+	pi[1].settimeout(5)
+	try:
+		result = pi[1].recvall(1024).decode("utf-8")
+	except socket.timeout:
+		result = "TIMEOUT"
+	pi[1].settimeout(None)
+	return result
+	
+def play_sync(movie, clients, UDPPort_sync):
+	interval = 5
+	syncmessage = queue.Queue()
+	syncqueue = queue.Queue()
+	syncplayer = player.ready_player(glob.glob(moviefile + "*.mp4")[0], syncqueue)
+	for client in clients:
+		waitforitqueue.put(True)
+	for client in clients:
+		tellClientsToSyncThread = TellClientsToSyncThread(client[0], client, movie, waitforitqueue)
+		tellClientsToSyncThread.start()
+	waitforitqueue.join()
+	syncScreamerThread = SyncScreamerThread("SCREAMFORME", UDPPort_sync, syncmessage)
+	syncScreamerThread.run()
+	while true:
+		try:
+			syncqueue.get(5)
+		except queue.empty:
+			syncmessage.put(syncplayer.position)
+		else:
+			break
+
+def syncscreamer(UDPPort_sync, syncmessage):
+	syncscreamer = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	syncscreamer.sendto("go".encode('utf-8'), ("224.0.0.1", udpport_sync))
+	while True:
+		message = syncmessage.get()
+		syncscreamer.sendto(message.encode('utf-8'), ("224.0.0.1", udpport_sync))
+		if message == "end":
+			break
+
+def tell_client_to_sync(pi, movie, waitforitqueue):
+	waitforitqueue.get()
+	message_to_pi(pi, ("sync:" + movie).encode("utf-8"))
+	waitforitqueue.task_done()
+	
+			
+class TellClientsToSyncThread(threading.Thread):
+	def __init__(self, name, piname, movie, waitforitqueue):
+		threading.Thread.__init__(self, name=name)
+		self.piname = piname
+		self.movie = movie
+		self.waitforitqueue = waitforitqueue
+	
+	def run(self):
+		tell_client_to_sync(self.piname, self.movie, self.waitforitqueue)
+	
+class SyncScreamerThread(threading.Thread):
+	def __init__(self, name, UDPPort_sync, syncmessage):
+		threading.Thread.__init__(self, name=name)
+		self.UDPPort_sync = UDPPort_sync
+		self.syncmessage = syncmessage
+	
+	def run(self):
+		syncscreamer(self.UDPPort_sync, self.syncmessage)
