@@ -7,6 +7,7 @@ import threading
 import time
 import queue
 import player
+import glob
 
 def message_to_pi(pi, message):
 	pi[1].sendall(message.encode("utf-8"))
@@ -22,7 +23,7 @@ def play_sync(movie, clients, UDPPort_sync):
 	interval = 5
 	syncmessage = queue.Queue()
 	syncqueue = queue.Queue()
-	syncplayer = player.ready_player(glob.glob(moviefile + "*.mp4")[0], syncqueue)
+	syncplayer = player.ready_player('"' + glob.glob(moviefile + "*.mp4\"")[0], syncqueue)
 	for client in clients:
 		waitforitqueue.put(True)
 	for client in clients:
