@@ -67,6 +67,7 @@ def interruptor(message, argument=None):
 def controller(incoming_from_controller, outgoing_to_controller, connection):
 	syncre = re.compile(r'^sync:(.*)')
 	message = connection.recv(1024).decode("utf-8")
+	print(message)
 	if message == "skip":
 		incoming_from_controller.put(message)
 		connection.sendall(outgoing_to_controller.get().encode("utf-8"))
