@@ -20,6 +20,7 @@ def make_control_socket(socketdict, discovered, port):
 		clientSocket.sendall('status'.encode('UTF-8'))
 		answer = clientSocket.recv(1024).decode('UTF-8')
 		socketdict[client[0]] = [clientSocket, answer]
+		discovered.task_done()
 
 class ClientFinderThread(threading.Thread):
 	def __init__(self, discovered, port, name):
