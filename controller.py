@@ -13,7 +13,7 @@ def message_to_pi(pi, message):
 	pi[0].sendall(message.encode("utf-8"))
 	pi[0].settimeout(5)
 	try:
-		result = pi[0].recvall(1024).decode("utf-8")
+		result = pi[0].recv(1024).decode("utf-8")
 	except socket.timeout:
 		result = "TIMEOUT"
 	pi[0].settimeout(None)
