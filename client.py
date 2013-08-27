@@ -14,7 +14,8 @@ def listener(port):
 	s.bind(("", port))
 	s.listen(1)
 	conn, addr = s.accept()
-	s.sendall('ok'.encode('utf-8'))
+	conn.recv(1024)
+	conn.sendall('ok'.encode('utf-8'))
 	return conn
 
 def screamer(clientname, udpport_discovery):
