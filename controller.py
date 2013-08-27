@@ -24,6 +24,7 @@ def play_sync(moviefile, clients, UDPPort_sync):
 	syncmessage = queue.Queue()
 	syncqueue = queue.Queue()
 	syncplayer = player.ready_player(glob.glob(moviefile + "*.mp4")[0], syncqueue)
+	print(clients)
 	for client in clients:
 		waitforitqueue.put(True)
 	for client in clients:
