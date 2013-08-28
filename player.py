@@ -9,6 +9,7 @@ import glob
 import queue
 import re
 import socket
+import time
 
 messagequeue = queue.Queue()
 
@@ -106,11 +107,11 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 			interruptor("pause") # Run main loop
 		else:
 			masterposition = float(syncmessage)
-			if masterposition + tolerance > player.position:
+			if masterposition + tolerance < player.position:
 				player.toggle_pause()
 				time.sleep(0.2)
 				player.toggle_pause()
-			elif masterposition - tolerance < player.position:
+			elif masterposition - tolerance > player.position:
 				player.increase_speed()
 				time.sleep(0.5)
 				player.toggle_pause()
