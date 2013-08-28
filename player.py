@@ -94,6 +94,7 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 	controllermessage.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
+		tolerance = 200000.0
 		player.toggle_pause() # Play synced movie
 		print("Got go: playing")
 		interruptor("pause") # Pause main loop
@@ -107,7 +108,7 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 			masterposition = float(syncmessage)
 			if masterposition + tolerance > player.position:
 				player.toggle_pause()
-				time.sleep(0.1)
+				time.sleep(0.2)
 				player.toggle_pause()
 			elif masterposition - tolerance < player.position:
 				player.increase_speed()
