@@ -76,6 +76,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		moviefile = syncre.match(message).groups()[0]
 		play_synced_movie(moviefile, outgoing_to_controller, udpport_sync)
 		connection.sendall(outgoing_to_controller.get().encode('utf-8'))
+		print('Sent GO!')
 	elif message == "pause":
 		incoming_from_controller.put(message)
 		connection.sendall("ready".encode('utf-8'))

@@ -55,6 +55,7 @@ def tell_client_to_sync(pi, movie, waitforitqueue):
 	waitforitqueue.get()
 	message_to_pi(pi, ("sync:" + movie))
 	waitforitqueue.task_done()
+	print('everyone on board')
 	
 			
 class TellClientsToSyncThread(threading.Thread):
