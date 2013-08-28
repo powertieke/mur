@@ -34,7 +34,7 @@ def play_sync(moviefile, clients, UDPPort_sync):
 	waitforitqueue.join()
 	print('everyone on board')
 	syncScreamerThread = SyncScreamerThread("SCREAMFORME", UDPPort_sync, syncmessage)
-	syncScreamerThread.run()
+	syncScreamerThread.start()
 	while true:
 		try:
 			syncqueue.get(5)
