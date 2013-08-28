@@ -95,6 +95,7 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 	
 	if syncqueue.get() == "go":
 		player.toggle_pause() # Play synced movie
+		print("Got go: playing")
 		interruptor("pause") # Pause main loop
 		syncmessage = syncqueue.get()
 		if syncmessage == "pause":
@@ -118,6 +119,7 @@ def sync_listener(udpport_sync, syncqueue):
 	s.bind(("", udpport_sync))
 	while True:
 		data = s.recv(1024).decode("utf-8")
+		print(data)
 		syncqueue.put(data)
 	
 class SyncThread(threading.Thread):

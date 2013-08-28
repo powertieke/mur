@@ -32,6 +32,7 @@ def play_sync(moviefile, clients, UDPPort_sync):
 		tellClientsToSyncThread = TellClientsToSyncThread(client[0], clients[client], moviefile, waitforitqueue)
 		tellClientsToSyncThread.start()
 	waitforitqueue.join()
+	print('everyone on board')
 	syncScreamerThread = SyncScreamerThread("SCREAMFORME", UDPPort_sync, syncmessage)
 	syncScreamerThread.run()
 	while true:
@@ -47,6 +48,7 @@ def syncscreamer(udpport_sync, syncmessage):
 	syncscreamer.sendto("go".encode('utf-8'), ("224.0.0.1", udpport_sync))
 	while True:
 		message = syncmessage.get()
+		print(message)
 		syncscreamer.sendto(message.encode('utf-8'), ("224.0.0.1", udpport_sync))
 		if message == "end":
 			break
@@ -55,7 +57,7 @@ def tell_client_to_sync(pi, movie, waitforitqueue):
 	waitforitqueue.get()
 	message_to_pi(pi, ("sync:" + movie))
 	waitforitqueue.task_done()
-	print('everyone on board')
+	
 	
 			
 class TellClientsToSyncThread(threading.Thread):
