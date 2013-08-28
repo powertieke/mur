@@ -37,8 +37,8 @@ def play_sync(moviefile, clients, UDPPort_sync):
 	syncScreamerThread.start()
 	while True:
 		try:
-			syncqueue.get(5)
-		except queue.empty:
+			syncqueue.get(True, 5)
+		except queue.Empty:
 			syncmessage.put(syncplayer.position)
 		else:
 			break
