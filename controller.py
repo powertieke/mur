@@ -49,7 +49,7 @@ def syncscreamer(udpport_sync, syncmessage):
 	while True:
 		message = syncmessage.get()
 		print(message)
-		syncscreamer.sendto(message.encode('utf-8'), ("224.0.0.1", udpport_sync))
+		syncscreamer.sendto(str(message).encode('utf-8'), ("224.0.0.1", udpport_sync))
 		if message == "end":
 			break
 
