@@ -10,6 +10,7 @@ import queue
 import re
 import socket
 import time
+import subprocess
 
 messagequeue = queue.Queue()
 
@@ -21,11 +22,16 @@ def ready_player(moviefile, stopqueue):
 		
 	player.toggle_pause()
 	return player
-	
+
+def get_duration(moviefile):
+	duration = subprocess.Popen(["mediainfo", "--Inform=\"General;%Duration%\"", '"' + moviefile + '"'], stdout=subprocess.PIPE).stdout.read()
+	duration = (float(duration) / 1000.)
+	return duration
+
 def loop_single_movies(moviefolder):
-	playlist = [[moviefile, None] for moviefile in glob.glob(moviefolder + "*.mp4")]
+	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
 	i = 0
-	playlist[i][1] = ready_player(playlist[i][0], messagequeue)
+	playlist[i][1] = ready_player(playlist[i][0], messagequeue, playlist[i][2])
 	playlist[i][1].toggle_pause()
 	while True:
 		if i == 0:
@@ -35,7 +41,7 @@ def loop_single_movies(moviefolder):
 		else:
 			nextmovieindex = i + 1
 			
-		playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], messagequeue)
+		playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], messagequeue, playlist[i][2])
 		message = messagequeue.get() # Wait for currently playing movie to end
 		if message == "end":
 			playlist[nextmovieindex][1].toggle_pause() #play next movie
@@ -124,6 +130,15 @@ def sync_listener(udpport_sync, syncqueue):
 		print(data)
 		syncqueue.put(data)
 	
+class KillThread(threading.Thread):
+	def __init__(self, name, duration, messagequeue):
+		threading.Thread.__init__(self, name=name)
+		self.duration = udpport_sync
+		self.messagequeue = syncqueue
+	def run(self):
+		player_killtimer(self.duration, self.messagequeue)
+		
+
 class SyncThread(threading.Thread):
 	def __init__(self, name, udpport_sync, syncqueue):
 		threading.Thread.__init__(self, name=name)

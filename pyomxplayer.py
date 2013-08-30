@@ -22,13 +22,14 @@ class OMXPlayer(object):
     paused = False
     subtitles_visible = True
 
-    def __init__(self, mediafile, stopqueue, args=None, start_playback=False):
+    def __init__(self, mediafile, stopqueue, duration, args=None, start_playback=False):
         if not args:
             args = ""
         cmd = self._LAUNCH_CMD % (mediafile, args)
         self._process = pexpect.spawn(cmd)
         
         self.stopqueue = stopqueue
+        self.duration = duration
         self.video = dict()
         self.audio = dict()
         # Get file properties
@@ -68,11 +69,16 @@ class OMXPlayer(object):
                                             pexpect.EOF,
                                             self._DONE_REXP])
             if index == 1: continue
-            elif index in (2, 3): 
+            elif index in (2, 3):
+	            print("Natural end at : %s" % self.position) 
                 self.stopqueue.put("end")
                 break
             else:
                 self.position = float(self._process.match.group(1))
+                if self.position > self.duration:
+                    print("Forced end at : %s" % self.position)
+                    self.stopqueue.put("end")
+	                break
             sleep(0.05)
 
     def toggle_pause(self):
