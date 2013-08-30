@@ -75,7 +75,7 @@ class OMXPlayer(object):
                 break
             else:
                 self.position = float(self._process.match.group(1))
-                if self.position > self.duration:
+                if int(self.position) > int(self.duration):
                     print("Forced end at : %s" % self.position)
                     self.stopqueue.put("end")
                     break
