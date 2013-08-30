@@ -27,7 +27,7 @@ def get_duration(moviefile):
 	proc = subprocess.Popen(["mediainfo", "--Inform=\"General;%Duration%\"", '"' + moviefile + '"'], stdout=subprocess.PIPE)
 	duration = proc.communicate()
 	print(duration)
-	duration = int(duration) * 100
+	duration
 	return duration
 
 def loop_single_movies(moviefolder):
