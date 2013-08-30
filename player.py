@@ -24,10 +24,10 @@ def ready_player(moviefile, stopqueue):
 	return player
 
 def get_duration(moviefile):
-	proc = subprocess.Popen(["mediainfo", "--Inform=\"General;%Duration%\"", '"' + moviefile + '"'], stdout=subprocess.PIPE)
-	duration = proc.communicate()
+	proc = subprocess.Popen(["/usr/bin/mediainfo", "--Inform=\"General;%Duration%\"", '"' + moviefile + '"'], stdout=subprocess.PIPE)
+	duration, rest = proc.communicate()
 	print(duration)
-	duration
+	duration = int(duration) * 10
 	return duration
 
 def loop_single_movies(moviefolder):
