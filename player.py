@@ -24,7 +24,7 @@ def ready_player(moviefile, stopqueue):
 	return player
 
 def get_duration(moviefile):
-	proc = subprocess.Popen(["/usr/bin/mediainfo", "--Inform=\"General;%Duration%\"", '"' + moviefile + '"'], stdout=subprocess.PIPE)
+	proc = subprocess.Popen("/usr/bin/mediainfo --Inform=\"General;%Duration%\" \"" + moviefile + '"', stdout=subprocess.PIPE)
 	duration, rest = proc.communicate()
 	print(duration)
 	duration = int(duration) * 10
