@@ -70,7 +70,7 @@ class OMXPlayer(object):
                                             self._DONE_REXP])
             if index == 1: continue
             elif index in (2, 3):
-	            print("Natural end at : %s" % self.position) 
+                print("Natural end at : %s" % self.position) 
                 self.stopqueue.put("end")
                 break
             else:
@@ -78,7 +78,7 @@ class OMXPlayer(object):
                 if self.position > self.duration:
                     print("Forced end at : %s" % self.position)
                     self.stopqueue.put("end")
-	                break
+                    break
             sleep(0.05)
 
     def toggle_pause(self):
