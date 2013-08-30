@@ -33,7 +33,7 @@ def get_duration(moviefile):
 def loop_single_movies(moviefolder):
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
 	i = 0
-	playlist[i][1] = ready_player(playlist[i][0], messagequeue, playlist[i][2])
+	playlist[i][1] = ready_player(playlist[i][0], messagequeue)
 	playlist[i][1].toggle_pause()
 	while True:
 		if i == 0:
@@ -43,7 +43,7 @@ def loop_single_movies(moviefolder):
 		else:
 			nextmovieindex = i + 1
 			
-		playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], messagequeue, playlist[i][2])
+		playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], messagequeue)
 		message = messagequeue.get() # Wait for currently playing movie to end
 		if message == "end":
 			playlist[nextmovieindex][1].toggle_pause() #play next movie
