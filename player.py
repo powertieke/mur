@@ -25,7 +25,7 @@ def ready_player(moviefile, stopqueue):
 
 def get_duration(moviefile):
 	duration = subprocess.Popen(["mediainfo", "--Inform=\"General;%Duration%\"", '"' + moviefile + '"'], stdout=subprocess.PIPE).stdout.read()
-	duration = (float(duration) / 1000.)
+	duration = int(duration) * 100
 	return duration
 
 def loop_single_movies(moviefolder):
