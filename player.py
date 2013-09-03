@@ -49,15 +49,25 @@ def loop_single_movies(moviefolder):
 			
 		message = messagequeue.get() # Wait for currently playing movie to end
 		if message == "end":
-			splash = show_splash_screen("/home/pi/mur/Misc/splashscreen.png")
 			playlist[i][1].stop()
 			playlist[i][1] = None
+			try:
+				subprocess.call("sudo killall omxplayer omxplayer.bin", shell=True)
+			except:
+				pass
 			playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], messagequeue, playlist[i][2])
 			playlist[nextmovieindex][1].toggle_pause() #play next movie
-			splash.kill()
 			i = nextmovieindex
 		elif message == "pause":
-				playlist[i][1].toggle_pause()
+			playlist[i][1].toggle_pause()
+		elif message == "endloop"
+			playlist[i][1].stop()
+			playlist[i][1] = None
+			try:
+				subprocess.call("sudo killall omxplayer omxplayer.bin", shell=True)
+			except:
+				pass
+			break
 		elif message[0] == "skip":
 			if message[1] != None:
 				nextmovieindex = message[1]
@@ -102,6 +112,12 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 def play_synced_movie(moviefile, controllermessage, udpport_sync):
 	syncqueue = queue.Queue()
 	
+	interruptor("endloop") # Pause main loop
+	try:
+		subprocess.call("sudo killall omxplayer omxplayer.bin", shell=True)
+	except:
+		pass
+	
 	syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
 	syncThread.start()
 	
@@ -112,7 +128,6 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 		tolerance = 200000.0
 		player.toggle_pause() # Play synced movie
 		print("Got go: playing")
-		interruptor("pause") # Pause main loop
 		syncmessage = syncqueue.get()
 		if syncmessage == "pause":
 			interruptor("pause")
