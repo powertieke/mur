@@ -23,6 +23,10 @@ def ready_player(moviefile, stopqueue, duration):
 	player.toggle_pause()
 	return player
 
+def show_splash_screen(image):
+	command = "fbi \"%s\"" % image
+	return subprocess.Popen(command, shell = True)
+	
 def get_duration(moviefile):
 	proc = subprocess.Popen('/usr/bin/mediainfo --Inform="General;%Duration%" "' + moviefile + '"', shell=True, stdout=subprocess.PIPE)
 	duration, rest = proc.communicate()
@@ -43,12 +47,14 @@ def loop_single_movies(moviefolder):
 		else:
 			nextmovieindex = i + 1
 			
-		playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], messagequeue, playlist[i][2])
 		message = messagequeue.get() # Wait for currently playing movie to end
 		if message == "end":
-			playlist[nextmovieindex][1].toggle_pause() #play next movie
+			splash = show_splash_screen("/home/pi/mur/Misc/splashscreen.png")
 			playlist[i][1].stop()
 			playlist[i][1] = None
+			playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], messagequeue, playlist[i][2])
+			playlist[nextmovieindex][1].toggle_pause() #play next movie
+			splash.kill()
 			i = nextmovieindex
 		elif message == "pause":
 				playlist[i][1].toggle_pause()
