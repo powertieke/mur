@@ -60,7 +60,7 @@ def loop_single_movies(moviefolder):
 			i = nextmovieindex
 		elif message == "pause":
 			playlist[i][1].toggle_pause()
-		elif message == "endloop"
+		elif message == "endloop":
 			playlist[i][1].stop()
 			playlist[i][1] = None
 			try:
