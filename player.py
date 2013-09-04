@@ -128,12 +128,14 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 		tolerance = 200000.0
 		player.toggle_pause() # Play synced movie
 		print("Got go: playing")
+		while True:
 		syncmessage = syncqueue.get()
 		if syncmessage == "pause":
 			interruptor("pause")
 			player.stop()
 		elif syncmessage == "end":
 			interruptor("pause") # Run main loop
+			break
 		else:
 			masterposition = float(syncmessage)
 			localposition = player.position
