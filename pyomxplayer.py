@@ -33,7 +33,7 @@ class OMXPlayer(object):
         self.video = dict()
         self.audio = dict()
         # Get file properties
-        print(self._process.readline())
+        # print(self._process.readline())
         # file_props = self._FILEPROP_REXP.match(self._process.readline()).groups()
         # (self.audio['streams'], self.video['streams'],
         #  self.chapters, self.subtitles) = [int(x) for x in file_props]
