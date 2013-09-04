@@ -129,25 +129,25 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 		player.toggle_pause() # Play synced movie
 		print("Got go: playing")
 		while True:
-		syncmessage = syncqueue.get()
-		if syncmessage == "pause":
-			interruptor("pause")
-			player.stop()
-		elif syncmessage == "end":
-			interruptor("pause") # Run main loop
-			break
-		else:
-			masterposition = float(syncmessage)
-			localposition = player.position
-			print("Master: %s <--> Local: %s" % (masterposition, localposition))
-			if masterposition + tolerance < localposition:
-				player.toggle_pause()
-				time.sleep(0.2)
-				player.toggle_pause()
-			elif masterposition - tolerance > localposition:
-				player.increase_speed()
-				time.sleep(0.5)
-				player.toggle_pause()
+			syncmessage = syncqueue.get()
+			if syncmessage == "pause":
+				interruptor("pause")
+				player.stop()
+			elif syncmessage == "end":
+				interruptor("pause") # Run main loop
+				break
+			else:
+				masterposition = float(syncmessage)
+				localposition = player.position
+				print("Master: %s <--> Local: %s" % (masterposition, localposition))
+				if masterposition + tolerance < localposition:
+					player.toggle_pause()
+					time.sleep(0.2)
+					player.toggle_pause()
+				elif masterposition - tolerance > localposition:
+					player.increase_speed()
+					time.sleep(0.5)
+					player.toggle_pause()
 		
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
