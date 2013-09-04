@@ -112,7 +112,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 def play_synced_movie(moviefile, controllermessage, udpport_sync):
 	syncqueue = queue.Queue()
 	
-	interruptor("endloop") # Pause main loop
+	interruptor("endloop") # Kill main loop
 	try:
 		subprocess.call("sudo killall omxplayer omxplayer.bin", shell=True)
 	except:
@@ -136,11 +136,13 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 			interruptor("pause") # Run main loop
 		else:
 			masterposition = float(syncmessage)
-			if masterposition + tolerance < player.position:
+			localposition = player.position
+			print("Master: %s <--> Local: %s" % (masterposition, localposition))
+			if masterposition + tolerance < localposition:
 				player.toggle_pause()
 				time.sleep(0.2)
 				player.toggle_pause()
-			elif masterposition - tolerance > player.position:
+			elif masterposition - tolerance > localposition:
 				player.increase_speed()
 				time.sleep(0.5)
 				player.toggle_pause()
