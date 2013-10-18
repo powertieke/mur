@@ -6,6 +6,7 @@ import queue
 import time
 
 def discovery_server(discovered, port):
+	"""Listens for screaming clients, and dumps their info into the Discovered queue for processing by the make_control_socket function."""
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind(('', port))
 	while True:
@@ -13,6 +14,7 @@ def discovery_server(discovered, port):
 		discovered.put([data.decode('UTF-8'), sender_addr])
 		
 def make_control_socket(socketdict, discovered, port):
+	"""Gets info from the discovered queue and sets up a control connection. Shoves these into the socketdict variable (Which is a global)"""
 	while True:
 		client = discovered.get()
 		clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -23,6 +25,7 @@ def make_control_socket(socketdict, discovered, port):
 		print(socketdict)
 
 class ClientFinderThread(threading.Thread):
+	"""Thread running the discovery server"""
 	def __init__(self, discovered, port, name):
 		threading.Thread.__init__(self, name=name)
 		self.discovered = discovered
@@ -31,6 +34,7 @@ class ClientFinderThread(threading.Thread):
 		discovery_server(self.discovered, self.port)
 		
 class MakeControlSocketThread(threading.Thread):
+	"""Thread running the make_control_socket function"""
 	def __init__(self, socketdict, discovered, port, name):
 		threading.Thread.__init__(self, name=name)
 		self.socketdict = socketdict
@@ -40,6 +44,7 @@ class MakeControlSocketThread(threading.Thread):
 		make_control_socket(self.socketdict, self.discovered, self.port)
 
 def clientfinder(udpport, tcpport):
+	"""Starts the neccesary threads for finding and connecting to the clients. Returns the shared Socketdict variable"""
 	discovered = queue.Queue()
 	socketdict = {}
 	clientFinderThread = ClientFinderThread(discovered, udpport, "Clientfinder")

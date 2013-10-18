@@ -8,8 +8,10 @@ import time
 import queue
 import player
 import glob
+"""Holds all of the functions used if the app is ran with the -m (master) flag. Uses the network connections supplied by the clientfinder module to tell the screens what to do. Also yells out it's own playing position so the screens can time-correct themselves"""
 
 def message_to_pi(pi, message):
+	"""Sends a message to the socket defined in pi, and returns the response"""
 	pi[0].sendall(message.encode("utf-8"))
 	pi[0].settimeout(5)
 	try:
@@ -20,6 +22,7 @@ def message_to_pi(pi, message):
 	return result
 	
 def play_sync(moviefile, clients, UDPPort_sync):
+	"""Tell all of the screens present in 'clients' to get ready for playing 'moviefile'. Waits for every client to respond with 'Ready' (Which means the client has started OMXplayer with the corresponding movie)"""
 	interval = 5
 	waitforitqueue = queue.Queue()
 	syncmessage = queue.Queue()

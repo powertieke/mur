@@ -6,10 +6,12 @@ import socket
 import time
 import threading
 
+"""This is where the client networking and controller discovery functions live"""
 
 
 
 def listener(port):
+	"""Listens for incoming TCP connection requests and returns the connection"""
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.bind(("", port))
 	s.listen(1)
@@ -19,6 +21,7 @@ def listener(port):
 	return conn
 
 def screamer(clientname, udpport_discovery):
+	"""Screams it's name through UDP out over the local network in search of a controller pi"""
 	while 1:
 		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		s.sendto(clientname.encode('utf-8'), ("224.0.0.1", udpport_discovery))
@@ -29,6 +32,7 @@ def screamer(clientname, udpport_discovery):
 	
 	
 class ScreamerThread(threading.Thread):
+	"""The tread running the screaming process. Else we could not do anything while the pi is looking for a server."""
 	def __init__(self, clientname, udpport, name):
 		threading.Thread.__init__(self, name=name)
 		self.clientname = clientname
@@ -38,6 +42,7 @@ class ScreamerThread(threading.Thread):
 		screamer(self.clientname, self.udpport)
 
 def find_controller(clientname, udpport, tcpport):
+	"""Opens a listening TCP socket, and starts yelling around for the controller. Returns a connection with the controller (when found)."""
 	global exitflag
 	exitflag = 0
 	screamerThread = ScreamerThread(clientname, udpport, "screamer1")
