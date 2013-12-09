@@ -20,7 +20,7 @@ def set_background(color):
 	subprocess.call('sudo cat image.raw > /dev/fb0', shell=True)
 
 def kill_all_omxplayers():
-	subprocess.call("sudo killall omxplayer omxplayer.bin", shell=True)
+	subprocess.call("sudo killall omxplayer omxplayer.bin 2> /dev/null", shell=True)
 
 def ready_player(moviefile, stopqueue, duration):
 	player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, None, True)
@@ -38,7 +38,7 @@ def show_splash_screen(image):
 def get_duration(moviefile):
 	proc = subprocess.Popen('/usr/bin/mediainfo --Inform="General;%Duration%" "' + moviefile + '"', shell=True, stdout=subprocess.PIPE)
 	duration, rest = proc.communicate()
-	print(duration)
+	# print(duration)
 	duration = int(duration) * 1000
 	return duration
 
@@ -101,7 +101,7 @@ def interruptor(message, argument=None):
 def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync):
 	syncre = re.compile(r'^sync:(.*)')
 	message = connection.recv(1024).decode("utf-8")
-	print(message)
+	# print(message)
 	if message == "skip":
 		incoming_from_controller.put(message)
 		connection.sendall(outgoing_to_controller.get().encode("utf-8"))
@@ -109,7 +109,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		moviefile = syncre.match(message).groups()[0]
 		play_synced_movie(moviefile, outgoing_to_controller, udpport_sync)
 		connection.sendall(outgoing_to_controller.get().encode('utf-8'))
-		print('Sent GO!')
+		# print('Sent GO!')
 	elif message == "pause":
 		incoming_from_controller.put(message)
 		connection.sendall("ready".encode('utf-8'))
@@ -122,7 +122,7 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 	
 	interruptor("endloop") # Kill main loop
 	try:
-		subprocess.call("sudo killall omxplayer omxplayer.bin", shell=True)
+		subprocess.call("sudo killall omxplayer omxplayer.bin 2> /dev/null", shell=True)
 	except:
 		pass
 	
@@ -135,7 +135,7 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 	if syncqueue.get() == "go":
 		tolerance = 200000.0
 		player.toggle_pause() # Play synced movie
-		print("Got go: playing")
+		# print("Got go: playing")
 		while True:
 			syncmessage = syncqueue.get()
 			if syncmessage == "pause":
@@ -147,7 +147,7 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 			else:
 				masterposition = float(syncmessage)
 				localposition = player.position
-				print("Master: %s <--> Local: %s" % (masterposition, localposition))
+				# print("Master: %s <--> Local: %s" % (masterposition, localposition))
 				if masterposition + tolerance < localposition:
 					player.toggle_pause()
 					time.sleep(0.2)
@@ -162,7 +162,7 @@ def sync_listener(udpport_sync, syncqueue):
 	s.bind(("", udpport_sync))
 	while True:
 		data = s.recv(1024).decode("utf-8")
-		print(data)
+		# print(data)
 		syncqueue.put(data)
 	
 class KillThread(threading.Thread):

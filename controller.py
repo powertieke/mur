@@ -28,14 +28,14 @@ def play_sync(moviefile, clients, UDPPort_sync):
 	syncmessage = queue.Queue()
 	syncqueue = queue.Queue()
 	syncplayer = player.ready_player(glob.glob(moviefile + "*.mp4")[0], syncqueue, player.get_duration(glob.glob(moviefile + "*.mp4")[0]))
-	print(clients)
+	# print(clients)
 	for client in clients:
 		waitforitqueue.put(True)
 	for client in clients:
 		tellClientsToSyncThread = TellClientsToSyncThread(client[0], clients[client], moviefile, waitforitqueue)
 		tellClientsToSyncThread.start()
 	waitforitqueue.join()
-	print('everyone on board')
+	# print('everyone on board')
 	syncScreamerThread = SyncScreamerThread("SCREAMFORME", UDPPort_sync, syncmessage)
 	syncScreamerThread.start()
 	syncplayer.toggle_pause()
@@ -52,7 +52,7 @@ def syncscreamer(udpport_sync, syncmessage):
 	syncscreamer.sendto("go".encode('utf-8'), ("224.0.0.1", udpport_sync))
 	while True:
 		message = syncmessage.get()
-		print(message)
+		# print(message)
 		syncscreamer.sendto(str(message).encode('utf-8'), ("224.0.0.1", udpport_sync))
 		if message == "end":
 			break

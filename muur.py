@@ -59,7 +59,7 @@ def main():
 	parser.add_argument("moviepath", help='Specify directory path where movie files are stored.')
 	
 	args = parser.parse_args()
-	pprint.pprint(args)
+	# pprint.pprint(args)
 	
 	if args.master :
 		foundclients = clientfinder.clientfinder(udpport_discovery, tcpport) # Listens to discovery broadcasts from unconnected pi's in the same network and sets up a control connection over TCP.
