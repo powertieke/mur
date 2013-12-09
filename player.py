@@ -17,6 +17,7 @@ messagequeue = queue.Queue()
 def set_background(color):
 	subprocess.call('sudo sh -c "TERM=linux setterm -background ' + color + ' >/dev/tty0"', shell=True)
 	subprocess.call('sudo sh -c "TERM=linux setterm -clear >/dev/tty0"', shell=True)
+    subprocess.call('sudo cat image.raw > /dev/fb0')
 
 def kill_all_omxplayers():
 	subprocess.call("sudo killall omxplayer omxplayer.bin", shell=True)
