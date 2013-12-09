@@ -14,6 +14,12 @@ import subprocess
 
 messagequeue = queue.Queue()
 
+def set_background(color):
+    subprocess.call('sudo sh -c "TERM=linux setterm -foreground ' + color + ' >/dev/tty0"', shell=True)
+
+def kill_all_omxplayers():
+    subprocess.call("sudo killall omxplayer omxplayer.bin", shell=True)
+
 def ready_player(moviefile, stopqueue, duration):
 	player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, None, True)
 	position = player.position
@@ -52,7 +58,7 @@ def loop_single_movies(moviefolder):
 			playlist[i][1].stop()
 			playlist[i][1] = None
 			try:
-				subprocess.call("sudo killall omxplayer omxplayer.bin", shell=True)
+				kill_all_omxplayers()
 			except:
 				pass
 			playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], messagequeue, playlist[i][2])
@@ -64,7 +70,7 @@ def loop_single_movies(moviefolder):
 			playlist[i][1].stop()
 			playlist[i][1] = None
 			try:
-				subprocess.call("sudo killall omxplayer omxplayer.bin", shell=True)
+                kill_all_omxplayers()
 			except:
 				pass
 			break
