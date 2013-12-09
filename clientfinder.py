@@ -22,7 +22,7 @@ def make_control_socket(socketdict, discovered, port):
 		clientSocket.sendall('status'.encode('UTF-8'))
 		answer = clientSocket.recv(1024).decode('UTF-8')
 		socketdict[client[0]] = [clientSocket, answer]
-		print(socketdict)
+		# print(socketdict)
 
 class ClientFinderThread(threading.Thread):
 	"""Thread running the discovery server"""
@@ -66,9 +66,9 @@ def test():
 	while True:
 		if len(socketdict) > 0 :
 			for name in socketdict:
-				print(name + " : ")
+				# print(name + " : ")
 				socketdict[name][0].sendall("status".encode('UTF-8'))
-				print(socketdict[name][0].recv(1024).decode('UTF-8') + "\n")
+				# print(socketdict[name][0].recv(1024).decode('UTF-8') + "\n")
 		time.sleep(5)
 	
 if __name__ == "__main__":

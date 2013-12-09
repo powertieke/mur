@@ -25,7 +25,7 @@ def screamer(clientname, udpport_discovery):
 	while 1:
 		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		s.sendto(clientname.encode('utf-8'), ("224.0.0.1", udpport_discovery))
-		print('%s: AARGGGH' % clientname)
+		# print('%s: AARGGGH' % clientname)
 		time.sleep(2)
 		if exitflag == 1:
 			break
@@ -56,7 +56,7 @@ def test():
 	
 	while True:
 		s.recv(1024)
-		print("Got some!")
+		# print("Got some!")
 		s.sendall("ok".encode('UTF-8'))
 
 if __name__ == "__main__":

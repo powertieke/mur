@@ -53,7 +53,8 @@ class OMXPlayer(object):
         #    self.current_audio_stream = 1
         #    self.current_volume = 0.0
         
-        print(self._process.readline())
+        # print(self._process.readline())
+		self._process.readline()
         self._position_thread = Thread(target=self._get_position)
         self._position_thread.start()
         
