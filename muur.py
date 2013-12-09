@@ -49,9 +49,9 @@ outgoing_to_controller = queue.Queue()
 
 
 def main():
-    atexit.register(player.set_background, 'black')
-    atexit.register(player.kill_all_omxplayers)
-    
+	atexit.register(player.set_background, 'black')
+	atexit.register(player.kill_all_omxplayers)
+	
 	parser = argparse.ArgumentParser(description='Networked display controller with support for playing syncronized movies')
 	parser.add_argument('-m', '--master', help='Run as master. This pi will run the controller website, and tell all of the slaves what to do', action='store_true')
 	parser.add_argument('-s', '--slave', help='Run as slave. This pi will drive a display. Start/stop/skip/sync commands will be received from master.',action='store_true')
@@ -66,7 +66,7 @@ def main():
 		interface.interface(foundclients, udpport_sync)
 		
 	if args.slave :
-        player.set_background('white')
+		player.set_background('white')
 		loopSingleMoviesThread = player.LoopSingleMoviesThread(args.moviepath)
 		loopSingleMoviesThread.start()
 		clientsocket = client.find_controller(args.clientname, udpport_discovery, tcpport)
