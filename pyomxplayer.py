@@ -44,10 +44,10 @@ class OMXPlayer(object):
         self.video['profile'] = int(video_props[3])
         self.video['fps'] = float(video_props[4])
         # Get audio properties
-        # audio_props = self._AUDIOPROP_REXP.match(self._process.readline()).groups()
-        # self.audio['decoder'] = audio_props[0]
-        # (self.audio['channels'], self.audio['rate'],
-        # self.audio['bps']) = [int(x) for x in audio_props[1:]]
+        audio_props = self._AUDIOPROP_REXP.match(self._process.readline()).groups()
+        self.audio['decoder'] = audio_props[0]
+        (self.audio['channels'], self.audio['rate'],
+        self.audio['bps']) = [int(x) for x in audio_props[1:]]
         
         # if self.audio['streams'] > 0:
         #    self.current_audio_stream = 1
