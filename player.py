@@ -53,7 +53,6 @@ def loop_single_movies(moviefolder):
 		if i == 0:
 			nextmovieindex = 1
 		elif i == len(playlist) - 1:
-			shuffle(playlist)
 			nextmovieindex = 0
 		else:
 			nextmovieindex = i + 1
