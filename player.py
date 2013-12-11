@@ -45,7 +45,6 @@ def get_duration(moviefile):
 
 def loop_single_movies(moviefolder):
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
-	shuffle(playlist)
 	i = 0
 	playlist[i][1] = ready_player(playlist[i][0], messagequeue, playlist[i][2])
 	playlist[i][1].toggle_pause()
