@@ -11,6 +11,7 @@ import re
 import socket
 import time
 import subprocess
+from random import shuffle
 
 messagequeue = queue.Queue()
 
@@ -44,6 +45,7 @@ def get_duration(moviefile):
 
 def loop_single_movies(moviefolder):
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
+	shuffle(playlist)
 	i = 0
 	playlist[i][1] = ready_player(playlist[i][0], messagequeue, playlist[i][2])
 	playlist[i][1].toggle_pause()
@@ -51,6 +53,7 @@ def loop_single_movies(moviefolder):
 		if i == 0:
 			nextmovieindex = 1
 		elif i == len(playlist) - 1:
+			shuffle(playlist)
 			nextmovieindex = 0
 		else:
 			nextmovieindex = i + 1
@@ -75,7 +78,7 @@ def loop_single_movies(moviefolder):
 				kill_all_omxplayers()
 			except:
 				pass
-			break
+			messagequeue.get()
 		elif message[0] == "skip":
 			if message[1] != None:
 				nextmovieindex = message[1]

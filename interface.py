@@ -4,9 +4,9 @@ import sys
 import os
 import controller
 
-def interface(clients, udpport_sync):
+def interface(clients, udpport_sync, moviefolder):
 	while True:
-		command = input('--> Type \'sync\' and an <ENTER> for synced play : ')
-		if command == 'sync':
-			controller.play_sync("/home/pi/mur/movie_files/sync/Screen", clients, udpport_sync)
+		command = input('--> Hit <ENTER> for synced play : ')
+		if command == '':
+			controller.play_sync(moviefolder + "sync/Screen", clients, udpport_sync)
 		
