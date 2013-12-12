@@ -8,5 +8,5 @@ def interface(clients, udpport_sync, moviefolder):
 	while True:
 		command = input('--> Hit <ENTER> for synced play : ')
 		if command == '':
-			controller.play_sync(moviefolder + "sync/Screen", clients, udpport_sync)
+			controller.play_sync(moviefolder + "sync/screen", clients, udpport_sync)
 		
