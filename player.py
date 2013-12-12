@@ -77,7 +77,8 @@ def loop_single_movies(moviefolder):
 				kill_all_omxplayers()
 			except:
 				pass
-		elif message == "resume":
+			messagequeue.get()
+			messagequeue.get()
 			try:
 				kill_all_omxplayers()
 			except:
