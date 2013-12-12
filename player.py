@@ -77,7 +77,14 @@ def loop_single_movies(moviefolder):
 				kill_all_omxplayers()
 			except:
 				pass
-			messagequeue.get()
+		elif message == "resume":
+			try:
+				kill_all_omxplayers()
+			except:
+				pass
+			playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], messagequeue, playlist[i][2])
+			playlist[nextmovieindex][1].toggle_pause() #play next movie
+			i = nextmovieindex
 		elif message[0] == "skip":
 			if message[1] != None:
 				nextmovieindex = message[1]
