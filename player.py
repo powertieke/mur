@@ -24,7 +24,7 @@ def kill_all_omxplayers():
 	subprocess.call("sudo killall omxplayer omxplayer.bin 2>>  /home/pi/mur.log", shell=True)
 
 def ready_player(moviefile, stopqueue, duration):
-	player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, None, True)
+	player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
 	position = player.position
 	while player.position == position:
 		pass

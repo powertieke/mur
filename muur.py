@@ -69,8 +69,8 @@ def main():
 		player.set_background('white')
 		loopSingleMoviesThread = player.LoopSingleMoviesThread(args.moviepath)
 		loopSingleMoviesThread.start()
-		clientsocket = client.find_controller(args.clientname, udpport_discovery, tcpport)
-		player.controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync)
+		# clientsocket = client.find_controller(args.clientname, udpport_discovery, tcpport)
+		# player.controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync)
 		
 		
 	
