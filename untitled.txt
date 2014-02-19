@@ -1,0 +1,4 @@
+- Foutmelding bij player als geen netwerk beschikbaar is. Laten checken, en geen netwerkgerelateerde functies draaien indien geen netwerk. Checken met kastje.
+- Gecentraliseerd updatescript maken. Is nodig voor het sneller testen van kleine aanpassingen.
+- Hoofddesign van webpagina maken - Overzicht van Schermen en interactie.
+- 
