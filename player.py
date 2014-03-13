@@ -43,7 +43,7 @@ def get_duration(moviefile):
 	duration = int(duration) * 1000
 	return duration
 
-def loop_single_movies(moviefolder):
+def loop_single_movies(moviefolder, udpport_sync):
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
 	shuffle(playlist)
 	i = 0
@@ -57,7 +57,7 @@ def loop_single_movies(moviefolder):
 		else:
 			nextmovieindex = i + 1
 			
-		message = messagequeue.get() # Wait for currently playing movie to end
+		message = messagequeue.get() # Wait for currently playing movie to end or for the server to interrupt
 		if message == "end":
 			playlist[i][1].stop()
 			playlist[i][1] = None
@@ -93,14 +93,17 @@ def loop_single_movies(moviefolder):
 			playlist[i][1].stop()
 			playlist[i][1] = None
 			i = nextmovieindex
-		
+		elif message[0] == "sync":
+			play_synced_movie(message[1], outgoing_to_controller, udpport_sync)
+			
 			
 class LoopSingleMoviesThread(threading.Thread):
-	def __init__(self, moviefolder, name='threadmeister'):
+	def __init__(self, moviefolder, udpport_sync, name='threadmeister'):
 		threading.Thread.__init__(self, name=name)
 		self.moviefolder = moviefolder
+		self.udpport_sync = udpport_sync
 	def run(self):
-		loop_single_movies(self.moviefolder)
+		loop_single_movies(self.moviefolder, self.udpport_sync)
 		
 def interruptor(message, argument=None):
 	if argument == None:
@@ -110,27 +113,51 @@ def interruptor(message, argument=None):
 
 def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync):
 	syncre = re.compile(r'^sync:(.*)')
-	message = connection.recv(1024).decode("utf-8")
-	# print(message)
-	if message == "skip":
-		incoming_from_controller.put(message)
-		connection.sendall(outgoing_to_controller.get().encode("utf-8"))
-	elif syncre.match(message):
-		moviefile = syncre.match(message).groups()[0]
-		play_synced_movie(moviefile, outgoing_to_controller, udpport_sync)
-		connection.sendall(outgoing_to_controller.get().encode('utf-8'))
-		# print('Sent GO!')
-	elif message == "pause":
-		incoming_from_controller.put(message)
-		connection.sendall("ready".encode('utf-8'))
-	else:
-		connection.sendall("error".encode('utf-8'))
+	skipre = re.compile(r'^skip:(.*)')
+	playre = re.compile(r'^play:(.*)')
+	while (True):
+		message = connection.recv(1024).decode("utf-8")
+		# print(message)
+		if message == "skip":
+			incoming_from_controller.put(message)
+			connection.sendall(outgoing_to_controller.get().encode("utf-8"))
+		elif syncre.match(message):
+			moviefile = syncre.match(message).groups()[0]
+			incoming_from_controller.put(["sync", moviefile])
+			# play_synced_movie(moviefile, outgoing_to_controller, udpport_sync)
+			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
+			# print('Sent GO!')
+		elif playre.match(message):
+			moviefile = playre.match(message).groups()[0]
+			incoming_from_controller.put(["play", moviefile])
+			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
+		elif skipre.match(message):
+			times = playre.match(message).groups()[0]
+			incoming_from_controller.put(["skip", times])
+			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
+		elif message == "pause":
+			incoming_from_controller.put(message)
+			connection.sendall("ready".encode('utf-8'))
+		else:
+			connection.sendall("error".encode('utf-8'))
+	
+def play_single_movie(moviefile, controllermessage):
+	singlequeue = queue.Queue()
+	
+	interruptor("endloop") # Kill main loop
+	try:
+		subprocess.call("sudo killall omxplayer omxplayer.bin 2> /dev/null", shell=True)
+	except:
+		pass
+	
+	player = ready_player(glob.glob(moviefile + "*.mp4")[0], singlequeue, get_duration(glob.glob(moviefile + "*.mp4")[0]))
+	player.toggle_pause()
+	
 	
 		
 def play_synced_movie(moviefile, controllermessage, udpport_sync):
 	syncqueue = queue.Queue()
 	
-	interruptor("endloop") # Kill main loop
 	try:
 		subprocess.call("sudo killall omxplayer omxplayer.bin 2> /dev/null", shell=True)
 	except:

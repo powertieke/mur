@@ -20,6 +20,15 @@ def message_to_pi(pi, message):
 		result = "TIMEOUT"
 	pi[0].settimeout(None)
 	return result
+
+def play_single(moviefile, client):
+	"""Tell a single client that you want it to play a single movie, blanking out any adjacent screens"""
+	if (message_to_pi(client, "play:" + moviefile) == "playing"):
+		# wait for interruption by interface or message of Pi
+		response = interrupt.get()
+		
+	
+	
 	
 def play_sync(moviefile, clients, UDPPort_sync):
 	"""Tell all of the screens present in 'clients' to get ready for playing 'moviefile'. Waits for every client to respond with 'Ready' (Which means the client has started OMXplayer with the corresponding movie)"""
