@@ -138,14 +138,13 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 	
 	
 		
-def play_synced_movie(moviefile, controllermessage, udpport_sync):
-	syncqueue = queue.Queue()
+def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync):
 	
 	syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
 	syncThread.start()
 	
-	player = ready_player(glob.glob(moviefile + "*.mp4")[0], syncqueue, get_duration(glob.glob(moviefile + "*.mp4")[0]))
-	controllermessage.put("ready") # let the controlling pi know we're ready to go
+	player = ready_player(glob.glob(moviefile + "*.mp4")[0], incoming_from_controller, get_duration(glob.glob(moviefile + "*.mp4")[0]))
+	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
 		tolerance = 200000.0
