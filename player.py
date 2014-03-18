@@ -13,7 +13,7 @@ import time
 import subprocess
 from random import shuffle
 
-messagequeue = queue.Queue()
+
 
 def set_background(color):
 	# subprocess.call('sudo sh -c "TERM=linux setterm -background ' + color + ' >/dev/tty0"', shell=True)
@@ -43,58 +43,53 @@ def get_duration(moviefile):
 	duration = int(duration) * 1000
 	return duration
 
-def loop_single_movies(moviefolder, udpport_sync):
+def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_controller):
+	status = "starting"
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
 	shuffle(playlist)
 	i = 0
-	playlist[i][1] = ready_player(playlist[i][0], messagequeue, playlist[i][2])
+	playlist[i][1] = ready_player(playlist[i][0], incoming_from_controller, playlist[i][2])
 	playlist[i][1].toggle_pause()
-	while True:
-		if i == 0:
-			nextmovieindex = 1
-		elif i == len(playlist) - 1:
-			nextmovieindex = 0
-		else:
-			nextmovieindex = i + 1
-			
-		message = messagequeue.get() # Wait for currently playing movie to end or for the server to interrupt
+	status = "playing:" + playlist[i][0]
+	while True: ## Main movie playing loop - Listens on incoming_from_controller queue
+		message = incoming_from_controller.get() # Wait for currently playing movie to end or for an incoming servermessage
 		if message == "end":
+			if i == 0:
+				nextmovieindex = 1
+			elif i == len(playlist) - 1:
+				nextmovieindex = 0
+			else:
+				nextmovieindex = i + 1
+			
 			playlist[i][1].stop()
 			playlist[i][1] = None
 			try:
 				kill_all_omxplayers()
 			except:
 				pass
-			playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], messagequeue, playlist[i][2])
+			playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], incoming_from_controller, playlist[i][2])
 			playlist[nextmovieindex][1].toggle_pause() #play next movie
 			i = nextmovieindex
-		elif message == "pause":
-			playlist[i][1].toggle_pause()
-		elif message == "endloop":
-			playlist[i][1].stop()
-			playlist[i][1] = None
-			try:
-				kill_all_omxplayers()
-			except:
-				pass
-			messagequeue.get()
-			messagequeue.get()
-			try:
-				kill_all_omxplayers()
-			except:
-				pass
-			playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], messagequeue, playlist[i][2])
-			playlist[nextmovieindex][1].toggle_pause() #play next movie
-			i = nextmovieindex
-		elif message[0] == "skip":
-			if message[1] != None:
-				nextmovieindex = message[1]
-			playlist[nextmovieindex][1].toggle_pause()
-			playlist[i][1].stop()
-			playlist[i][1] = None
-			i = nextmovieindex
+		elif message == "status":
+			outgoing_to_controller.put(status)
 		elif message[0] == "sync":
-			play_synced_movie(message[1], outgoing_to_controller, udpport_sync)
+			playlist[i][1].stop()
+			playlist[i][1] = None
+			try:
+				kill_all_omxplayers()
+			except:
+				pass
+			play_synced_movie(message[1], incoming_from_controller, outgoing_to_controller, udpport_sync)
+		elif message[0] == "play":
+			playlist[i][1].stop()
+			playlist[i][1] = None
+			try:
+				kill_all_omxplayers()
+			except:
+				pass
+			playlist[nextmovieindex][1] = ready_player(message[1], incoming_from_controller, get_duration(message[1]))
+			playlist[nextmovieindex][1].toggle_pause() #play next movie
+			
 			
 			
 class LoopSingleMoviesThread(threading.Thread):
@@ -141,27 +136,10 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		else:
 			connection.sendall("error".encode('utf-8'))
 	
-def play_single_movie(moviefile, controllermessage):
-	singlequeue = queue.Queue()
-	
-	interruptor("endloop") # Kill main loop
-	try:
-		subprocess.call("sudo killall omxplayer omxplayer.bin 2> /dev/null", shell=True)
-	except:
-		pass
-	
-	player = ready_player(glob.glob(moviefile + "*.mp4")[0], singlequeue, get_duration(glob.glob(moviefile + "*.mp4")[0]))
-	player.toggle_pause()
-	
 	
 		
 def play_synced_movie(moviefile, controllermessage, udpport_sync):
 	syncqueue = queue.Queue()
-	
-	try:
-		subprocess.call("sudo killall omxplayer omxplayer.bin 2> /dev/null", shell=True)
-	except:
-		pass
 	
 	syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
 	syncThread.start()
@@ -175,11 +153,7 @@ def play_synced_movie(moviefile, controllermessage, udpport_sync):
 		# print("Got go: playing")
 		while True:
 			syncmessage = syncqueue.get()
-			if syncmessage == "pause":
-				interruptor("pause")
-				player.stop()
-			elif syncmessage == "end":
-				interruptor("resume") # Run main loop
+			if syncmessage == "end":
 				break
 			else:
 				masterposition = float(syncmessage)
