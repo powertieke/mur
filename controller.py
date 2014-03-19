@@ -25,7 +25,7 @@ def play_single(moviefile, client):
 	"""Tell a single client that you want it to play a single movie, blanking out any adjacent screens"""
 	if (message_to_pi(client, "play:" + moviefile) == "playing"):
 		# wait for interruption by interface or message of Pi
-		response = interrupt.get()
+		return "Playing"
 		
 	
 	
@@ -36,7 +36,7 @@ def play_sync(moviefile, clients, UDPPort_sync):
 	waitforitqueue = queue.Queue()
 	syncmessage = queue.Queue()
 	syncqueue = queue.Queue()
-	syncplayer = player.ready_player(glob.glob(moviefile + "*.mp4")[0], syncqueue, player.get_duration(glob.glob(moviefile + "*.mp4")[0]))
+	syncplayer = player.ready_player("/sync/" + moviefile + ".mp4")[0], syncqueue, player.get_duration(glob.glob(moviefile + "*.mp4")[0]))
 	# print(clients)
 	for client in clients:
 		waitforitqueue.put(True)
@@ -55,6 +55,7 @@ def play_sync(moviefile, clients, UDPPort_sync):
 			syncmessage.put(syncplayer.position)
 		else:
 			break
+	return "done"
 
 def syncscreamer(udpport_sync, syncmessage):
 	syncscreamer = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

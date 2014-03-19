@@ -139,11 +139,12 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 	
 		
 def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync):
+	syncqueue = queue.Queue()
 	
 	syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
 	syncThread.start()
 	
-	player = ready_player(glob.glob(moviefile + "*.mp4")[0], incoming_from_controller, get_duration(glob.glob(moviefile + "*.mp4")[0]))
+	player = ready_player(moviefile + args.clientname + ".mp4", incoming_from_controller, get_duration(moviefile + args.clientname + ".mp4"))
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
@@ -175,14 +176,6 @@ def sync_listener(udpport_sync, syncqueue):
 		# print(data)
 		syncqueue.put(data)
 	
-class KillThread(threading.Thread):
-	def __init__(self, name, duration, messagequeue):
-		threading.Thread.__init__(self, name=name)
-		self.duration = udpport_sync
-		self.messagequeue = syncqueue
-	def run(self):
-		player_killtimer(self.duration, self.messagequeue)
-		
 
 class SyncThread(threading.Thread):
 	def __init__(self, name, udpport_sync, syncqueue):

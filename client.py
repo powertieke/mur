@@ -22,6 +22,7 @@ def listener(port):
 
 def screamer(clientname, udpport_discovery):
 	"""Screams it's name through UDP out over the local network in search of a controller pi"""
+	time.sleep(5) # give the main thread a couple of seconds to ready the connection before it starts yelling it's name - Fix better later (using a thread and a queue)
 	while 1:
 		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		s.sendto(clientname.encode('utf-8'), ("224.0.0.1", udpport_discovery))
