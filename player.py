@@ -43,7 +43,7 @@ def get_duration(moviefile):
 	duration = int(duration) * 1000
 	return duration
 
-def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_controller):
+def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_controller, udpport_sync):
 	status = "starting"
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
 	shuffle(playlist)
@@ -93,12 +93,12 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			
 			
 class LoopSingleMoviesThread(threading.Thread):
-	def __init__(self, moviefolder, udpport_sync, name='threadmeister'):
+	def __init__(self, moviefolder, incoming_from_controller, outgoing_to_controller, udpport_sync, name='threadmeister'):
 		threading.Thread.__init__(self, name=name)
 		self.moviefolder = moviefolder
 		self.udpport_sync = udpport_sync
 	def run(self):
-		loop_single_movies(self.moviefolder, self.udpport_sync)
+		loop_single_movies(self.moviefolder, self.incoming_from_controller, self.outgoing_to_controller, self.udpport_sync)
 		
 def interruptor(message, argument=None):
 	if argument == None:
