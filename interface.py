@@ -3,6 +3,7 @@
 import sys
 import os
 import controller
+import re
 
 def interface(clients, udpport_sync, moviefolder):
 	syncre = re.compile(r'^sync:(.*)')
