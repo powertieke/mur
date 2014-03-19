@@ -24,7 +24,7 @@ def interface(clients, udpport_sync, moviefolder):
 					break
 				else:
 					print(client + " not in screen list. Try again.\n")
-			print(controller.play_single(moviefolder + "/singles/" + moviename + ".mp4", client))
+			print(controller.play_single(moviefolder + "/singles/" + moviename + ".mp4", clients[client]))
 		elif syncre.match(command):
 			moviename = syncre.match(command).groups()[0]
 			print(controller.play_sync(moviefolder + "/sync/" + moviename, clients, udpport_sync))
