@@ -97,6 +97,8 @@ class LoopSingleMoviesThread(threading.Thread):
 		threading.Thread.__init__(self, name=name)
 		self.moviefolder = moviefolder
 		self.udpport_sync = udpport_sync
+		self.incoming_from_controller = incoming_from_controller
+		self.outgoing_to_controller = outgoing_to_controller
 	def run(self):
 		loop_single_movies(self.moviefolder, self.incoming_from_controller, self.outgoing_to_controller, self.udpport_sync)
 		
