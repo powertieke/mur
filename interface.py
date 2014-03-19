@@ -6,9 +6,9 @@ import controller
 import re
 
 def interface(clients, udpport_sync, moviefolder):
-	syncre = re.compile(r'^sync:(.*)')
-	skipre = re.compile(r'^skip:(.*)')
-	playre = re.compile(r'^play:(.*)')
+	syncre = re.compile(r'^sync:(.*)$')
+	skipre = re.compile(r'^skip:(.*)$')
+	playre = re.compile(r'^play:(.*)$')
 	while True:
 		command = input('--> Type "play:<moviefile>" or "sync:<moviefile>" : ')
 		if command == '':

@@ -109,9 +109,9 @@ def interruptor(message, argument=None):
 		messagequeue.put((message, argument))
 
 def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync):
-	syncre = re.compile(r'^sync:(.*)')
-	skipre = re.compile(r'^skip:(.*)')
-	playre = re.compile(r'^play:(.*)')
+	syncre = re.compile(r'^sync:(.*)$')
+	skipre = re.compile(r'^skip:(.*)$')
+	playre = re.compile(r'^play:(.*)$')
 	while (True):
 		message = connection.recv(1024).decode("utf-8")
 		# print(message)
