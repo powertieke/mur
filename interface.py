@@ -14,7 +14,7 @@ def interface(clients, udpport_sync, moviefolder):
 		if command == '':
 			pass
 		elif playre.match(command):
-			moviename = playre.match(command).groups()[0]
+			moviename = playre.match(command).group(1)
 			print("Which screen?\n")
 			for key in clients.keys():
 				print(key + "\n")
@@ -26,7 +26,7 @@ def interface(clients, udpport_sync, moviefolder):
 					print(client + " not in screen list. Try again.\n")
 			print(controller.play_single(moviefolder + "/singles/" + moviename + ".mp4", clients[client]))
 		elif syncre.match(command):
-			moviename = syncre.match(command).groups()[0]
+			moviename = syncre.match(command).group(1)
 			print(controller.play_sync(moviefolder + "/sync/" + moviename, clients, udpport_sync))
 		else:
 			pass

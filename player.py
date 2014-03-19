@@ -119,17 +119,17 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			incoming_from_controller.put(message)
 			connection.sendall(outgoing_to_controller.get().encode("utf-8"))
 		elif syncre.match(message):
-			moviefile = syncre.match(message).groups()[0]
+			moviefile = syncre.match(message).group(1)
 			incoming_from_controller.put(["sync", moviefile])
 			# play_synced_movie(moviefile, outgoing_to_controller, udpport_sync)
 			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
 			# print('Sent GO!')
 		elif playre.match(message):
-			moviefile = playre.match(message).groups()[0]
+			moviefile = playre.match(message).group(1)
 			incoming_from_controller.put(["play", moviefile])
 			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
 		elif skipre.match(message):
-			times = playre.match(message).groups()[0]
+			times = playre.match(message).group(1)
 			incoming_from_controller.put(["skip", times])
 			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
 		elif message == "pause":
