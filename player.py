@@ -87,6 +87,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 				kill_all_omxplayers()
 			except:
 				pass
+			print(message[1])
 			playlist[nextmovieindex][1] = ready_player(message[1], incoming_from_controller, get_duration(message[1]))
 			playlist[nextmovieindex][1].toggle_pause() #play next movie
 			
