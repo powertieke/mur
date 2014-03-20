@@ -17,16 +17,21 @@ def interface(clients, udpport_sync, moviefolder):
 			moviename = playre.match(command).group(1)
 			print("Which screen?\n")
 			for key in clients.keys():
-				print(key + "\n")
+				print(key)
 			while True:
-				client = input("--> Type the name of the screen you would like to show the presentation on:")
+				client = input("--> Type the name of the screen you would like to show the presentation on or type cancel:")
 				if client in clients.keys():
+					print(controller.play_single(moviefolder + "/single/" + moviename + ".mp4", clients[client]))
+					break
+				elif client == "cancel":
 					break
 				else:
 					print(client + " not in screen list. Try again.\n")
-			print(controller.play_single(moviefolder + "/single/" + moviename + ".mp4", clients[client]))
+			
 		elif syncre.match(command):
 			moviename = syncre.match(command).group(1)
 			print(controller.play_sync(moviefolder + "/sync/" + moviename, clients, udpport_sync))
+		elif command == "quit":
+			break
 		else:
 			pass
