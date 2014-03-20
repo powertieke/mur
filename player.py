@@ -43,7 +43,7 @@ def get_duration(moviefile):
 	duration = int(duration) * 1000
 	return duration
 
-def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_controller, udpport_sync):
+def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
 	status = "starting"
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
 	shuffle(playlist)
@@ -79,7 +79,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 				kill_all_omxplayers()
 			except:
 				pass
-			play_synced_movie(message[1], incoming_from_controller, outgoing_to_controller, udpport_sync)
+			play_synced_movie(message[1], incoming_from_controller, outgoing_to_controller, udpport_sync, clientname)
 		elif message[0] == "play":
 			playlist[i][1].stop()
 			playlist[i][1] = None
@@ -94,14 +94,15 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			
 			
 class LoopSingleMoviesThread(threading.Thread):
-	def __init__(self, moviefolder, incoming_from_controller, outgoing_to_controller, udpport_sync, name='threadmeister'):
+	def __init__(self, moviefolder, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname, name='threadmeister'):
 		threading.Thread.__init__(self, name=name)
 		self.moviefolder = moviefolder
 		self.udpport_sync = udpport_sync
 		self.incoming_from_controller = incoming_from_controller
 		self.outgoing_to_controller = outgoing_to_controller
+		self.clientname = clientname
 	def run(self):
-		loop_single_movies(self.moviefolder, self.incoming_from_controller, self.outgoing_to_controller, self.udpport_sync)
+		loop_single_movies(self.moviefolder, self.incoming_from_controller, self.outgoing_to_controller, self.udpport_sync, self.clientname)
 		
 def interruptor(message, argument=None):
 	if argument == None:
@@ -141,13 +142,13 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 	
 	
 		
-def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync):
+def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
 	syncqueue = queue.Queue()
 	
 	syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
 	syncThread.start()
 	
-	player = ready_player(moviefile + args.clientname + ".mp4", incoming_from_controller, get_duration(moviefile + args.clientname + ".mp4"))
+	player = ready_player(moviefile + clientname + ".mp4", incoming_from_controller, get_duration(moviefile + clientname + ".mp4"))
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
