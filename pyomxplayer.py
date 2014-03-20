@@ -112,4 +112,4 @@ class OMXPlayer(object):
         raise NotImplementedError
 
     def increase_speed(self):
-        self._process.send(self._INCREASE_SPEED_CMD)
+        self._process.send(self._TOGGLE_INCREASE_SPEED_CMD)

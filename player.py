@@ -170,8 +170,9 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		player.toggle_pause() # Play synced movie
 		# print("Got go: playing")
 		while True:
-			syncmessage = syncqueue.get()
+			syncmessage = syncqueue.get(True, 10)
 			if syncmessage == "end":
+				print("gotend")
 				break
 			else:
 				masterposition = float(syncmessage)
