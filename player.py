@@ -52,8 +52,11 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	playlist[i][1].toggle_pause()
 	status = "playing:" + playlist[i][0]
 	while True: ## Main movie playing loop - Listens on incoming_from_controller queue
+		print("waiting...")
 		message = incoming_from_controller.get() # Wait for currently playing movie to end or for an incoming servermessage
+		print("Got:" + message)
 		if message == "end":
+			print("got end")
 			if i == 0:
 				nextmovieindex = 1
 			elif i == len(playlist) - 1:
@@ -117,7 +120,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 	playre = re.compile(r'^play:(.*)$')
 	while (True):
 		message = connection.recv(1024).decode("utf-8")
-		# print(message)
+		print(message)
 		if message == "skip":
 			incoming_from_controller.put(message)
 			connection.sendall(outgoing_to_controller.get().encode("utf-8"))
@@ -126,15 +129,17 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			incoming_from_controller.put(["sync", moviefile])
 			# play_synced_movie(moviefile, outgoing_to_controller, udpport_sync)
 			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
-			# print('Sent GO!')
+			print('Sent GO!')
 		elif playre.match(message):
 			moviefile = playre.match(message).group(1)
 			incoming_from_controller.put(["play", moviefile])
 			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
+			print("sent done")
 		elif skipre.match(message):
 			times = playre.match(message).group(1)
 			incoming_from_controller.put(["skip", times])
 			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
+			print("sent")
 		elif message == "pause":
 			incoming_from_controller.put(message)
 			connection.sendall("ready".encode('utf-8'))
@@ -146,8 +151,12 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
 	syncqueue = queue.Queue()
 	
+	print("starting syncthread")
+	
 	syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
 	syncThread.start()
+	
+	print("syncthread started")
 	
 	player = ready_player(moviefile + clientname + ".mp4", incoming_from_controller, get_duration(moviefile + clientname + ".mp4"))
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
