@@ -64,7 +64,10 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			else:
 				nextmovieindex = i + 1
 			
-			playlist[i][1].stop()
+			try:
+				playlist[i][1].stop()
+			except:
+				pass
 			playlist[i][1] = None
 			try:
 				kill_all_omxplayers()
@@ -77,7 +80,10 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			outgoing_to_controller.put(status)
 		elif message[0] == "sync":
 			print("got sync")
-			playlist[i][1].stop()
+			try:
+				playlist[i][1].stop()
+			except:
+				pass
 			playlist[i][1] = None
 			try:
 				kill_all_omxplayers()
@@ -88,7 +94,10 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			play_synced_movie(message[1], incoming_from_controller, outgoing_to_controller, udpport_sync, clientname)
 			print("Got to the end of this fucker")
 		elif message[0] == "play":
-			playlist[i][1].stop()
+			try:
+				playlist[i][1].stop()
+			except:
+				pass
 			playlist[i][1] = None
 			try:
 				kill_all_omxplayers()
