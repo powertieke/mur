@@ -54,7 +54,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	while True: ## Main movie playing loop - Listens on incoming_from_controller queue
 		print("waiting...")
 		message = incoming_from_controller.get() # Wait for currently playing movie to end or for an incoming servermessage
-		print("Got:" + message)
+		print("Gotsome")
 		if message == "end":
 			print("got end")
 			if i == 0:
@@ -76,13 +76,17 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 		elif message == "status":
 			outgoing_to_controller.put(status)
 		elif message[0] == "sync":
+			print("got sync")
 			playlist[i][1].stop()
 			playlist[i][1] = None
 			try:
 				kill_all_omxplayers()
 			except:
 				pass
+				
+			print("killed players. Starting sync")
 			play_synced_movie(message[1], incoming_from_controller, outgoing_to_controller, udpport_sync, clientname)
+			print("Got to the end of this fucker")
 		elif message[0] == "play":
 			playlist[i][1].stop()
 			playlist[i][1] = None
