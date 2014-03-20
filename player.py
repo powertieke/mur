@@ -162,7 +162,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 	
 	print("syncthread started")
 	
-	player = ready_player(moviefile + clientname + ".mp4", incoming_from_controller, get_duration(moviefile + clientname + ".mp4"))
+	player = ready_player(moviefile + clientname + ".mp4", syncqueue, get_duration(moviefile + clientname + ".mp4"))
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
@@ -173,6 +173,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 			syncmessage = syncqueue.get(True, 10)
 			if syncmessage == "end":
 				print("gotend")
+				incoming_from_controller.put("end")
 				break
 			else:
 				masterposition = float(syncmessage)
