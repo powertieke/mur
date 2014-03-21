@@ -48,6 +48,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
 	shuffle(playlist)
 	i = 0
+	nextmovieindex = 1
 	playlist[i][1] = ready_player(playlist[i][0], incoming_from_controller, playlist[i][2])
 	playlist[i][1].toggle_pause()
 	status = "playing:" + playlist[i][0]
@@ -184,6 +185,12 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 			syncmessage = syncqueue.get(True, 10)
 			if syncmessage == "end":
 				print("gotend")
+				player.stop()
+				try:
+					kill_all_omxplayers()
+				except:
+					pass
+					
 				incoming_from_controller.put("end")
 				break
 			else:
