@@ -50,7 +50,9 @@ def play_sync(moviefile, clients, UDPPort_sync):
 	syncplayer.toggle_pause()
 	while True:
 		try:
-			syncqueue.get(True, 5)
+			msg = syncqueue.get(True, 5)
+			syncmessage.put(msg)
+			break
 		except queue.Empty:
 			syncmessage.put(syncplayer.position)
 		else:
@@ -64,6 +66,7 @@ def syncscreamer(udpport_sync, syncmessage):
 		message = syncmessage.get()
 		# print(message)
 		syncscreamer.sendto(str(message).encode('utf-8'), ("224.0.0.1", udpport_sync))
+		print("message")
 		if message == "end":
 			break
 	syncscreamer.close()

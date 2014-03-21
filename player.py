@@ -211,7 +211,7 @@ def sync_listener(udpport_sync, syncqueue):
 	s.bind(("", udpport_sync))
 	while True:
 		data = s.recv(1024).decode("utf-8")
-		# print(data)
+		print(data)
 		syncqueue.put(data)
 		if data == "end":
 			s.close()
