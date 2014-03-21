@@ -191,7 +191,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				except:
 					pass
 					
-				incoming_from_controller.put("end")
+				# incoming_from_controller.put("end")
 				break
 			else:
 				masterposition = float(syncmessage)
