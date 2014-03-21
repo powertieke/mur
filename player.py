@@ -213,6 +213,9 @@ def sync_listener(udpport_sync, syncqueue):
 		data = s.recv(1024).decode("utf-8")
 		# print(data)
 		syncqueue.put(data)
+		if data == "end":
+			s.close()
+			break
 	
 
 class SyncThread(threading.Thread):

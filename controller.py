@@ -66,6 +66,7 @@ def syncscreamer(udpport_sync, syncmessage):
 		syncscreamer.sendto(str(message).encode('utf-8'), ("224.0.0.1", udpport_sync))
 		if message == "end":
 			break
+	syncscreamer.close()
 
 def tell_client_to_sync(pi, movie, waitforitqueue):
 	waitforitqueue.get()
