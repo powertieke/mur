@@ -165,7 +165,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 	
 		
 def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
-	syncqueue = queue.Queue()
+	syncqueue = queue.Queue(1)
 	
 	print("starting syncthread")
 	
@@ -216,7 +216,10 @@ def sync_listener(udpport_sync, syncqueue):
 	while True:
 		data = s.recv(1024).decode("utf-8")
 		print(data)
-		syncqueue.put(data)
+		try:
+			syncqueue.put(data)
+		except:
+			pass
 		if data == "end":
 			s.close()
 			break
