@@ -203,7 +203,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					player.toggle_pause()
 				elif masterposition - tolerance > localposition:
 					player.increase_speed()
-					time.sleep(0.5)
+					time.sleep(2)
 					player.decrease_speed()
 		
 def sync_listener(udpport_sync, syncqueue):
