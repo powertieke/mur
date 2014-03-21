@@ -178,7 +178,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
-		tolerance = 200000.0
+		tolerance = 100000.0
 		player.toggle_pause() # Play synced movie
 		# print("Got go: playing")
 		while True:
@@ -204,7 +204,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				elif masterposition - tolerance > localposition:
 					player.increase_speed()
 					time.sleep(0.5)
-					player.toggle_pause()
+					player.decrease_speed()
 		
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

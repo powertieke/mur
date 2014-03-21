@@ -17,8 +17,8 @@ class OMXPlayer(object):
     _PAUSE_CMD = 'p'
     _TOGGLE_SUB_CMD = 's'
     _QUIT_CMD = 'q'
-    _TOGGLE_INCREASE_SPEED_CMD = '1'
-
+    _TOGGLE_INCREASE_SPEED_CMD = '2'
+    _TOGGLE_DECREASE_SPEED_CMD = '1'
     paused = False
     subtitles_visible = True
 
@@ -113,3 +113,6 @@ class OMXPlayer(object):
 
     def increase_speed(self):
         self._process.send(self._TOGGLE_INCREASE_SPEED_CMD)
+
+    def decrease_speed(self):
+        self._process.send(self._TOGGLE_DECREASE_SPEED_CMD)
