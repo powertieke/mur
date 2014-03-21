@@ -165,7 +165,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 	
 		
 def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
-	syncqueue = queue.Queue(1)
+	syncqueue = queue.Queue()
 	
 	print("starting syncthread")
 	
@@ -198,17 +198,21 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				localposition = player.position
 				# print("Master: %s <--> Local: %s" % (masterposition, localposition))
 				if masterposition + tolerance < localposition:
+					syncqueue.put(True) # Block queue until done adjusting
 					player.toggle_pause()
 					adjustment = (localposition - masterposition) / 100000.
 					print("adj:" + str(adjustment))
 					time.sleep(adjustment)
 					player.toggle_pause()
+					syncqueue.get() # unblock Thread
 				elif masterposition - tolerance > localposition:
+					syncqueue.put(True) # Block queue until done adjusting
 					player.increase_speed()
 					adjustment = (masterposition - localposition) / 100000.
 					print("adj:" + str(adjustment))
 					time.sleep(adjustment*2.0)
 					player.decrease_speed()
+					syncqueue.get() # unblock Thread
 		
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -216,11 +220,12 @@ def sync_listener(udpport_sync, syncqueue):
 	while True:
 		data = s.recv(1024).decode("utf-8")
 		print(data)
-		try:
+		if syncqueue.empty() :
 			syncqueue.put(data)
-		except:
+		else:
 			pass
 		if data == "end":
+			syncqueue.put(data)
 			s.close()
 			break
 	
