@@ -198,6 +198,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				localposition = player.position
 				# print("Master: %s <--> Local: %s" % (masterposition, localposition))
 				if masterposition + tolerance < localposition:
+					print("Running fast. Stalling.")
 					syncqueue.put(True) # Block queue until done adjusting
 					player.toggle_pause()
 					adjustment = (localposition - masterposition) / 100000.
@@ -206,6 +207,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					player.toggle_pause()
 					syncqueue.get() # unblock Thread
 				elif masterposition - tolerance > localposition:
+					print("Running late. Catching up.")
 					syncqueue.put(True) # Block queue until done adjusting
 					player.increase_speed()
 					adjustment = (masterposition - localposition) / 100000.
@@ -221,8 +223,10 @@ def sync_listener(udpport_sync, syncqueue):
 		data = s.recv(1024).decode("utf-8")
 		print(data)
 		if syncqueue.empty() :
+			print("Put pos in q")
 			syncqueue.put(data)
 		else:
+			print("Discard pos")
 			pass
 		if data == "end":
 			syncqueue.put(data)
