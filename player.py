@@ -31,6 +31,7 @@ def ready_player(moviefile, stopqueue, duration):
 	while player.position < 10000:
 		pass
 	player.toggle_pause()
+	time.sleep(1)
 	return player
 
 def show_splash_screen(image):
