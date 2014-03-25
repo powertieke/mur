@@ -180,7 +180,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
-		tolerance = 200000.0
+		tolerance = 100000.0
 		player.toggle_pause() # Play synced movie
 		# print("Got go: playing")
 		synced = False
@@ -200,26 +200,23 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				masterposition = float(syncmessage)
 				localposition = player.position
 				# print("Master: %s <--> Local: %s" % (masterposition, localposition))
-				if synced == False :
-					if masterposition + tolerance < localposition:
-						print("Running fast. Stalling.")
-						synced = True # Only sync once
-						player.toggle_pause()
-						adjustment = (localposition - masterposition) / 100000.
-						print("adj:" + str(adjustment))
-						time.sleep(adjustment)
-						player.toggle_pause()
-					elif masterposition - tolerance > localposition:
-						print("Running late. Catching up.")
-						synced = True # Only sync once
-						player.increase_speed()
-						adjustment = (masterposition - localposition) / 100000.
-						print("adj:" + str(adjustment))
-						time.sleep(adjustment*2.0)
-						player.decrease_speed()
-					else :
-						pass
-					
+				if masterposition + tolerance < localposition:
+					print("Running fast. Stalling.")
+					player.toggle_pause()
+					adjustment = (localposition - masterposition) / 1000000.
+					print("adj:" + str(adjustment))
+					time.sleep(adjustment)
+					player.toggle_pause()
+				elif masterposition - tolerance > localposition:
+					print("Running late. Catching up.")
+					player.increase_speed()
+					adjustment = (masterposition - localposition) / 1000000.
+					print("adj:" + str(adjustment))
+					time.sleep(adjustment*2.0)
+					player.decrease_speed()
+				else :
+					pass
+				
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind(("", udpport_sync))
