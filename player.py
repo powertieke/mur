@@ -203,14 +203,17 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					player.toggle_pause()
 					adjustment = (localposition - masterposition) / 1000000.
 					print("adj:" + str(adjustment))
-					time.sleep(adjustment)
+					delay = adjustment - 0.1
+					if delay < 0:
+						 delay = 0
+					time.sleep(delay)
 					player.toggle_pause()
 				elif masterposition - tolerance > localposition:
 					print("Running late. Catching up.")
 					player.increase_speed()
 					adjustment = (masterposition - localposition) / 1000000.
 					print("adj:" + str(adjustment))
-					time.sleep((adjustment*1.5))
+					time.sleep((adjustment*2)+0.1)
 					player.decrease_speed()
 				else :
 					pass
