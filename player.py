@@ -28,7 +28,7 @@ def ready_player(moviefile, stopqueue, duration):
 	position = player.position
 	while player.position == position:
 		pass
-	while player.position < 10000:
+	while player.position < 500000:
 		pass
 	player.toggle_pause()
 	time.sleep(1)
