@@ -28,8 +28,6 @@ def ready_player(moviefile, stopqueue, duration):
 	position = player.position
 	while player.position == position:
 		pass
-	while player.position < 500000:
-		pass
 	player.toggle_pause()
 	time.sleep(1)
 	return player
@@ -212,7 +210,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					player.increase_speed()
 					adjustment = (masterposition - localposition) / 1000000.
 					print("adj:" + str(adjustment))
-					time.sleep((adjustment*2.0)+0.2)
+					time.sleep((adjustment))
 					player.decrease_speed()
 				else :
 					pass

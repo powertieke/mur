@@ -51,7 +51,7 @@ def play_sync(moviefile, clients, UDPPort_sync):
 	syncplayer.toggle_pause()
 	while True:
 		try:
-			msg = syncqueue.get(True, 2)
+			msg = syncqueue.get(True, 5)
 			syncmessage.put(msg)
 			break
 		except queue.Empty:
