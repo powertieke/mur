@@ -181,6 +181,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		tolerance = 20000.0
 		player.toggle_pause() # Play synced movie
 		# print("Got go: playing")
+		synced = False
 		while True:
 			syncmessage = syncqueue.get(True, 10)
 			if syncmessage == "end":
@@ -197,39 +198,33 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				masterposition = float(syncmessage)
 				localposition = player.position
 				# print("Master: %s <--> Local: %s" % (masterposition, localposition))
-				if masterposition + tolerance < localposition:
-					print("Running fast. Stalling.")
-					syncqueue.put(True) # Block queue until done adjusting
-					player.toggle_pause()
-					adjustment = (localposition - masterposition) / 100000.
-					print("adj:" + str(adjustment))
-					time.sleep(adjustment)
-					player.toggle_pause()
-					syncqueue.get() # unblock Thread
-				elif masterposition - tolerance > localposition:
-					print("Running late. Catching up.")
-					syncqueue.put(True) # Block queue until done adjusting
-					player.increase_speed()
-					adjustment = (masterposition - localposition) / 100000.
-					print("adj:" + str(adjustment))
-					time.sleep(adjustment*2.0)
-					player.decrease_speed()
-					syncqueue.get() # unblock Thread
-		
+				if synced == False :
+					if masterposition + tolerance < localposition:
+						print("Running fast. Stalling.")
+						synced = True # Only sync once
+						player.toggle_pause()
+						adjustment = (localposition - masterposition) / 100000.
+						print("adj:" + str(adjustment))
+						time.sleep(adjustment)
+						player.toggle_pause()
+					elif masterposition - tolerance > localposition:
+						print("Running late. Catching up.")
+						synced = True # Only sync once
+						player.increase_speed()
+						adjustment = (masterposition - localposition) / 100000.
+						print("adj:" + str(adjustment))
+						time.sleep(adjustment*2.0)
+						player.decrease_speed()
+					
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind(("", udpport_sync))
 	while True:
 		data = s.recv(1024).decode("utf-8")
 		print(data)
-		if syncqueue.empty() :
-			print("Put pos in q")
-			syncqueue.put(data)
-		else:
-			print("Discard pos")
-			pass
+		print("Put pos in q")
+		syncqueue.put(data)
 		if data == "end":
-			syncqueue.put(data)
 			s.close()
 			break
 	
