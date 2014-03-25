@@ -215,6 +215,8 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 						print("adj:" + str(adjustment))
 						time.sleep(adjustment*2.0)
 						player.decrease_speed()
+					else :
+						pass
 					
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
