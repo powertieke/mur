@@ -114,5 +114,6 @@ class OMXPlayer(object):
     def increase_speed(self):
         self._process.send(self._TOGGLE_INCREASE_SPEED_CMD)
 
+
     def decrease_speed(self):
         self._process.send(self._TOGGLE_DECREASE_SPEED_CMD)

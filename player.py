@@ -28,7 +28,8 @@ def ready_player(moviefile, stopqueue, duration):
 	position = player.position
 	while player.position == position:
 		pass
-		
+	while player.position < 10000:
+		pass
 	player.toggle_pause()
 	return player
 
@@ -178,7 +179,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
-		tolerance = 20000.0
+		tolerance = 200000.0
 		player.toggle_pause() # Play synced movie
 		# print("Got go: playing")
 		synced = False
