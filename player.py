@@ -183,7 +183,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		# print("Got go: playing")
 		synced = False
 		while True:
-			syncmessage = syncqueue.get(True, 10)
+			syncmessage = syncqueue.get()
 			if syncmessage == "end":
 				print("gotend")
 				player.stop()
