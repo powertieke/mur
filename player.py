@@ -196,6 +196,9 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				break
 			elif insync > 6:
 				pass # Stayed in sync for three seconds
+				masterposition = float(syncmessage)
+				localposition = player.position
+				print("Master: %s <--> Local: %s" % (masterposition, localposition))
 			else:
 				masterposition = float(syncmessage)
 				localposition = player.position
@@ -219,8 +222,8 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					adjustment = (masterposition - localposition) / 1000000.
 					print("adj:" + str(adjustment))
 					delay = (adjustment * 2.0)
-					if delay < 0.5:
-						 delay = 0.5
+					if delay < 0.3:
+						 delay = 0.3
 					time.sleep(delay)
 					player.decrease_speed()
 					insync = 0
