@@ -183,7 +183,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
-		tolerance = 50000.0
+		tolerance = 100000.0
 		player.toggle_pause() # Play synced movie
 		# print("Got go: playing")
 		insync = 0
@@ -245,7 +245,7 @@ def sync_listener(udpport_sync, syncqueue):
 		if syncqueue.empty():
 			syncqueue.put(data)
 		elif data == "end":
-			# syncqueue.put(data)
+			syncqueue.put(data)
 			s.close()
 			break
 	
