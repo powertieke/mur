@@ -28,6 +28,7 @@ def ready_player(moviefile, stopqueue, duration):
 	position = player.position
 	while player.position == position:
 		pass
+	
 	player.toggle_pause()
 	time.sleep(1)
 	return player

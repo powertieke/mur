@@ -80,7 +80,7 @@ class OMXPlayer(object):
                     # print("Forced end at : %s" % self.position)
                     self.stopqueue.put("end")
                     break
-            sleep(0.05)
+            sleep(0.01) # Was 0.5, but we want better accuraccy
 
     def toggle_pause(self):
         if self._process.send(self._PAUSE_CMD):
