@@ -181,7 +181,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		tolerance = 50000.0
 		player.toggle_pause() # Play synced movie
 		# print("Got go: playing")
-		synced = False
+		insync = 0
 		while True:
 			syncmessage = syncqueue.get()
 			if syncmessage == "end":
@@ -194,10 +194,13 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					
 				# incoming_from_controller.put("end")
 				break
+			elif insync > 6:
+				pass # Stayed in sync for three seconds
 			else:
 				masterposition = float(syncmessage)
 				localposition = player.position
 				print("Master: %s <--> Local: %s" % (masterposition, localposition))
+				syncqueue.put(True)
 				if masterposition + tolerance < localposition:
 					print("Running fast. Stalling.")
 					adjustment = (localposition - masterposition) / 1000000.
@@ -208,6 +211,8 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					player.toggle_pause()
 					time.sleep(delay)
 					player.toggle_pause()
+					insync = 0
+					syncqueue.get()
 				elif masterposition - tolerance > localposition:
 					print("Running late. Catching up.")
 					player.increase_speed()
@@ -218,16 +223,21 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 						 delay = 0.5
 					time.sleep(delay)
 					player.decrease_speed()
+					insync = 0
+					syncqueue.get()
 				else :
-					pass
+					insync = insync + 1
+					syncqueue.get()
 				
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind(("", udpport_sync))
 	while True:
 		data = s.recv(1024).decode("utf-8")
-		syncqueue.put(data)
+		if syncqueue.empty():
+			syncqueue.put(data)
 		if data == "end":
+			syncqueue.put(data)
 			s.close()
 			break
 	
