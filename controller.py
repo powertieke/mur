@@ -13,7 +13,7 @@ import glob
 def message_to_pi(pi, message):
 	"""Sends a message to the socket defined in pi, and returns the response"""
 	pi[0].sendall(message.encode("utf-8"))
-	pi[0].settimeout(5)
+	pi[0].settimeout(10)
 	try:
 		result = pi[0].recv(1024).decode("utf-8")
 	except socket.timeout:

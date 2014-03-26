@@ -26,7 +26,7 @@ def kill_all_omxplayers():
 def ready_player(moviefile, stopqueue, duration):
 	player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
 	position = player.position
-	while player.position < 1000000:
+	while player.position < 200000:
 		pass
 	
 	player.toggle_pause()
@@ -105,6 +105,10 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			try:
 				kill_all_omxplayers()
 			except:
+				pass
+			try:
+				incoming_from_controller.get(True)
+			except queue.empty:
 				pass
 			print(message[1])
 			playlist[nextmovieindex][1] = ready_player(message[1], incoming_from_controller, get_duration(message[1]))
