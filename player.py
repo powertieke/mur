@@ -214,8 +214,8 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					adjustment = (masterposition - localposition) / 1000000.
 					print("adj:" + str(adjustment))
 					delay = (adjustment * 2.0)
-					if delay < 0.1:
-						 delay = 0.1
+					if delay < 0.3:
+						 delay = 0.3
 					time.sleep(delay)
 					player.decrease_speed()
 				else :
