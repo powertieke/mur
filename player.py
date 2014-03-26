@@ -26,7 +26,7 @@ def kill_all_omxplayers():
 def ready_player(moviefile, stopqueue, duration):
 	player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
 	position = player.position
-	while player.position == position:
+	while player.position < 1000000:
 		pass
 	
 	player.toggle_pause()
@@ -179,7 +179,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
-		tolerance = 30000.0
+		tolerance = 50000.0
 		player.toggle_pause() # Play synced movie
 		# print("Got go: playing")
 		insync = 0
