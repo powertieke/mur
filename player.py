@@ -241,7 +241,7 @@ def sync_listener(udpport_sync, syncqueue):
 		if syncqueue.empty():
 			syncqueue.put(data)
 		elif data == "end":
-			syncqueue.put(data)
+			# syncqueue.put(data)
 			s.close()
 			break
 	
