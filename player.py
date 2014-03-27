@@ -25,10 +25,11 @@ def kill_all_omxplayers():
 
 def ready_player(moviefile, stopqueue, duration):
 	player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
-	position = player.position
-	while player.position < 200000:
+	position = 200000
+	while player.position < position:
 		pass
-	
+	overshoot = player.position - position
+	time.sleep((180000 - overshoot)/1000000)
 	player.toggle_pause()
 	time.sleep(1)
 	return player
