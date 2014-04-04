@@ -14,6 +14,7 @@ def webinterface():
 		
 	syncre = re.compile(r'^sync:(.*)$')
 	playre = re.compile(r'^play:(.*)$')
+	statre = re.compile(r'^stat:(.*)$')
 	while True:
 		command = getmessage(inpipe_path)
 		if command == '':
@@ -36,6 +37,13 @@ def webinterface():
 		elif syncre.match(command):
 			moviename = syncre.match(command).group(1)
 			print(controller.play_sync(moviefolder + "/sync/" + moviename, clients, udpport_sync))
+		elif statre.match(command):
+			piname = statre.match(command).group(1)
+			if piname == all:
+				statstring = ""
+				clientrecord = []
+				for client in clients.keys():
+					clientrecord.append("/".join([client, clients[client][1]]))
 		elif command == "quit":
 			break
 		elif command == "status":
