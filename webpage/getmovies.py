@@ -16,7 +16,7 @@ singlemovies = list(set([os.path.basename(x)[:-4].split("pi")[0] for x in single
 outputsingle = json.dumps(singlemovies)
 
 print("<script>")
-print("var syncmovies = %s;" % outputsync)
-print("var singlemovies = %s;" % outputsingle)
+print("syncmovies = %s;" % outputsync)
+print("singlemovies = %s;" % outputsingle)
 print("</script>")
 

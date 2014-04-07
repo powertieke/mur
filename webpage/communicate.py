@@ -25,7 +25,7 @@ response = inpipe.read()
 inpipe.close()
 statusdict = json.loads(response)
 print("<script>")
-print("var screenstatus = %s;" % statusdict)
+print("screenstatus = %s;" % statusdict)
 print("updatescreens();")
 print("</script>")
 
