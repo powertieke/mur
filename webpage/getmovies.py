@@ -20,9 +20,3 @@ print("var syncmovies = %s;" % outputsync)
 print("var singlemovies = %s;" % outputsingle)
 print("</script>")
 
-
-print("<pre>")
-print("var syncmovies = %s;" % outputsync)
-print("var singlemovies = %s;" % outputsingle)
-print("</pre>")
-

@@ -31,6 +31,9 @@ $( document ).ready(function() {
 		}
 	}
 	$("div#loadmovies").load("getmovies.py");
+	for (var i = 0; i < syncmovies.length; i++) {
+			$("div#loadmovies").append("<p>" + syncmovies[i] + "</p>");
+	}
 	$("div#loadstatus").load("communicate.py", {"command": "status"});
 	$("#runsync").click(function () {
 		$(this).fadeOut().fadeIn();

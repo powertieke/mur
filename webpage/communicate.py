@@ -29,10 +29,5 @@ print("var screenstatus = %s;" % statusdict)
 print("updatescreens();")
 print("</script>")
 
-print("<pre>")
-print("var screenstatus = %s;" % statusdict)
-print("updatescreens();")
-print("</pre>")
-
 
 os.remove("locked")
