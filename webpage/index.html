@@ -16,20 +16,23 @@ var syncmovie = "run";
 var syncmovies = [];
 var singlemovies = [];
 var screenstatus = [];
-$( document ).ready(function() {
-	function updatescreens() {
-		for (var client in screenstatus) {
-			$(".screen").css("background-color", "#FF0000");
-			if (screenstatus[client] == "0") {
-				$("#" + client).css("background-color", "#00FF00");
-				$("#" + client).click(function () {
-					$(this).fadeOut().fadeIn();
-				}); 
-			} else if (screenstatus[client] == "2"){
-				$("#" + client).unbind("click");
-			}
+
+function updatescreens() {
+	for (var client in screenstatus) {
+		$(".screen").css("background-color", "#FF0000");
+		if (screenstatus[client] == "0") {
+			$("#" + client).css("background-color", "#00FF00");
+			$("#" + client).click(function () {
+				$(this).fadeOut().fadeIn();
+			}); 
+		} else if (screenstatus[client] == "2"){
+			$("#" + client).unbind("click");
 		}
 	}
+}
+
+
+$( document ).ready(function() {
 	$.getJSON("getmovies.py").done(function( json ) {
 		syncmovies = json[0];
 		singlemovies = json[1];
