@@ -31,6 +31,8 @@ def play_single(moviefile, client):
 	
 	
 def play_sync(moviefile, clients, UDPPort_sync):
+	for client in clients.keys():
+		clients[client][1] = "2"
 	"""Tell all of the screens present in 'clients' to get ready for playing 'moviefile'. Waits for every client to respond with 'Ready' (Which means the client has started OMXplayer with the corresponding movie)"""
 	interval = 5
 	waitforitqueue = queue.Queue()
@@ -58,6 +60,8 @@ def play_sync(moviefile, clients, UDPPort_sync):
 			syncmessage.put(syncplayer.position)
 		else:
 			break
+	for client in clients.keys():
+		clients[client][1] = "0"	
 	return "done"
 
 def syncscreamer(udpport_sync, syncmessage):

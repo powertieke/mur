@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 
 import os
+import json
 
-def webinterface():
-	inpipe_path = "/home/pi/fromwebapp"
-	outpipe_path = "/home/pi/towebapp"
+def webinterface(clients, udpport_sync, moviefolder):
+	inpipe_path = "/home/pi/mur/webpage/fromwebapp"
+	outpipe_path = "/home/pi/mur/webpage/towebapp"
 	
 	if not os.path.exists(inpipe_path):
 		os.mkfifo(inpipe_path)
@@ -20,24 +21,14 @@ def webinterface():
 		if command == '':
 			putmessage(outpipe_path, "")
 		elif playre.match(command):
-			moviename = playre.match(command).group(1)
-			print("Which screen?\n")
-			for key in clients.keys():
-				putmessage()
-			while True:
-				client = input("--> Type the name of the screen you would like to show the presentation on or type cancel:")
-				if client in clients.keys():
-					print(controller.play_single(moviefolder + "/single/" + moviename + ".mp4", clients[client]))
-					break
-				elif client == "cancel":
-					break
-				else:
-					print(client + " not in screen list. Try again.\n")
+			client, moviename = playre.match(command).group(1).split(",")
+			response = controller.play_single(moviefolder + "/single/" + moviename + ".mp4", clients[client])
+			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 			
 		elif syncre.match(command):
 			moviename = syncre.match(command).group(1)
-			print(controller.play_sync(moviefolder + "/sync/" + moviename, clients, udpport_sync))
-		elif statre.match(command):
+			response = controller.play_sync(moviefolder + "/sync/" + moviename, clients, udpport_sync))
+		elif statre.match(command): # here for fun, not used yet
 			piname = statre.match(command).group(1)
 			if piname == all:
 				statstring = ""
@@ -47,7 +38,7 @@ def webinterface():
 		elif command == "quit":
 			break
 		elif command == "status":
-			putmessage(outpipe_path, status)
+			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		else:
 			pass
 		

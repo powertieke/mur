@@ -17,13 +17,16 @@ while os.path.exists("locked") :
 	time.sleep(0.3)
 
 open("locked", "a")
-outpipe = open("outpipe", "w")
+outpipe = open("fromwebapp", "w")
 outpipe.writelines(form["command"].value)
 outpipe.close()
-inpipe = open("inpipe", "r")
+inpipe = open("towebapp", "r")
 response = inpipe.read()
 inpipe.close()
 statusdict = json.loads(response)
-
+print("<script>")
+print("var status = %s;" % [statusdict])
+print("updatescreens();")
+print("</script>")
 
 os.remove("locked")

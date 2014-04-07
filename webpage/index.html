@@ -7,36 +7,66 @@
 #maintable {
 	width : 100%;
 }
+td.screen {
+	background-color : #FF0000;
+}
 </style>
 <script language="javascript" type="text/javascript">
-
+$( document ).ready(function() {
+	var syncmovie = "run";
+	var syncmovies = [];
+	var singlemovies = [];
+	var screenstatus = [];
+	$("div#loadmovies").load("getmovies.py");
+	$("div#loadstatus").load("communicate.py", {"command": "status"});
+	function updatescreens() {
+		for (var client in screenstatus) {
+			$(".screen").css("background-color", "#FF0000;");
+			if (screenstatus[client] == "0") {
+				$("#" + client).css("background-color", "#00FF00;");
+				$("#" + client).click(function () {
+					$(this).fadeOut().fadeIn();
+				}); 
+			} else if (screenstatus[client] == "2"){
+				$("#" + client).unbind("click");
+			}
+		}
+	}
+	$("#runsync").click(function () {
+		$(this).fadeOut().fadeIn();
+		$("div#loadstatus").load("communicate.cgi", {"command": "sync:" + syncmovie });	
+	});
+	
+})
 
 </script> 
 </head>
 
 <body>
 <div id="main">
+<div id="loadmovies"></div>
+<div id="loadstatus"></div>
 <table id="maintable" border=1>
 <tr>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td rowspan="3" class="screen">pitm</td>
+	<td rowspan="3" class="screen" id="pitm">pitm</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
 <tr>
-	<td class="screen">pi1</td>
-	<td class="screen">pi2</td>
-	<td class="screen">pi3</td>
-	<td class="screen">pi4</td>
-	<td class="screen">pi5</td>
-	<td class="screen">pi6</td>
-	<td class="screen">pi7</td>
-	<td class="screen">pi8</td>
+	<td class="screen" id="pi1">pi1</td>
+	<td class="screen" id="pi2">pi2</td>
+	<td class="screen" id="pi3">pi3</td>
+	<td class="screen" id="pi4">pi4</td>
+	<td class="screen" id="pi5">pi5</td>
+	<td class="screen" id="pi6">pi6</td>
+	<td class="screen" id="pi7">pi7</td>
+	<td class="screen" id="pi8">pi8</td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
@@ -50,41 +80,41 @@
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td class="screen">pilb</td>
+	<td class="screen" id="pilb">pilb</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td class="screen">pirb</td>
+	<td class="screen" id="pirb">pirb</td>
 	<td>&nbsp;</td>
 </tr>
 <tr>
-	<td class="screen">pill</td>
+	<td class="screen" id="pill">pill</td>
 	<td>&nbsp;</td>
-	<td class="screen">pilr</td>
+	<td class="screen" id="pilr">pilr</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td class="screen">pirl</td>
+	<td class="screen" id="pirl">pirl</td>
 	<td>&nbsp;</td>
-	<td class="screen">pirr</td>
+	<td class="screen" id="pirr">pirr</td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td class="screen">pilf</td>
+	<td class="screen" id="pilf">pilf</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td class="screen">pirf</td>
+	<td class="screen" id="pirf">pirf</td>
 	<td>&nbsp;</td>
 </tr>
 </table>
 </div>
 <div id="menu">
-<a href="javascript:void(0);">Run synced animation on all screens</a> <br />
+<a href="javascript:void(0);" id="runsync">Run synced animation on all screens</a> <br />
 <a href="javascript:void(0);">blackout all screens</a> <br />
 <a href="javascript:void(0);">shutdown </a> <br />
 </div>
