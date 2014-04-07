@@ -64,7 +64,7 @@ def main():
 	if args.master :
 		foundclients = clientfinder.clientfinder(udpport_discovery, tcpport) # Listens to discovery broadcasts from unconnected pi's in the same network and sets up a control connection over TCP.
 		# interface.interface(foundclients, udpport_sync, args.moviepath)
-		webinterface.webinterface(foundclients, udpport_sync, args.moviepath)
+		interface.interface(foundclients, udpport_sync, args.moviepath)
 		
 	if args.slave :
 		player.set_background('white')
