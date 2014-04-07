@@ -27,7 +27,7 @@ def webinterface(clients, udpport_sync, moviefolder):
 			
 		elif syncre.match(command):
 			moviename = syncre.match(command).group(1)
-			response = controller.play_sync(moviefolder + "/sync/" + moviename, clients, udpport_sync))
+			response = controller.play_sync(moviefolder + "/sync/" + moviename, clients, udpport_sync)
 		elif statre.match(command): # here for fun, not used yet
 			piname = statre.match(command).group(1)
 			if piname == all:
