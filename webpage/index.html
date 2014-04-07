@@ -30,13 +30,14 @@ $( document ).ready(function() {
 			}
 		}
 	}
-	$.getJSON("getmovies.py", function( json ) {
-		
+	$.getJSON("getmovies.py").done(function( json ) {
+		syncmovies = json[0];
+		singlemovies = json[1];
 	});
 	for (var i = 0; i < syncmovies.length; i++) {
 			$("div#loadmovies").append("<p>" + syncmovies[i] + "</p>");
 	}
-	$.getJSON("communicate.py", {"command": "status"}, function( json ) {
+	$.getJSON("communicate.py", {"command": "status"}).done(function( json ) {
 		screenstatus = json;
 	});
 	updatescreens();
