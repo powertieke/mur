@@ -12,11 +12,11 @@ td.screen {
 }
 </style>
 <script language="javascript" type="text/javascript">
+var syncmovie = "run";
+var syncmovies = [];
+var singlemovies = [];
+var screenstatus = [];
 $( document ).ready(function() {
-	var syncmovie = "run";
-	var syncmovies = [];
-	var singlemovies = [];
-	var screenstatus = [];
 	function updatescreens() {
 		for (var client in screenstatus) {
 			$(".screen").css("background-color", "#FF0000");
