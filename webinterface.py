@@ -33,6 +33,7 @@ def webinterface(clients, udpport_sync, moviefolder):
 			print("gotsync")
 			moviename = syncre.match(command).group(1)
 			response = controller.play_sync(moviefolder + "/sync/" + moviename, clients, udpport_sync)
+			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif statre.match(command): # here for fun, not used yet
 			piname = statre.match(command).group(1)
 			if piname == all:
