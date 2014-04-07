@@ -29,4 +29,10 @@ print("var status = %s;" % [statusdict])
 print("updatescreens();")
 print("</script>")
 
+print("<pre>")
+print("var status = %s;" % [statusdict])
+print("updatescreens();")
+print("</pre>")
+
+
 os.remove("locked")
