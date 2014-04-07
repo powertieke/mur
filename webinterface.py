@@ -21,13 +21,16 @@ def webinterface(clients, udpport_sync, moviefolder):
 	while True:
 		command = getmessage(inpipe_path)
 		if command == '':
+			print("gotnuthin")
 			putmessage(outpipe_path, "")
 		elif playre.match(command):
+			print("play")
 			client, moviename = playre.match(command).group(1).split(",")
 			response = controller.play_single(moviefolder + "/single/" + moviename + ".mp4", clients[client])
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 			
 		elif syncre.match(command):
+			print("gotsync")
 			moviename = syncre.match(command).group(1)
 			response = controller.play_sync(moviefolder + "/sync/" + moviename, clients, udpport_sync)
 		elif statre.match(command): # here for fun, not used yet
@@ -40,8 +43,10 @@ def webinterface(clients, udpport_sync, moviefolder):
 		elif command == "quit":
 			break
 		elif command == "status":
+			print("gotstatus")
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		else:
+			print(command)
 			pass
 		
 
