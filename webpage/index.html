@@ -19,9 +19,9 @@ $( document ).ready(function() {
 	var screenstatus = [];
 	function updatescreens() {
 		for (var client in screenstatus) {
-			$(".screen").css("background-color", "#FF0000;");
+			$(".screen").css("background-color", "#FF0000");
 			if (screenstatus[client] == "0") {
-				$("#" + client).css("background-color", "#00FF00;");
+				$("#" + client).css("background-color", "#00FF00");
 				$("#" + client).click(function () {
 					$(this).fadeOut().fadeIn();
 				}); 
