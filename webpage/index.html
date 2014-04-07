@@ -34,7 +34,7 @@ $( document ).ready(function() {
 	}
 	$("#runsync").click(function () {
 		$(this).fadeOut().fadeIn();
-		$("div#loadstatus").load("communicate.cgi", {"command": "sync:" + syncmovie });	
+		$("div#loadstatus").load("communicate.py", {"command": "sync:" + syncmovie });	
 	});
 	
 })
