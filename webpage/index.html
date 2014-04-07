@@ -17,8 +17,6 @@ $( document ).ready(function() {
 	var syncmovies = [];
 	var singlemovies = [];
 	var screenstatus = [];
-	$("div#loadmovies").load("getmovies.py");
-	$("div#loadstatus").load("communicate.py", {"command": "status"});
 	function updatescreens() {
 		for (var client in screenstatus) {
 			$(".screen").css("background-color", "#FF0000;");
@@ -32,6 +30,8 @@ $( document ).ready(function() {
 			}
 		}
 	}
+	$("div#loadmovies").load("getmovies.py");
+	$("div#loadstatus").load("communicate.py", {"command": "status"});
 	$("#runsync").click(function () {
 		$(this).fadeOut().fadeIn();
 		$("div#loadstatus").load("communicate.py", {"command": "sync:" + syncmovie });	
