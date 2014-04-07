@@ -23,11 +23,7 @@ outpipe.close()
 inpipe = open("towebapp", "r")
 response = inpipe.read()
 inpipe.close()
-statusdict = json.loads(response)
-print("<script>")
-print("screenstatus = %s;" % statusdict)
-print("updatescreens();")
-print("</script>")
+print(response)
 
 
 os.remove("locked")
