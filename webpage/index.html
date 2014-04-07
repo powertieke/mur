@@ -30,16 +30,16 @@ $( document ).ready(function() {
 			}
 		}
 	}
-	$("div#loadmovies").load("getmovies.py");
+	$.getScript("getmovies.py");
 	for (var i = 0; i < syncmovies.length; i++) {
 			$("div#loadmovies").append("<p>" + syncmovies[i] + "</p>");
 	}
-	$("div#loadstatus").load("communicate.py", {"command": "status"});
+	$.getScript("communicate.py?command=status"));
 	$("#runsync").click(function () {
 		$(this).fadeOut().fadeIn();
 		$("div#loadstatus").load("communicate.py", {"command": "sync:" + syncmovie });	
 	});
-	
+	$.getScript("communicate.py?command=status"));
 })
 
 </script> 
