@@ -27,17 +27,49 @@ def play_single(moviefile, client):
 		# wait for interruption by interface or message of Pi
 		return "Playing"
 		
+class PlaySyncLoopThread(threading.Thread):
+	def __init__(self, name, moviefile, clients, UDPPort_sync, syncqueue, repeats, intervalmovie, clientselection):
+		threading.Thread.__init__(self, name=name)
+		self.moviefile = moviefile
+		self.clients = clients
+		self.UDPPort_sync = UDPPort_sync
+		self.syncqueue = syncqueue
+		self.repeats = repeats
+		self.intervalmovie = intervalmovie
+		self.clientselection = clientselection
+	
+	def run(self):
+		clientselection = {x : clients[x] for x in clientselection}
+		if repeats == 0:
+			while True:
+				result = play_sync(moviefile, clientselection, UDPPort_sync, syncqueue)
+				try:
+					player.kill_all_omxplayers()
+				except:
+					pass
+				if result == "stoploop":
+					break
+		else:
+			while True:
+				for _ in range(repeats):
+					result = play_sync(moviefile, clientselection, UDPPort_sync, syncqueue)
+					try:
+						player.kill_all_omxplayers()
+					except:
+						pass
+					if result == "stoploop":
+						break
+				result = play_sync(intervalmovie, clients, UDPPort_sync, syncqueue)
 	
 	
-	
-def play_sync(moviefile, clients, UDPPort_sync):
+def play_sync(moviefile, clients, UDPPort_sync, syncqueue):
 	for client in clients.keys():
 		clients[client][1] = "2"
 	"""Tell all of the screens present in 'clients' to get ready for playing 'moviefile'. Waits for every client to respond with 'Ready' (Which means the client has started OMXplayer with the corresponding movie)"""
 	interval = 5
 	waitforitqueue = queue.Queue()
 	syncmessage = queue.Queue()
-	syncqueue = queue.Queue()
+	# syncqueue = queue.Queue()
 	syncplayer = player.ready_player(moviefile + ".mp4", syncqueue, player.get_duration(moviefile + ".mp4"))
 	# print(clients)
 	for client in clients:
@@ -62,7 +94,7 @@ def play_sync(moviefile, clients, UDPPort_sync):
 			break
 	for client in clients.keys():
 		clients[client][1] = "0"	
-	return "done"
+	return msg
 
 def syncscreamer(udpport_sync, syncmessage):
 	syncscreamer = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

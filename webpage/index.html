@@ -16,10 +16,22 @@ var syncmovie = "run";
 var syncmovies = [];
 var singlemovies = [];
 var screenstatus = [];
+var changed = {};
 
 function updatescreens() {
+	var change = {}
 	for (var client in screenstatus) {
-		$(".screen").css("background-color", "#FF0000");
+		if (client in changed) {
+		        if (screenstatus[client] != changed[client]) {
+		            change[client] = screenstatus[client];
+		        }
+		    } else {
+		        change[client] = screenstatus[client];
+		    }
+		}
+		
+	}
+	for (var client in screenstatus) {
 		if (screenstatus[client] == "0") {
 			$("#" + client).css("background-color", "#00FF00");
 			$("#" + client).click(function () {
