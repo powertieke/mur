@@ -49,7 +49,7 @@ class PlaySyncThread(threading.Thread):
 		self.syncqueue = syncqueue
 		
 	def run(self):
-		play_sync(moviefile, clients, UDPPort_sync, syncqueue)
+		play_sync(self.moviefile, self.clients, self.UDPPort_sync, self.syncqueue)
 		startSyncLoop(syncloops)
 		
 		
@@ -65,10 +65,10 @@ class PlaySyncLoopThread(threading.Thread):
 		self.clientselection = clientselection
 	
 	def run(self):
-		clientselection = {x : clients[x] for x in clientselection}
+		clientselection = {x : clients[x] for x in self.clientselection}
 		if repeats == 0:
 			while True:
-				result = play_sync(moviefile, clientselection, UDPPort_sync, syncqueue)
+				result = play_sync(self.moviefile, clientselection, self.UDPPort_sync, self.syncqueue)
 				try:
 					player.kill_all_omxplayers()
 				except:
@@ -78,14 +78,14 @@ class PlaySyncLoopThread(threading.Thread):
 		else:
 			while True:
 				for _ in range(repeats):
-					result = play_sync(moviefile, clientselection, UDPPort_sync, syncqueue)
+					result = play_sync(self.moviefile, clientselection, self.UDPPort_sync, self.syncqueue)
 					try:
 						player.kill_all_omxplayers()
 					except:
 						pass
 					if result == "stoploop":
 						break
-				result = play_sync(intervalmovie, clients, UDPPort_sync, syncqueue)
+				result = play_sync(self.intervalmovie, self.clients, self.UDPPort_sync, self.syncqueue)
 	
 	
 def play_sync(moviefile, clients, UDPPort_sync, syncqueue):
