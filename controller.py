@@ -72,7 +72,7 @@ class PlaySyncLoopThread(threading.Thread):
 		clientselection = {x : self.clients[x] for x in self.clientselection}
 		if self.repeats == 0:
 			while True:
-				result = play_sync(self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
+				result = play_sync(moviefolder + "/sync/" + self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
 				try:
 					player.kill_all_omxplayers()
 				except:
@@ -82,7 +82,7 @@ class PlaySyncLoopThread(threading.Thread):
 		else:
 			while True:
 				for _ in range(self.repeats):
-					result = play_sync(self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
+					result = play_sync(moviefolder + "/sync/" + self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
 					try:
 						player.kill_all_omxplayers()
 					except:
