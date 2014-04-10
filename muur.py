@@ -31,6 +31,7 @@ outgoing_to_controller = queue.Queue()
 syncqueue = queue.Queue()
 
 syncloops = {"clients": ["pitm", "pi1"], "moviefile" : "Screen", "repeats": 10, "intervalmoviefile" : "run"}
+foundclients = {}
 
 
 
