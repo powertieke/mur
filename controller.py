@@ -69,13 +69,13 @@ def startSyncLoop(syncloops, foundclients, UDPPort_sync, killqueue):
 			else:
 				print("start syncloop")
 				syncloop = PlaySyncLoopThread("playsyncloop", syncloops["moviefile"], foundclients, UDPPort_sync, killqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
-				syncloop.run()
+				syncloop.start()
 				print("start syncloop done")
 				start = True
 
 def startSyncThread(moviefile, clients, UDPPort_sync, killqueue):
 	syncThread = PlaySyncThread("playsync", moviefile, clients, UDPPort_sync, killqueue)
-	syncThread.run()
+	syncThread.start()
 
 def message_to_pi(pi, message):
 	"""Sends a message to the socket defined in pi, and returns the response"""
