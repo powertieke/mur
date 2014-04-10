@@ -14,6 +14,50 @@ moviefolder = "/media/usb"
 
 """Holds all of the functions used if the app is ran with the -m (master) flag. Uses the network connections supplied by the clientfinder module to tell the screens what to do. Also yells out it's own playing position so the screens can time-correct themselves"""
 
+def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats, intervalmovie, clientselection):
+	clientselection = {x : self.clients[x] for x in self.clientselection}
+	if self.repeats == 0:
+		while True:
+			result = play_sync(moviefolder + "/sync/" + self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
+			try:
+				player.kill_all_omxplayers()
+			except:
+				pass
+			if result == "kill":
+				try:
+					player.kill_all_omxplayers()
+				except:
+					pass
+				self.killqueue.get()
+	else:
+		while True:
+			for _ in range(self.repeats):
+				result = play_sync(moviefolder + "/sync/" + self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
+				try:
+					player.kill_all_omxplayers()
+				except:
+					pass
+				if result == "kill":
+					try:
+						player.kill_all_omxplayers()
+					except:
+						pass
+					self.killqueue.get()
+			result = play_sync(moviefolder + "/sync/" + self.intervalmovie, self.clients, self.UDPPort_sync, self.killqueue)
+			if result == "kill":
+				try:
+					player.kill_all_omxplayers()
+				except:
+					pass
+				self.killqueue.get()
+	
+
+def play_threaded_sync(moviefile, clients, UDPPort_sync, killqueue):
+	syncqueue = queue.Queue()
+	play_sync(moviefile, clients, UDPPort_sync, syncqueue)
+	killqueue.put("kill")
+	
+
 def startSyncLoop(syncloops, foundclients, UDPPort_sync, killqueue):
 	start = False
 	while start == False:
@@ -59,9 +103,7 @@ class PlaySyncThread(threading.Thread):
 		self.killqueue = killqueue
 		
 	def run(self):
-		syncqueue = queue.Queue()
-		play_sync(self.moviefile, self.clients, self.UDPPort_sync, syncqueue)
-		self.killqueue.put("kill")
+		play_threaded_sync(self.moviefile, self.clients, self.UDPPort_sync, self.killqueue)
 		
 		
 class PlaySyncLoopThread(threading.Thread):
@@ -76,42 +118,7 @@ class PlaySyncLoopThread(threading.Thread):
 		self.clientselection = clientselection
 	
 	def run(self):
-		clientselection = {x : self.clients[x] for x in self.clientselection}
-		if self.repeats == 0:
-			while True:
-				result = play_sync(moviefolder + "/sync/" + self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
-				try:
-					player.kill_all_omxplayers()
-				except:
-					pass
-				if result == "kill":
-					try:
-						player.kill_all_omxplayers()
-					except:
-						pass
-					self.killqueue.get()
-		else:
-			while True:
-				for _ in range(self.repeats):
-					result = play_sync(moviefolder + "/sync/" + self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
-					try:
-						player.kill_all_omxplayers()
-					except:
-						pass
-					if result == "kill":
-						try:
-							player.kill_all_omxplayers()
-						except:
-							pass
-						self.killqueue.get()
-				result = play_sync(moviefolder + "/sync/" + self.intervalmovie, self.clients, self.UDPPort_sync, self.killqueue)
-				if result == "kill":
-					try:
-						player.kill_all_omxplayers()
-					except:
-						pass
-					self.killqueue.get()
-				
+		play_threaded_sync_loop(self.moviefile, self.clients, self.UDPPort_sync, self.killqueue, self.repeats, self.intervalmovie, self.clientselection)
 	
 	
 def play_sync(moviefile, clients, UDPPort_sync, killqueue):
