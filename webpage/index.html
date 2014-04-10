@@ -19,7 +19,7 @@ var screenstatus = [];
 var changed = {};
 
 function updatescreens() {
-	var change = {}
+	var change = {};
 	for (var client in screenstatus) {
 		if (client in changed) {
 		        if (screenstatus[client] != changed[client]) {
