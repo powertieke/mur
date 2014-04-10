@@ -81,7 +81,7 @@ class PlaySyncLoopThread(threading.Thread):
 					break
 		else:
 			while True:
-				for _ in range(repeats):
+				for _ in range(self.repeats):
 					result = play_sync(self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
 					try:
 						player.kill_all_omxplayers()
