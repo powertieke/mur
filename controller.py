@@ -59,7 +59,7 @@ class PlaySyncThread(threading.Thread):
 	def run(self):
 		syncqueue = queue.Queue()
 		play_sync(self.moviefile, self.clients, self.UDPPort_sync, syncqueue)
-		killqueue.put("kill")
+		self.killqueue.put("kill")
 		
 		
 class PlaySyncLoopThread(threading.Thread):
