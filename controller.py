@@ -13,7 +13,7 @@ from muur import syncloops
 
 def startSyncLoop(syncloops):
 	if syncloops["clients"] != []:
-		if !all(c in foundclients for c in syncloops["clients"]):
+		if not (all(c in foundclients for c in syncloops["clients"])):
 			time.sleep(5)
 		else:
 			syncLoop = PlaySyncLoopThread(syncloops["moviefile"], foundclients, udpport_sync, syncqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
