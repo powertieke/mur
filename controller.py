@@ -19,7 +19,7 @@ def startSyncLoop(syncloops, foundclients, UDPPort_sync, killqueue):
 			time.sleep(5)
 		else:
 			print("start syncloop")
-			syncLoop = PlaySyncLoopThread("playsyncloop", syncloops["moviefile"], foundclients, UDPPort_sync, killqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
+			syncloop = PlaySyncLoopThread("playsyncloop", syncloops["moviefile"], foundclients, UDPPort_sync, killqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
 			syncloop.run()
 
 def startSyncThread(moviefile, clients, UDPPort_sync, killqueue):
@@ -118,9 +118,10 @@ def play_sync(moviefile, clients, UDPPort_sync, killqueue):
 	while True:
 		try:
 			killmessage = killqueue.get(False)
-			syncqueue.put("end")
 		except queue.Empty:
 			killmessage = False
+		if killmessage != False:
+			syncqueue.put("end")
 		try:
 			msg = syncqueue.get(True, 0.5)
 			syncmessage.put(msg)
