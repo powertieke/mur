@@ -9,6 +9,9 @@ import queue
 import player
 import glob
 from muur import syncloops
+
+moviefolder = "/media/usb"
+
 """Holds all of the functions used if the app is ran with the -m (master) flag. Uses the network connections supplied by the clientfinder module to tell the screens what to do. Also yells out it's own playing position so the screens can time-correct themselves"""
 
 def startSyncLoop(syncloops, foundclients, UDPPort_sync, killqueue):
