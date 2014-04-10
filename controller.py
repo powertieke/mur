@@ -15,10 +15,10 @@ moviefolder = "/media/usb"
 """Holds all of the functions used if the app is ran with the -m (master) flag. Uses the network connections supplied by the clientfinder module to tell the screens what to do. Also yells out it's own playing position so the screens can time-correct themselves"""
 
 def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats, intervalmovie, clientselection):
-	clientselection = {x : self.clients[x] for x in self.clientselection}
-	if self.repeats == 0:
+	clientselection = {x : clients[x] for x in clientselection}
+	if repeats == 0:
 		while True:
-			result = play_sync(moviefolder + "/sync/" + self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
+			result = play_sync(moviefolder + "/sync/" + moviefile, clientselection, UDPPort_sync, killqueue)
 			try:
 				player.kill_all_omxplayers()
 			except:
@@ -28,11 +28,11 @@ def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats
 					player.kill_all_omxplayers()
 				except:
 					pass
-				self.killqueue.get()
+				killqueue.get()
 	else:
 		while True:
-			for _ in range(self.repeats):
-				result = play_sync(moviefolder + "/sync/" + self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
+			for _ in range(repeats):
+				result = play_sync(moviefolder + "/sync/" + moviefile, clientselection, UDPPort_sync, killqueue)
 				try:
 					player.kill_all_omxplayers()
 				except:
@@ -42,14 +42,14 @@ def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats
 						player.kill_all_omxplayers()
 					except:
 						pass
-					self.killqueue.get()
-			result = play_sync(moviefolder + "/sync/" + self.intervalmovie, self.clients, self.UDPPort_sync, self.killqueue)
+					killqueue.get()
+			result = play_sync(moviefolder + "/sync/" + intervalmovie, clients, UDPPort_sync, killqueue)
 			if result == "kill":
 				try:
 					player.kill_all_omxplayers()
 				except:
 					pass
-				self.killqueue.get()
+				killqueue.get()
 	
 
 def play_threaded_sync(moviefile, clients, UDPPort_sync, killqueue):
