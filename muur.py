@@ -30,7 +30,7 @@ incoming_from_controller = queue.Queue()
 outgoing_to_controller = queue.Queue()
 syncqueue = queue.Queue()
 
-syncloops = {"clients": ["pitm", "pitrf", "pitrr", "pitrb", "pitrl", "pitlf","pitlr", "pitlb", "pitll"], "moviefile" : "s2", "repeats": 10, "intervalmoviefile" : "run"}
+syncloops = {"clients": ["pitm", "pi1"], "moviefile" : "Screen", "repeats": 10, "intervalmoviefile" : "run"}
 
 
 
@@ -68,11 +68,7 @@ def main():
 		foundclients = clientfinder.clientfinder(udpport_discovery, tcpport) # Listens to discovery broadcasts from unconnected pi's in the same network and sets up a control connection over TCP.
 		# interface.interface(foundclients, udpport_sync, args.moviepath)
 		webinterface.webinterface(foundclients, udpport_sync, args.moviepath, syncqueue)
-		if !all(c in foundclients for c in syncloops["clients"]):
-			time.sleep(5)
-		else:
-			syncLoop = controller.PlaySyncLoopThread(syncloops["moviefile"], foundclients, udpport_sync, syncqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
-		
+		controller.startSyncLoop(syncloops)
 		
 	if args.slave :
 		player.set_background('white')

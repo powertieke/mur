@@ -8,7 +8,17 @@ import time
 import queue
 import player
 import glob
+from muur import syncloops
 """Holds all of the functions used if the app is ran with the -m (master) flag. Uses the network connections supplied by the clientfinder module to tell the screens what to do. Also yells out it's own playing position so the screens can time-correct themselves"""
+
+def startSyncLoop(syncloops):
+	if syncloops["clients"] != []:
+		if !all(c in foundclients for c in syncloops["clients"]):
+			time.sleep(5)
+		else:
+			syncLoop = PlaySyncLoopThread(syncloops["moviefile"], foundclients, udpport_sync, syncqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
+			syncloop.run()
+
 
 def message_to_pi(pi, message):
 	"""Sends a message to the socket defined in pi, and returns the response"""
@@ -26,6 +36,19 @@ def play_single(moviefile, client):
 	if (message_to_pi(client, "play:" + moviefile) == "playing"):
 		# wait for interruption by interface or message of Pi
 		return "Playing"
+
+class PlaySyncThread(threading.Thread):
+	def __init__(self, name, moviefile, clients, UDPPort_sync, syncqueue):
+		threading.Thread.__init__(self, name=name)
+		self.moviefile = moviefile
+		self.clients = clients
+		self.UDPPort_sync = UDPPort_sync
+		self.syncqueue = syncqueue
+		
+	def run(self):
+		play_sync(moviefile, clients, UDPPort_sync, syncqueue)
+		startSyncLoop(syncloops)
+		
 		
 class PlaySyncLoopThread(threading.Thread):
 	def __init__(self, name, moviefile, clients, UDPPort_sync, syncqueue, repeats, intervalmovie, clientselection):
