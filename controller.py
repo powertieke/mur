@@ -19,6 +19,9 @@ def startSyncLoop(syncloops):
 			syncLoop = PlaySyncLoopThread(syncloops["moviefile"], foundclients, udpport_sync, syncqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
 			syncloop.run()
 
+def startSyncThread(moviefile, clients, UDPPort_sync, syncqueue):
+	syncThread = PlaySyncThread(moviefile, clients, UDPPort_sync, syncqueue)
+	syncThread.run()
 
 def message_to_pi(pi, message):
 	"""Sends a message to the socket defined in pi, and returns the response"""
