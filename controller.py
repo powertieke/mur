@@ -11,7 +11,7 @@ import glob
 from muur import syncloops
 """Holds all of the functions used if the app is ran with the -m (master) flag. Uses the network connections supplied by the clientfinder module to tell the screens what to do. Also yells out it's own playing position so the screens can time-correct themselves"""
 
-def startSyncLoop(syncloops, foundclients):
+def startSyncLoop(syncloops, foundclients, UDPPort_sync, killqueue):
 	if syncloops["clients"] != []:
 		if not (all(c in foundclients for c in syncloops["clients"])):
 			print(foundclients)
@@ -19,7 +19,7 @@ def startSyncLoop(syncloops, foundclients):
 			time.sleep(5)
 		else:
 			print("start syncloop")
-			syncLoop = PlaySyncLoopThread("playsyncloop", syncloops["moviefile"], foundclients, udpport_sync, killqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
+			syncLoop = PlaySyncLoopThread("playsyncloop", syncloops["moviefile"], foundclients, UDPPort_sync, killqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
 			syncloop.run()
 
 def startSyncThread(moviefile, clients, UDPPort_sync, killqueue):
@@ -54,7 +54,7 @@ class PlaySyncThread(threading.Thread):
 	def run(self):
 		play_sync(self.moviefile, self.clients, self.UDPPort_sync, self.killqueue)
 		print("doneSyncing")
-		startSyncLoop(syncloops, self.clients)
+		startSyncLoop(syncloops, self.clients, self.UDPPort_sync, self.killqueue)
 		
 		
 class PlaySyncLoopThread(threading.Thread):
