@@ -6,7 +6,7 @@ import os
 import json
 import queue
 
-def webinterface(clients, udpport_sync, moviefolder, syncqueue):
+def webinterface(clients, udpport_sync, moviefolder, killqueue):
 	inpipe_path = "/home/pi/mur/webpage/fromwebapp"
 	outpipe_path = "/home/pi/mur/webpage/towebapp"
 	
@@ -33,8 +33,8 @@ def webinterface(clients, udpport_sync, moviefolder, syncqueue):
 		elif syncre.match(command):
 			print("gotsync")
 			moviename = syncre.match(command).group(1)
-			syncqueue.put("endloop")
-			controller.startSyncThread(moviefolder + "/sync/" + moviename, clients, udpport_sync, syncqueue)
+			killqueue.put("kill")
+			controller.startSyncThread(moviefolder + "/sync/" + moviename, clients, udpport_sync, killqueue)
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif statre.match(command): # here for fun, not used yet
 			piname = statre.match(command).group(1)

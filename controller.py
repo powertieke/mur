@@ -19,11 +19,11 @@ def startSyncLoop(syncloops):
 			time.sleep(5)
 		else:
 			print("start syncloop")
-			syncLoop = PlaySyncLoopThread("playsyncloop", syncloops["moviefile"], foundclients, udpport_sync, syncqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
+			syncLoop = PlaySyncLoopThread("playsyncloop", syncloops["moviefile"], foundclients, udpport_sync, killqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
 			syncloop.run()
 
-def startSyncThread(moviefile, clients, UDPPort_sync, syncqueue):
-	syncThread = PlaySyncThread("playsync", moviefile, clients, UDPPort_sync, syncqueue)
+def startSyncThread(moviefile, clients, UDPPort_sync, killqueue):
+	syncThread = PlaySyncThread("playsync", moviefile, clients, UDPPort_sync, killqueue)
 	syncThread.run()
 
 def message_to_pi(pi, message):
@@ -44,26 +44,26 @@ def play_single(moviefile, client):
 		return "Playing"
 
 class PlaySyncThread(threading.Thread):
-	def __init__(self, name, moviefile, clients, UDPPort_sync, syncqueue):
+	def __init__(self, name, moviefile, clients, UDPPort_sync, killqueue):
 		threading.Thread.__init__(self, name=name)
 		self.moviefile = moviefile
 		self.clients = clients
 		self.UDPPort_sync = UDPPort_sync
-		self.syncqueue = syncqueue
+		self.killqueue = killqueue
 		
 	def run(self):
-		play_sync(self.moviefile, self.clients, self.UDPPort_sync, self.syncqueue)
+		play_sync(self.moviefile, self.clients, self.UDPPort_sync, self.killqueue)
 		print("doneSyncing")
 		startSyncLoop(syncloops)
 		
 		
 class PlaySyncLoopThread(threading.Thread):
-	def __init__(self, name, moviefile, clients, UDPPort_sync, syncqueue, repeats, intervalmovie, clientselection):
+	def __init__(self, name, moviefile, clients, UDPPort_sync, killqueue, repeats, intervalmovie, clientselection):
 		threading.Thread.__init__(self, name=name)
 		self.moviefile = moviefile
 		self.clients = clients
 		self.UDPPort_sync = UDPPort_sync
-		self.syncqueue = syncqueue
+		self.killqueue = killqueue
 		self.repeats = repeats
 		self.intervalmovie = intervalmovie
 		self.clientselection = clientselection
@@ -72,34 +72,36 @@ class PlaySyncLoopThread(threading.Thread):
 		clientselection = {x : clients[x] for x in self.clientselection}
 		if repeats == 0:
 			while True:
-				result = play_sync(self.moviefile, clientselection, self.UDPPort_sync, self.syncqueue)
+				result = play_sync(self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
 				try:
 					player.kill_all_omxplayers()
 				except:
 					pass
-				if result == "stoploop":
+				if result == "kill":
 					break
 		else:
 			while True:
 				for _ in range(repeats):
-					result = play_sync(self.moviefile, clientselection, self.UDPPort_sync, self.syncqueue)
+					result = play_sync(self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
 					try:
 						player.kill_all_omxplayers()
 					except:
 						pass
-					if result == "stoploop":
+					if result == "kill":
 						break
-				result = play_sync(self.intervalmovie, self.clients, self.UDPPort_sync, self.syncqueue)
+				if result == "kill":
+					break
+				result = play_sync(self.intervalmovie, self.clients, self.UDPPort_sync, self.killqueue)
 	
 	
-def play_sync(moviefile, clients, UDPPort_sync, syncqueue):
+def play_sync(moviefile, clients, UDPPort_sync, killqueue):
 	for client in clients.keys():
 		clients[client][1] = "2"
 	"""Tell all of the screens present in 'clients' to get ready for playing 'moviefile'. Waits for every client to respond with 'Ready' (Which means the client has started OMXplayer with the corresponding movie)"""
 	interval = 5
 	waitforitqueue = queue.Queue()
 	syncmessage = queue.Queue()
-	# syncqueue = queue.Queue()
+	syncqueue = queue.Queue()
 	syncplayer = player.ready_player(moviefile + ".mp4", syncqueue, player.get_duration(moviefile + ".mp4"))
 	# print(clients)
 	for client in clients:
@@ -115,6 +117,11 @@ def play_sync(moviefile, clients, UDPPort_sync, syncqueue):
 	syncplayer.toggle_pause()
 	while True:
 		try:
+			killmessage = killqueue.get(False)
+			syncqueue.put("end")
+		except queue.Empty:
+			killmessage = False
+		try:
 			msg = syncqueue.get(True, 0.5)
 			syncmessage.put(msg)
 			break
@@ -123,7 +130,9 @@ def play_sync(moviefile, clients, UDPPort_sync, syncqueue):
 		else:
 			break
 	for client in clients.keys():
-		clients[client][1] = "0"	
+		clients[client][1] = "0"
+	if killmessage != False:
+		msg = killmessage
 	return msg
 
 def syncscreamer(udpport_sync, syncmessage):
