@@ -22,14 +22,12 @@ function updatescreens() {
 	var change = {};
 	for (var client in screenstatus) {
 		if (client in changed) {
-		        if (screenstatus[client] != changed[client]) {
-		            change[client] = screenstatus[client];
-		        }
-		    } else {
-		        change[client] = screenstatus[client];
-		    }
+			if (screenstatus[client] != changed[client]) {
+				change[client] = screenstatus[client];
+			}
+		} else {
+			change[client] = screenstatus[client];
 		}
-		
 	}
 	for (var client in screenstatus) {
 		if (screenstatus[client] == "0") {
