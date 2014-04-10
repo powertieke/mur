@@ -70,7 +70,7 @@ class PlaySyncLoopThread(threading.Thread):
 	
 	def run(self):
 		clientselection = {x : self.clients[x] for x in self.clientselection}
-		if repeats == 0:
+		if self.repeats == 0:
 			while True:
 				result = play_sync(self.moviefile, clientselection, self.UDPPort_sync, self.killqueue)
 				try:
