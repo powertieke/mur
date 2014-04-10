@@ -14,8 +14,11 @@ from muur import syncloops, foundclients
 def startSyncLoop(syncloops):
 	if syncloops["clients"] != []:
 		if not (all(c in foundclients for c in syncloops["clients"])):
+			print(foundclients)
+			print("pi's not all here. Stopping for 5")
 			time.sleep(5)
 		else:
+			print("start syncloop")
 			syncLoop = PlaySyncLoopThread("playsyncloop", syncloops["moviefile"], foundclients, udpport_sync, syncqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
 			syncloop.run()
 
@@ -50,6 +53,7 @@ class PlaySyncThread(threading.Thread):
 		
 	def run(self):
 		play_sync(self.moviefile, self.clients, self.UDPPort_sync, self.syncqueue)
+		print("doneSyncing")
 		startSyncLoop(syncloops)
 		
 		
