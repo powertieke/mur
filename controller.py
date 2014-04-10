@@ -55,6 +55,7 @@ class PlaySyncThread(threading.Thread):
 		self.killqueue = killqueue
 		
 	def run(self):
+		self.killqueue.put("kill")
 		play_sync(self.moviefile, self.clients, self.UDPPort_sync, self.killqueue)
 		print("doneSyncing")
 		startSyncLoop(syncloops, self.clients, self.UDPPort_sync, self.killqueue)
@@ -94,7 +95,7 @@ class PlaySyncLoopThread(threading.Thread):
 						break
 				if result == "kill":
 					break
-				result = play_sync(self.intervalmovie, self.clients, self.UDPPort_sync, self.killqueue)
+				result = play_sync(moviefolder + "/sync/" + self.intervalmovie, self.clients, self.UDPPort_sync, self.killqueue)
 	
 	
 def play_sync(moviefile, clients, UDPPort_sync, killqueue):
