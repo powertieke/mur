@@ -16,11 +16,11 @@ def startSyncLoop(syncloops):
 		if not (all(c in foundclients for c in syncloops["clients"])):
 			time.sleep(5)
 		else:
-			syncLoop = PlaySyncLoopThread(syncloops["moviefile"], foundclients, udpport_sync, syncqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
+			syncLoop = PlaySyncLoopThread("playsyncloop", syncloops["moviefile"], foundclients, udpport_sync, syncqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
 			syncloop.run()
 
 def startSyncThread(moviefile, clients, UDPPort_sync, syncqueue):
-	syncThread = PlaySyncThread(moviefile, clients, UDPPort_sync, syncqueue)
+	syncThread = PlaySyncThread("playsync", moviefile, clients, UDPPort_sync, syncqueue)
 	syncThread.run()
 
 def message_to_pi(pi, message):
