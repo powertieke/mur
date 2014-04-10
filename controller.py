@@ -15,7 +15,8 @@ moviefolder = "/media/usb"
 """Holds all of the functions used if the app is ran with the -m (master) flag. Uses the network connections supplied by the clientfinder module to tell the screens what to do. Also yells out it's own playing position so the screens can time-correct themselves"""
 
 def startSyncLoop(syncloops, foundclients, UDPPort_sync, killqueue):
-	while True:
+	start = False
+	while start == False:
 		if syncloops["clients"] != []:
 			if not (all(c in foundclients for c in syncloops["clients"])):
 				print(foundclients)
@@ -25,7 +26,8 @@ def startSyncLoop(syncloops, foundclients, UDPPort_sync, killqueue):
 				print("start syncloop")
 				syncloop = PlaySyncLoopThread("playsyncloop", syncloops["moviefile"], foundclients, UDPPort_sync, killqueue, syncloops["repeats"], syncloops["intervalmoviefile"], syncloops["clients"])
 				syncloop.run()
-				break
+				print("start syncloop done")
+				start = True
 
 def startSyncThread(moviefile, clients, UDPPort_sync, killqueue):
 	syncThread = PlaySyncThread("playsync", moviefile, clients, UDPPort_sync, killqueue)
