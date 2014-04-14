@@ -22,7 +22,7 @@ def set_background(color):
 	# subprocess.call('sudo cat image.raw > /dev/fb0 2>> /home/pi/mur.log', shell=True)
 
 def kill_all_omxplayers():
-	subprocess.call("sudo killall omxplayer omxplayer.bin 2>>  /home/pi/mur.log", shell=True)
+	subprocess.call("sudo killall omxplayer omxplayer.bin 2>>  /dev/null", shell=True)
 
 def ready_player(moviefile, stopqueue, duration):
 	player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
@@ -56,11 +56,8 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	playlist[i][1].toggle_pause()
 	status = "playing:" + playlist[i][0]
 	while True: ## Main movie playing loop - Listens on incoming_from_controller queue
-		print("waiting...")
 		message = incoming_from_controller.get() # Wait for currently playing movie to end or for an incoming servermessage
-		print("Gotsome")
 		if message == "end":
-			print("got end")
 			if i == 0:
 				nextmovieindex = 1
 			elif i == len(playlist) - 1:
@@ -94,9 +91,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			except:
 				pass
 				
-			print("killed players. Starting sync")
 			play_synced_movie(message[1], incoming_from_controller, outgoing_to_controller, udpport_sync, clientname)
-			print("Got to the end of this fucker")
 			i = nextmovieindex
 		elif message[0] == "play":
 			try:
@@ -112,7 +107,6 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 				incoming_from_controller.get(True)
 			except queue.empty:
 				pass
-			print(message[1])
 			playlist[nextmovieindex][1] = ready_player(message[1], incoming_from_controller, get_duration(message[1]))
 			playlist[nextmovieindex][1].toggle_pause() #play next movie
 			outgoing_to_controller.put(clientname + " is playing :" + message[1])
@@ -166,6 +160,11 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		elif message == "pause":
 			incoming_from_controller.put(message)
 			connection.sendall("ready".encode('utf-8'))
+		elif message == "status":
+			connection.sendall("0".encode('utf-8'))
+		elif message == b'':
+			connection.close()
+			break
 		else:
 			connection.sendall("error".encode('utf-8'))
 	
@@ -174,18 +173,16 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
 	syncqueue = queue.Queue()
 	
-	print("starting syncthread")
-	
 	syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
 	syncThread.start()
 	
-	print("syncthread started")
 	
 	if os.path.exists(moviefile + clientname + ".mp4"):
 		player = ready_player(moviefile + clientname + ".mp4", syncqueue, get_duration(moviefile + clientname + ".mp4"))
 	elif os.path.exists(moviefile + ".mp4"):
 		player = ready_player(moviefile + ".mp4", syncqueue, get_duration(moviefile + ".mp4"))
 		
+	syncqueue.clear()
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
@@ -196,7 +193,6 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		while True:
 			syncmessage = syncqueue.get()
 			if syncmessage == "end":
-				print("gotend")
 				player.stop()
 				try:
 					kill_all_omxplayers()
@@ -209,16 +205,12 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				pass # Stayed in sync for three seconds
 				masterposition = float(syncmessage)
 				localposition = player.position
-				print("Master: %s <--> Local: %s" % (masterposition, localposition))
 			else:
 				masterposition = float(syncmessage)
 				localposition = player.position
-				print("Master: %s <--> Local: %s" % (masterposition, localposition))
 				syncqueue.put(True)
 				if masterposition + tolerance < localposition:
-					print("Running fast. Stalling.")
 					adjustment = (localposition - masterposition) / 1000000.
-					print("adj:" + str(adjustment))
 					delay = adjustment - 0.05
 					player.toggle_pause()
 					if delay < 0.2:
@@ -228,10 +220,8 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					insync = 0
 					syncqueue.get()
 				elif masterposition - tolerance > localposition:
-					print("Running late. Catching up.")
 					player.increase_speed()
 					adjustment = (masterposition - localposition) / 1000000.
-					print("adj:" + str(adjustment))
 					delay = (adjustment * 2.0)
 					if delay < 0.1:
 						 delay = 0.1

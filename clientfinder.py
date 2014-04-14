@@ -5,6 +5,23 @@ import threading
 import queue
 import time
 
+def check_clients(socketdict):
+	while True:
+		time.sleep(1)
+		for pi in socketdict.keys():
+			clientSocket = socketdict[pi][0]
+			sent = clientSocket.sendall('status'.encode('UTF-8'))
+			if sent == 0 :
+				clientSocket.close()
+				del socketdict[pi]
+			else :
+				answer = clientSocket.recv(1024).decode('UTF-8')
+				if answer == b'':
+					clientSocket.close()
+					del socketdict[pi]
+				else :
+					socketdict[pi][1] = answer
+
 def discovery_server(discovered, port):
 	"""Listens for screaming clients, and dumps their info into the Discovered queue for processing by the make_control_socket function."""
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -23,6 +40,14 @@ def make_control_socket(socketdict, discovered, port):
 		answer = clientSocket.recv(1024).decode('UTF-8')
 		socketdict[client[0]] = [clientSocket, answer]
 		# print(socketdict)
+
+class CheckClientsThread(threading.Thread):
+	"""thread polling clients"""
+	def __init__(self, socketdict, name):
+		threading.Thread.__init__(self, name=name)
+		self.socketdict = socketdict
+	def run(self):
+		check_clients(self.socketdict)
 
 class ClientFinderThread(threading.Thread):
 	"""Thread running the discovery server"""
@@ -51,6 +76,8 @@ def clientfinder(udpport, tcpport):
 	clientFinderThread.start()
 	makeControlSocketThread = MakeControlSocketThread(socketdict, discovered, tcpport, "socketmaker")
 	makeControlSocketThread.start()
+	checkClientsThread = CheckClientsThread(socketdict, "checkclients")
+	checkClientsThread.start()
 	return socketdict
 
 def test():
