@@ -73,10 +73,13 @@ def clientfinder(udpport, tcpport):
 	discovered = queue.Queue()
 	socketdict = {}
 	clientFinderThread = ClientFinderThread(discovered, udpport, "Clientfinder")
+	clientFinderThread.daemon = True
 	clientFinderThread.start()
 	makeControlSocketThread = MakeControlSocketThread(socketdict, discovered, tcpport, "socketmaker")
+	makeControlSocketThread.daemon = True
 	makeControlSocketThread.start()
 	checkClientsThread = CheckClientsThread(socketdict, "checkclients")
+	checkClientsThread.daemon = True
 	checkClientsThread.start()
 	return socketdict
 
@@ -86,6 +89,7 @@ def test():
 	udpport = 6666
 	tcpport = 6667
 	clientFinderThread = ClientFinderThread(discovered, udpport, "Clientfinder")
+	clientFinderThread.daemon = True
 	clientFinderThread.start()
 	makeControlSocketThread = MakeControlSocketThread(socketdict, discovered, tcpport, "socketmaker")
 	makeControlSocketThread.start()
