@@ -34,7 +34,10 @@ syncloops = {"clients": ["pitm", "pi1"], "moviefile" : "Screen", "repeats": 10, 
 
 
 
-
+def cleanup():
+	subprocess.call('sudo sh -c "TERM=linux setterm -cursor on >/dev/tty0"', shell=True)
+	player.kill_all_omxplayers()
+	
 
 
 
@@ -52,8 +55,7 @@ syncloops = {"clients": ["pitm", "pi1"], "moviefile" : "Screen", "repeats": 10, 
 
 
 def main():
-	atexit.register(player.set_background, 'black')
-	atexit.register(player.kill_all_omxplayers)
+	atexit.register(cleanup)
 	
 	parser = argparse.ArgumentParser(description='Networked display controller with support for playing syncronized movies')
 	parser.add_argument('-m', '--master', help='Run as master. This pi will run the controller website, and tell all of the slaves what to do', action='store_true')
@@ -72,7 +74,7 @@ def main():
 		
 		
 	if args.slave :
-		player.set_background('white')
+		player.set_background('black')
 		loopSingleMoviesThread = player.LoopSingleMoviesThread(args.moviepath, incoming_from_controller, outgoing_to_controller, udpport_sync, args.clientname)
 		loopSingleMoviesThread.start()
 		clientsocket = client.find_controller(args.clientname, udpport_discovery, tcpport)
