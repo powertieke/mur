@@ -13,7 +13,7 @@ import time
 import subprocess
 from random import shuffle
 
-
+status = 0
 
 def set_background(color):
 	subprocess.call('sudo sh -c "TERM=linux setterm -background ' + color + ' >/dev/tty0"', shell=True)
@@ -47,14 +47,14 @@ def get_duration(moviefile):
 	return duration
 
 def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
-	status = "starting"
+	status = "0"
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
 	shuffle(playlist)
 	i = 0
 	nextmovieindex = 1
+	try:
 	playlist[i][1] = ready_player(playlist[i][0], incoming_from_controller, playlist[i][2])
 	playlist[i][1].toggle_pause()
-	status = "playing:" + playlist[i][0]
 	while True: ## Main movie playing loop - Listens on incoming_from_controller queue
 		message = incoming_from_controller.get() # Wait for currently playing movie to end or for an incoming servermessage
 		if message == "end":
@@ -161,8 +161,8 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			incoming_from_controller.put(message)
 			connection.sendall("ready".encode('utf-8'))
 		elif message == "status":
-			connection.sendall("0".encode('utf-8'))
-		elif message == b'':
+			connection.sendall(status.encode('utf-8'))
+		elif message == '':
 			connection.close()
 			break
 		else:
