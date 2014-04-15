@@ -279,7 +279,7 @@ class StatThread(threading.Thread):
 		threading.Thread.__init__(self, name=name)
 		self.statsocket = statsocket
 	def run(self):
-		stat(statsocket)
+		stat(self.statsocket)
 
 class SyncThread(threading.Thread):
 	def __init__(self, name, udpport_sync, syncqueue):
