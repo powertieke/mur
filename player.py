@@ -25,7 +25,17 @@ def kill_all_omxplayers():
 	subprocess.call("sudo killall omxplayer omxplayer.bin 2>>  /dev/null", shell=True)
 
 def ready_player(moviefile, stopqueue, duration):
-	player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
+	retry = 0
+	while retry < 2:
+		try:
+			player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
+		except:
+			if retry < 2:
+				retry = retry + 1
+			else:
+				raise RuntimeError("Failed to open OMXplayer")
+		else:
+			break
 	position = 200000
 	while player.position < position:
 		pass
@@ -52,7 +62,6 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	shuffle(playlist)
 	i = 0
 	nextmovieindex = 1
-	try:
 	playlist[i][1] = ready_player(playlist[i][0], incoming_from_controller, playlist[i][2])
 	playlist[i][1].toggle_pause()
 	while True: ## Main movie playing loop - Listens on incoming_from_controller queue
