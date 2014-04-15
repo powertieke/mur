@@ -81,7 +81,7 @@ def main():
 		clientsocket, statsocket = client.find_controller(args.clientname, udpport_discovery, tcpport, statport)
 		statThread = player.StatThread("statsocket", statsocket)
 		statThread.daemon = True
-		starThread.start()
+		statThread.start()
 		player.controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport)
 		
 		
