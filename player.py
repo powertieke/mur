@@ -11,6 +11,7 @@ import re
 import socket
 import time
 import subprocess
+import client
 from random import shuffle
 
 
