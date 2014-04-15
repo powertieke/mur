@@ -163,6 +163,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 	while (True):
 		try:
 			message = connection.recv(1024).decode("utf-8")
+			print(message)
 		except:
 			print("lostconnection")
 			clientsocket, statsocket = client.find_controller(clientname, udpport_discovery, tcpport, statport)
