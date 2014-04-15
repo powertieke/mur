@@ -149,7 +149,10 @@ def stat(statsocket):
 			message = statsocket.recv(1024).decode("utf-8")
 		except:
 			status = "-1"
-		statsocket.sendall(status.encode("utf-8"))
+		try:
+			statsocket.sendall(status.encode("utf-8"))
+		except:
+			pass
 		if status == "-1":
 			raise RuntimeError("Dead status socket")
 
