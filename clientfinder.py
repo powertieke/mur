@@ -8,19 +8,25 @@ import time
 def check_clients(socketdict):
 	while True:
 		time.sleep(1)
+		removefromdict = []
 		for pi in socketdict.keys():
 			clientSocket = socketdict[pi][0]
-			sent = clientSocket.sendall('status'.encode('UTF-8'))
-			if sent == 0 :
-				clientSocket.close()
-				del socketdict[pi]
-			else :
-				answer = clientSocket.recv(1024).decode('UTF-8')
-				if answer == b'':
-					clientSocket.close()
-					del socketdict[pi]
-				else :
-					socketdict[pi][1] = answer
+			try:
+				sent = clientSocket.sendall('status'.encode('UTF-8'))
+			except:
+				removefromdict.append(pi)
+			else:
+				try:
+					answer = clientSocket.recv(1024).decode('UTF-8')
+				except:
+					removefromdict.append(pi)
+		for pi in removefromdict:
+			try:
+				socketdict[pi][0].close()
+			except:
+				pass
+			del socketdict[pi]
+		
 
 def discovery_server(discovered, port):
 	"""Listens for screaming clients, and dumps their info into the Discovered queue for processing by the make_control_socket function."""

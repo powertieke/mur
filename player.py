@@ -12,6 +12,7 @@ import socket
 import time
 import subprocess
 from random import shuffle
+from muur import tcpport, udpport_discovery
 
 status = 0
 
@@ -26,10 +27,11 @@ def kill_all_omxplayers():
 
 def ready_player(moviefile, stopqueue, duration):
 	retry = 0
-	while retry < 2:
+	while True:
 		try:
 			player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
 		except:
+			print("Failed loading: Retry %s" % retry)
 			if retry < 2:
 				retry = retry + 1
 			else:
@@ -145,8 +147,12 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 	skipre = re.compile(r'^skip:(.*)$')
 	playre = re.compile(r'^play:(.*)$')
 	while (True):
-		message = connection.recv(1024).decode("utf-8")
-		print(message)
+		try:
+			message = connection.recv(1024).decode("utf-8")
+		except:
+			clientsocket = client.find_controller(args.clientname, udpport_discovery, tcpport)
+			controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync)
+			break
 		if message == "skip":
 			incoming_from_controller.put(message)
 			connection.sendall(outgoing_to_controller.get().encode("utf-8"))
@@ -155,17 +161,14 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			incoming_from_controller.put(["sync", moviefile])
 			# play_synced_movie(moviefile, outgoing_to_controller, udpport_sync)
 			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
-			print('Sent GO!')
 		elif playre.match(message):
 			moviefile = playre.match(message).group(1)
 			incoming_from_controller.put(["play", moviefile])
 			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
-			print("sent done")
 		elif skipre.match(message):
 			times = playre.match(message).group(1)
 			incoming_from_controller.put(["skip", times])
 			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
-			print("sent")
 		elif message == "pause":
 			incoming_from_controller.put(message)
 			connection.sendall("ready".encode('utf-8'))
