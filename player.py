@@ -164,6 +164,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		try:
 			message = connection.recv(1024).decode("utf-8")
 		except:
+			print("lostconnection")
 			clientsocket, statsocket = client.find_controller(args.clientname, udpport_discovery, tcpport, statport)
 			statThread = StatThread("statthread", statsocket)
 			statThread.daemon = True
