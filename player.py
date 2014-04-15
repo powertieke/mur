@@ -149,12 +149,11 @@ def stat(statsocket):
 			message = statsocket.recv(1024).decode("utf-8")
 		except:
 			status = "-1"
+			break
 		try:
 			statsocket.sendall(status.encode("utf-8"))
 		except:
 			status = "-1"
-		if status == "-1":
-			raise RuntimeError("Dead status socket")
 			break
 
 def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync, udpport_discovery, tcpport, statport, clientname):
