@@ -48,7 +48,7 @@ class ScreamerThread(threading.Thread):
 	def run(self):
 		screamer(self.clientname, self.udpport)
 
-def find_controller(clientname, udpport, tcpport):
+def find_controller(clientname, udpport, tcpport, statport):
 	"""Opens a listening TCP socket, and starts yelling around for the controller. Returns a connection with the controller (when found)."""
 	global exitflag
 	exitflag = 0
