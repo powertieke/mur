@@ -36,7 +36,7 @@ def discovery_server(discovered, port):
 		data, sender_addr = s.recvfrom(1024)
 		discovered.put([data.decode('UTF-8'), sender_addr])
 		
-def make_control_socket(socketdict, discovered, port):
+def make_control_socket(socketdict, discovered, port, statport):
 	"""Gets info from the discovered queue and sets up a control connection. Shoves these into the socketdict variable (Which is a global)"""
 	while True:
 		client = discovered.get()
@@ -45,7 +45,7 @@ def make_control_socket(socketdict, discovered, port):
 		clientSocket.sendall('status'.encode('UTF-8'))
 		answer = clientSocket.recv(1024).decode('UTF-8')
 		statSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		statSocket.connect((client[1][0], port))
+		statSocket.connect((client[1][0], statport))
 		statSocket.sendall('status'.encode('UTF-8'))
 		answer = statSocket.recv(1024).decode('UTF-8')
 		socketdict[client[0]] = [clientSocket, answer, client[1][0], statSocket]
@@ -70,22 +70,23 @@ class ClientFinderThread(threading.Thread):
 		
 class MakeControlSocketThread(threading.Thread):
 	"""Thread running the make_control_socket function"""
-	def __init__(self, socketdict, discovered, port, name):
+	def __init__(self, socketdict, discovered, port, statport, name):
 		threading.Thread.__init__(self, name=name)
 		self.socketdict = socketdict
 		self.discovered = discovered
 		self.port = port
+		self.statport = statport
 	def run(self):
-		make_control_socket(self.socketdict, self.discovered, self.port)
+		make_control_socket(self.socketdict, self.discovered, self.port, self.statport)
 
-def clientfinder(udpport, tcpport):
+def clientfinder(udpport, tcpport, statport):
 	"""Starts the neccesary threads for finding and connecting to the clients. Returns the shared Socketdict variable"""
 	discovered = queue.Queue()
 	socketdict = {}
 	clientFinderThread = ClientFinderThread(discovered, udpport, "Clientfinder")
 	clientFinderThread.daemon = True
 	clientFinderThread.start()
-	makeControlSocketThread = MakeControlSocketThread(socketdict, discovered, tcpport, "socketmaker")
+	makeControlSocketThread = MakeControlSocketThread(socketdict, discovered, tcpport, statport, "socketmaker")
 	makeControlSocketThread.daemon = True
 	makeControlSocketThread.start()
 	checkClientsThread = CheckClientsThread(socketdict, "checkclients")
