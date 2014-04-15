@@ -78,7 +78,7 @@ def main():
 		loopSingleMoviesThread = player.LoopSingleMoviesThread(args.moviepath, incoming_from_controller, outgoing_to_controller, udpport_sync, args.clientname)
 		loopSingleMoviesThread.start()
 		clientsocket = client.find_controller(args.clientname, udpport_discovery, tcpport)
-		player.controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync)
+		player.controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport)
 		
 		
 	

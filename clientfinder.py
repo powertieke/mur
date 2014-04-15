@@ -44,7 +44,7 @@ def make_control_socket(socketdict, discovered, port):
 		clientSocket.connect((client[1][0], port))
 		clientSocket.sendall('status'.encode('UTF-8'))
 		answer = clientSocket.recv(1024).decode('UTF-8')
-		socketdict[client[0]] = [clientSocket, answer]
+		socketdict[client[0]] = [clientSocket, answer, client[1][0]]
 		# print(socketdict)
 
 class CheckClientsThread(threading.Thread):

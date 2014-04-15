@@ -12,7 +12,7 @@ import socket
 import time
 import subprocess
 from random import shuffle
-from muur import tcpport, udpport_discovery
+
 
 status = 0
 
@@ -142,7 +142,7 @@ def interruptor(message, argument=None):
 	else:
 		messagequeue.put((message, argument))
 
-def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync):
+def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync, udpport_discovery, tcpport):
 	syncre = re.compile(r'^sync:(.*)$')
 	skipre = re.compile(r'^skip:(.*)$')
 	playre = re.compile(r'^play:(.*)$')
