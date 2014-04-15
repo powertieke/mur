@@ -162,7 +162,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			message = connection.recv(1024).decode("utf-8")
 		except:
 			clientsocket, statsocket = client.find_controller(args.clientname, udpport_discovery, tcpport, statport)
-			statThread = StatThread("stattread", statsocket)
+			statThread = StatThread("statthread", statsocket)
 			statThread.daemon = True
 			statThread.start()
 			controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync)

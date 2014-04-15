@@ -31,7 +31,10 @@ def screamer(clientname, udpport_discovery):
 	time.sleep(5) # give the main thread a couple of seconds to ready the connection before it starts yelling it's name - Fix better later (using a thread and a queue)
 	while 1:
 		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		s.sendto(clientname.encode('utf-8'), ("224.0.0.1", udpport_discovery))
+		try:
+			s.sendto(clientname.encode('utf-8'), ("224.0.0.1", udpport_discovery))
+		except socket.error:
+			pass
 		# print('%s: AARGGGH' % clientname)
 		time.sleep(2)
 		if exitflag == 1:
