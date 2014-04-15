@@ -38,7 +38,6 @@ def screamer(clientname, udpport_discovery):
 class ListenerThread(threading.Thread):
 	def __init__(self, port, outqueue, name):
 		threading.Thread.__init__(self, name=name)
-		self.clientname = clientname
 		self.port = port
 		self.outqueue = outqueue
 	def run(self):
