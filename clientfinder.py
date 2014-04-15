@@ -9,7 +9,7 @@ def check_clients(socketdict):
 	while True:
 		time.sleep(1)
 		removefromdict = []
-		for pi in socketdict.keys():
+		for pi in list(socketdict.keys()):
 			clientSocket = socketdict[pi][0]
 			try:
 				sent = clientSocket.sendall('status'.encode('UTF-8'))
