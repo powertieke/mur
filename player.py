@@ -14,7 +14,7 @@ import subprocess
 from random import shuffle
 
 
-status = 0
+status = "0"
 
 def set_background(color):
 	subprocess.call('sudo sh -c "TERM=linux setterm -background ' + color + ' >/dev/tty0"', shell=True)
@@ -35,7 +35,8 @@ def ready_player(moviefile, stopqueue, duration):
 			if retry < 2:
 				retry = retry + 1
 			else:
-				raise RuntimeError("Failed to open OMXplayer")
+				raise RuntimeError("Failed to open OMXplayer. Filename: %s" % moviefile)
+				status = "-1"
 		else:
 			break
 	position = 200000
@@ -174,6 +175,9 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			connection.sendall("ready".encode('utf-8'))
 		elif message == "status":
 			connection.sendall(status.encode('utf-8'))
+			if status == "-1":
+				connection.close()
+				raise RuntimeError("Failed loading moviefile. Stopping")
 		elif message == '':
 			connection.close()
 			break
