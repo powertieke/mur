@@ -82,7 +82,7 @@ def main():
 		statThread = player.StatThread("statsocket", statsocket)
 		statThread.daemon = True
 		statThread.start()
-		player.controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport)
+		player.controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport, args.clientname)
 		
 		
 	

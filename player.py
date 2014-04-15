@@ -152,11 +152,12 @@ def stat(statsocket):
 		try:
 			statsocket.sendall(status.encode("utf-8"))
 		except:
-			pass
+			status = "-1"
 		if status == "-1":
 			raise RuntimeError("Dead status socket")
+			break
 
-def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync, udpport_discovery, tcpport, statport):
+def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync, udpport_discovery, tcpport, statport, clientname):
 	syncre = re.compile(r'^sync:(.*)$')
 	skipre = re.compile(r'^skip:(.*)$')
 	playre = re.compile(r'^play:(.*)$')
@@ -165,11 +166,11 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			message = connection.recv(1024).decode("utf-8")
 		except:
 			print("lostconnection")
-			clientsocket, statsocket = client.find_controller(args.clientname, udpport_discovery, tcpport, statport)
+			clientsocket, statsocket = client.find_controller(clientname, udpport_discovery, tcpport, statport)
 			statThread = StatThread("statthread", statsocket)
 			statThread.daemon = True
 			statThread.start()
-			controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport)
+			controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport, clientname)
 			break
 		if message == "skip":
 			incoming_from_controller.put(message)
