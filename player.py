@@ -211,7 +211,8 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 	elif os.path.exists(moviefile + ".mp4"):
 		player = ready_player(moviefile + ".mp4", syncqueue, get_duration(moviefile + ".mp4"))
 		
-	syncqueue.clear()
+	while syncqueue.empty() == False:
+		syncqueue.get()
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	
 	if syncqueue.get() == "go":
