@@ -169,7 +169,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			statThread = StatThread("statthread", statsocket)
 			statThread.daemon = True
 			statThread.start()
-			controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync)
+			controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport)
 			break
 		if message == "skip":
 			incoming_from_controller.put(message)
