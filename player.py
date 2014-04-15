@@ -14,7 +14,6 @@ import subprocess
 from random import shuffle
 
 
-status = "0"
 
 def set_background(color):
 	subprocess.call('sudo sh -c "TERM=linux setterm -background ' + color + ' >/dev/tty0"', shell=True)
@@ -144,6 +143,7 @@ def interruptor(message, argument=None):
 		messagequeue.put((message, argument))
 
 def stat(statsocket):
+	status = "0"
 	while True:
 		try:
 			message = statsocket.recv(1024).decode("utf-8")
