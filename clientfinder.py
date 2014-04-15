@@ -41,11 +41,19 @@ def make_control_socket(socketdict, discovered, port, statport):
 	while True:
 		client = discovered.get()
 		clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		clientSocket.connect((client[1][0], port))
+		try:
+			clientSocket.connect((client[1][0], port))
+		except socket.error:
+			print("%s refused connection on tcpport. Letting go for now" % client[0])
+			continue
 		clientSocket.sendall('status'.encode('UTF-8'))
 		answer = clientSocket.recv(1024).decode('UTF-8')
 		statSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		statSocket.connect((client[1][0], statport))
+		try:
+			statSocket.connect((client[1][0], statport))
+		except socket.error:
+			print("%s refused connection in statport. Letting go for now" % client[0])
+			continue
 		statSocket.sendall('status'.encode('UTF-8'))
 		answer = statSocket.recv(1024).decode('UTF-8')
 		socketdict[client[0]] = [clientSocket, answer, client[1][0], statSocket]
