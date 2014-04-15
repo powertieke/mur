@@ -10,7 +10,7 @@ def check_clients(socketdict):
 		time.sleep(1)
 		removefromdict = []
 		for pi in list(socketdict.keys()):
-			clientSocket = socketdict[pi][0]
+			clientSocket = socketdict[pi][3]
 			try:
 				sent = clientSocket.sendall('status'.encode('UTF-8'))
 			except:
@@ -44,7 +44,11 @@ def make_control_socket(socketdict, discovered, port):
 		clientSocket.connect((client[1][0], port))
 		clientSocket.sendall('status'.encode('UTF-8'))
 		answer = clientSocket.recv(1024).decode('UTF-8')
-		socketdict[client[0]] = [clientSocket, answer, client[1][0]]
+		statSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		statSocket.connect((client[1][0], port))
+		statSocket.sendall('status'.encode('UTF-8'))
+		answer = statSocket.recv(1024).decode('UTF-8')
+		socketdict[client[0]] = [clientSocket, answer, client[1][0], statSocket]
 		# print(socketdict)
 
 class CheckClientsThread(threading.Thread):

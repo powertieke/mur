@@ -143,7 +143,17 @@ def interruptor(message, argument=None):
 	else:
 		messagequeue.put((message, argument))
 
-def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync, udpport_discovery, tcpport):
+def stat(statsocket):
+	while True:
+		try:
+			message = statsocket.recv(1024).decode("utf-8")
+		except:
+			status = "-1"
+		statsocket.sendall(status)
+		if status == "-1":
+			raise RuntimeError("Dead status socket")
+
+def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync, udpport_discovery, tcpport, statport):
 	syncre = re.compile(r'^sync:(.*)$')
 	skipre = re.compile(r'^skip:(.*)$')
 	playre = re.compile(r'^play:(.*)$')
@@ -151,7 +161,10 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		try:
 			message = connection.recv(1024).decode("utf-8")
 		except:
-			clientsocket = client.find_controller(args.clientname, udpport_discovery, tcpport)
+			clientsocket, statsocket = client.find_controller(args.clientname, udpport_discovery, tcpport, statport)
+			statThread = StatThread("stattread", statsocket)
+			statThread.daemon = True
+			statThread.start()
 			controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync)
 			break
 		if message == "skip":
@@ -261,6 +274,12 @@ def sync_listener(udpport_sync, syncqueue):
 			s.close()
 			break
 	
+class StatThread(threading.Thread):
+	def __init__(self, name, statsocket):
+		threading.Thread.__init__(self, name=name)
+		self.statsocket = statsocket
+	def run(self):
+		stat(statsocket)
 
 class SyncThread(threading.Thread):
 	def __init__(self, name, udpport_sync, syncqueue):

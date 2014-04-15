@@ -180,7 +180,6 @@ def tell_client_to_sync(pi, movie, waitforitqueue):
 	message_to_pi(pi, ("sync:" + movie))
 	waitforitqueue.task_done()
 	
-	
 			
 class TellClientsToSyncThread(threading.Thread):
 	def __init__(self, name, piname, movie, waitforitqueue):

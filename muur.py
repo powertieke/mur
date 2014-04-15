@@ -21,6 +21,7 @@ import atexit
 
 # Standard ports
 tcpport = 50667
+statport = 50668
 udpport_discovery = 50666
 udpport_sync = 50665
 
@@ -67,7 +68,7 @@ def main():
 	# pprint.pprint(args)
 	
 	if args.master :
-		foundclients = clientfinder.clientfinder(udpport_discovery, tcpport) # Listens to discovery broadcasts from unconnected pi's in the same network and sets up a control connection over TCP.
+		foundclients = clientfinder.clientfinder(udpport_discovery, tcpport, statport) # Listens to discovery broadcasts from unconnected pi's in the same network and sets up a control connection over TCP.
 		# interface.interface(foundclients, udpport_sync, args.moviepath)
 		controller.startSyncLoop(syncloops, foundclients, udpport_sync, killqueue)
 		webinterface.webinterface(foundclients, udpport_sync, args.moviepath, killqueue)
@@ -77,8 +78,11 @@ def main():
 		player.set_background('black')
 		loopSingleMoviesThread = player.LoopSingleMoviesThread(args.moviepath, incoming_from_controller, outgoing_to_controller, udpport_sync, args.clientname)
 		loopSingleMoviesThread.start()
-		clientsocket = client.find_controller(args.clientname, udpport_discovery, tcpport)
-		player.controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport)
+		clientsocket, statsocket = client.find_controller(args.clientname, udpport_discovery, tcpport, statport)
+		statThread = player.StatThread(statsocket)
+		statThread.daemon = True
+		starThread.start()
+		player.controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport)
 		
 		
 	

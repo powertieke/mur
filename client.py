@@ -10,7 +10,7 @@ import threading
 
 
 
-def listener(port):
+def listener(port, statport):
 	"""Listens for incoming TCP connection requests and returns the connection"""
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.bind(("", port))
@@ -18,7 +18,13 @@ def listener(port):
 	conn, addr = s.accept()
 	conn.recv(1024)
 	conn.sendall('0'.encode('utf-8'))
-	return conn
+	s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	s2.bind(("", statport))
+	s2.listen(1)
+	conn2, addr = s2.accept()
+	conn2.recv(1024)
+	conn2.sendall('0'.encode('utf-8'))
+	return conn, conn2
 
 def screamer(clientname, udpport_discovery):
 	"""Screams it's name through UDP out over the local network in search of a controller pi"""
@@ -48,9 +54,9 @@ def find_controller(clientname, udpport, tcpport):
 	exitflag = 0
 	screamerThread = ScreamerThread(clientname, udpport, "screamer1")
 	screamerThread.start()
-	controlSocket = listener(tcpport)
+	controlSocket, statsocket = listener(tcpport, statport)
 	exitflag = 1
-	return controlSocket
+	return controlSocket, statsocket
 
 def test():
 	s = find_controller("testpi1", 6666, 6667)
