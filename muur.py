@@ -79,7 +79,7 @@ def main():
 		loopSingleMoviesThread = player.LoopSingleMoviesThread(args.moviepath, incoming_from_controller, outgoing_to_controller, udpport_sync, args.clientname)
 		loopSingleMoviesThread.start()
 		clientsocket, statsocket = client.find_controller(args.clientname, udpport_discovery, tcpport, statport)
-		statThread = player.StatThread(statsocket)
+		statThread = player.StatThread("statsocket", statsocket)
 		statThread.daemon = True
 		starThread.start()
 		player.controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport)
