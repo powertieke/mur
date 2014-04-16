@@ -221,10 +221,14 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			except socket.timeout:
 				print("Response timed out.")
 				connection.settimeout(None)
+				clearqueue(outgoing_to_controller)
+				clearqueue(incoming_from_controller)
 				pass
 			except socket.error:
 				print("Something is wrong with the connection, will handle later")
 				connection.settimeout(None)
+				clearqueue(outgoing_to_controller)
+				clearqueue(incoming_from_controller)
 				pass
 			connection.settimeout(None)
 		elif playre.match(message):
@@ -259,8 +263,9 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		
 def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
 	syncqueue = queue.Queue()
+	killsyncqueue = queue.Queue()
 	
-	syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
+	syncThread = SyncThread("willekeur", udpport_sync, syncqueue, killsyncqueue)
 	syncThread.start()
 	
 	if os.path.exists(moviefile + clientname + ".mp4"):
@@ -345,12 +350,19 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 			kill_all_omxplayers()
 		except:
 			pass
+	killsyncqueue.put(True)
 		
 		
-def sync_listener(udpport_sync, syncqueue):
+def sync_listener(udpport_sync, syncqueue, killsyncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind(("", udpport_sync))
 	while True:
+		try:
+			killsyncqueue.get(False)
+		except queue.Empty:
+			pass
+		else:
+			break
 		s.settimeout(10)
 		try:
 			data = s.recv(1024).decode("utf-8")
@@ -362,6 +374,7 @@ def sync_listener(udpport_sync, syncqueue):
 			break
 	syncqueue.put("end")
 	s.close()
+	print("syncthread finished")
 	
 class StatThread(threading.Thread):
 	def __init__(self, name, statsocket):
@@ -371,12 +384,13 @@ class StatThread(threading.Thread):
 		stat(self.statsocket)
 
 class SyncThread(threading.Thread):
-	def __init__(self, name, udpport_sync, syncqueue):
+	def __init__(self, name, udpport_sync, syncqueue, killsyncqueue):
 		threading.Thread.__init__(self, name=name)
 		self.udpport = udpport_sync
 		self.syncqueue = syncqueue
+		self.killsyncqueue = killsyncqueue
 	def run(self):
-		sync_listener(self.udpport, self.syncqueue)
+		sync_listener(self.udpport, self.syncqueue, self.killsyncqueue)
 
 def test(moviefolder):
 	loop_single_movies(moviefolder)
