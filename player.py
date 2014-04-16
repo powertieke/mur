@@ -336,15 +336,22 @@ def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind(("", udpport_sync))
 	while killsyncthreadflag == 0:
-		data = s.recv(1024).decode("utf-8")
+		s.settimeout(10)
+		try:
+			data = s.recv(1024).decode("utf-8")
+		except socket.timeout:
+			syncqueue.put("end")
+			s.close()
+			break
 		if syncqueue.empty():
 			syncqueue.put(data)
 		if data == "end":
 			syncqueue.put(data)
 			s.close()
 			break
-	syncqueue.put("end")
-	s.close()
+	if killsyncthreadflag == 1:
+		syncqueue.put("end")
+		s.close()
 	
 	
 	
