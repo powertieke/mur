@@ -69,6 +69,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	status = "0"
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
 	shuffle(playlist)
+	global killsyncthreadflag
 	killsyncthreadflag = 0
 	i = 0
 	nextmovieindex = 1
