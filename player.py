@@ -382,7 +382,7 @@ def sync_listener(udpport_sync, syncqueue):
 		syncqueue.put("end")
 		s.close()
 		killsyncthreadflag = 0
-	
+	print("syncthread stopped")
 	
 	
 class StatThread(threading.Thread):
