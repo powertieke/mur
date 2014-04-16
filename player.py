@@ -186,7 +186,11 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			# play_synced_movie(moviefile, outgoing_to_controller, udpport_sync)
 			connection.settimeout(15)
 			try:
-				connection.sendall(outgoing_to_controller.get().encode('utf-8'))
+				connection.sendall(outgoing_to_controller.get(15).encode('utf-8'))
+			except queue.empty:
+				print("Response timed out.")
+				connection.settimeout(None)
+				pass
 			except socket.timeout:
 				print("Response timed out.")
 				connection.settimeout(None)
