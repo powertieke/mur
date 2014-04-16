@@ -33,6 +33,7 @@ def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats
 		while True:
 			for _ in range(repeats):
 				result = play_sync(moviefolder + "/sync/" + moviefile, clientselection, UDPPort_sync, killqueue)
+				print(result)
 				try:
 					player.kill_all_omxplayers()
 				except:
