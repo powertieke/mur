@@ -243,7 +243,8 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		
 def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
 	syncqueue = queue.Queue()
-	
+	global killsyncthreadflag
+	killsyncthreadflag = 0
 	syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
 	syncThread.start()
 	
@@ -307,6 +308,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 						syncqueue.get()
 		else:
 			print("Got something else instead of go. Resuming normal play")
+			killsyncthreadflag = 1
 			try:
 				player.stop()
 				kill_all_omxplayers()
@@ -314,6 +316,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				pass
 	except queue.Empty:
 		print("Timed Out while waiting for the go")
+		killsyncthreadflag  = 1
 		try:
 			player.stop()
 			kill_all_omxplayers()
@@ -321,6 +324,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 			pass
 	except UnboundLocalError:
 		print("OMXplayer got killed before we got the go")
+		killsyncthreadflag = 1
 		try:
 			player.stop()
 			kill_all_omxplayers()
@@ -331,7 +335,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind(("", udpport_sync))
-	while True:
+	while killsyncthreadflag == 0:
 		data = s.recv(1024).decode("utf-8")
 		if syncqueue.empty():
 			syncqueue.put(data)
