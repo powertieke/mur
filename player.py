@@ -98,6 +98,13 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 		elif message == "status":
 			outgoing_to_controller.put(status)
 		elif message[0] == "sync":
+			if i == 0:
+				nextmovieindex = 1
+			elif i == len(playlist) - 1:
+				nextmovieindex = 0
+			else:
+				nextmovieindex = i + 1
+			
 			print("got sync")
 			try:
 				playlist[i][1].stop()
