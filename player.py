@@ -350,6 +350,7 @@ def sync_listener(udpport_sync, syncqueue):
 			s.close()
 			break
 	if killsyncthreadflag == 1:
+		print("killed syncthread")
 		syncqueue.put("end")
 		s.close()
 	
