@@ -261,9 +261,11 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
 	syncqueue = queue.Queue()
 	global killsyncthreadflag
-	if killsyncthreadflag == 0:
-		syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
-		syncThread.start()
+	while killsyncthreadflag != 0:
+		time.sleep(1)
+	syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
+	syncThread.start()
+		
 	
 	
 	if os.path.exists(moviefile + clientname + ".mp4"):
