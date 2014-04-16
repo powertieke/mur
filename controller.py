@@ -173,12 +173,15 @@ def play_sync(moviefile, clients, UDPPort_sync, killqueue):
 def syncscreamer(udpport_sync, syncmessage):
 	syncscreamer = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	syncscreamer.sendto("go".encode('utf-8'), ("224.0.0.1", udpport_sync))
+	print("Sent: %s" % "go")
 	while True:
 		message = syncmessage.get()
 		# print(message)
 		syncscreamer.sendto(str(message).encode('utf-8'), ("224.0.0.1", udpport_sync))
-		print(message)
+		print("Sent: %s" % message)
 		if message == "end":
+			while syncmessage.empty() == False:
+				syncmessage.get()
 			break
 	syncscreamer.close()
 
