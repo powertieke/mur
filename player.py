@@ -34,6 +34,10 @@ def ready_player(moviefile, stopqueue, duration):
 			print("Failed loading: Retry %s" % retry)
 			if retry < 2:
 				retry = retry + 1
+				try:
+					kill_all_omxplayers()
+				except:
+					pass
 			else:
 				raise RuntimeError("Failed to open OMXplayer. Filename: %s" % moviefile)
 				status = "-1"
@@ -274,6 +278,13 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				else :
 					insync = insync + 1
 					syncqueue.get()
+	else:
+		player.stop()
+		try:
+			kill_all_omxplayers()
+		except:
+			pass
+	
 				
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
