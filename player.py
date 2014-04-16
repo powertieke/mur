@@ -69,7 +69,6 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	status = "0"
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
 	shuffle(playlist)
-	global killsyncthreadflag
 	killsyncthreadflag = 0
 	i = 0
 	nextmovieindex = 1
@@ -245,6 +244,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		
 def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
 	syncqueue = queue.Queue()
+	global killsyncthreadflag
 	if killsyncthreadflag == 0:
 		syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
 		syncThread.start()
@@ -336,6 +336,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind(("", udpport_sync))
+	global killsyncthreadflag
 	killsyncthreadflag = 1
 	while killsyncthreadflag == 1:
 		s.settimeout(10)
