@@ -14,6 +14,8 @@ import subprocess
 import client
 from random import shuffle
 
+status = 0
+
 def clearqueue(thequeue):
 	while thequeue.empty() == False:
 		thequeue.get()
@@ -82,7 +84,7 @@ def get_duration(moviefile):
 	return duration
 
 def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
-	status = "0"
+	global status
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
 	shuffle(playlist)
 	i = 0
@@ -92,6 +94,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	while True: ## Main movie playing loop - Listens on incoming_from_controller queue
 		message = incoming_from_controller.get() # Wait for currently playing movie to end or for an incoming servermessage
 		if message == "end":
+			status = 0
 			if i == 0:
 				nextmovieindex = 1
 			elif i == len(playlist) - 1:
@@ -114,6 +117,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 		elif message == "status":
 			outgoing_to_controller.put(status)
 		elif message[0] == "sync":
+			status = 1
 			if i == 0:
 				nextmovieindex = 1
 			elif i == len(playlist) - 1:
@@ -135,6 +139,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			play_synced_movie(message[1], incoming_from_controller, outgoing_to_controller, udpport_sync, clientname)
 			i = nextmovieindex
 		elif message[0] == "play":
+			status 2
 			try:
 				playlist[i][1].stop()
 			except:
@@ -173,7 +178,6 @@ def interruptor(message, argument=None):
 		messagequeue.put((message, argument))
 
 def stat(statsocket):
-	status = "0"
 	while True:
 		try:
 			message = statsocket.recv(1024).decode("utf-8")
