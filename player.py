@@ -247,10 +247,10 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		player = ready_player(moviefile + ".mp4", syncqueue, get_duration(moviefile + ".mp4"))
 		
 	while syncqueue.empty() == False:
-		syncqueue.get()
+		print("flushing: %s" % syncqueue.get())
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
-	
-	if syncqueue.get() == "go":
+	try:
+	if syncqueue.get(True, 10) == "go":
 		tolerance = 500000.0
 		player.toggle_pause() # Play synced movie
 		# print("Got go: playing")
@@ -299,13 +299,20 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					insync = insync + 1
 					syncqueue.get()
 	else:
+		print("Got something else instead of go. Resuming normal play")
 		player.stop()
 		try:
 			kill_all_omxplayers()
 		except:
 			pass
-	
-				
+	except queue.Empty:
+		print("Timed Out while waiting for the go")
+		player.stop()
+		try:
+			kill_all_omxplayers()
+		except:
+			pass
+		
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind(("", udpport_sync))
