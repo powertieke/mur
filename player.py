@@ -319,6 +319,14 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 			kill_all_omxplayers()
 		except:
 			pass
+	except UnboundLocalError:
+		print("OMXplayer got killed before we got the go")
+		player.stop()
+		try:
+			kill_all_omxplayers()
+		except:
+			pass
+		
 		
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
