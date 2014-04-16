@@ -120,8 +120,8 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			except:
 				pass
 			try:
-				incoming_from_controller.get(True)
-			except queue.empty:
+				incoming_from_controller.get(False)
+			except queue.Empty:
 				pass
 			playlist[nextmovieindex][1] = ready_player(message[1], incoming_from_controller, get_duration(message[1]))
 			playlist[nextmovieindex][1].toggle_pause() #play next movie
@@ -186,8 +186,8 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			# play_synced_movie(moviefile, outgoing_to_controller, udpport_sync)
 			connection.settimeout(15)
 			try:
-				connection.sendall(outgoing_to_controller.get(15).encode('utf-8'))
-			except queue.empty:
+				connection.sendall(outgoing_to_controller.get(True, 15).encode('utf-8'))
+			except queue.Empty:
 				print("Response timed out.")
 				connection.settimeout(None)
 				pass
@@ -254,7 +254,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		while True:
 			syncmessage = syncqueue.get()
 			print(syncmessage)
-			if syncmessage == "end":
+			if (syncmessage == "end") or (syncmessage == "go"):
 				player.stop()
 				try:
 					kill_all_omxplayers()
