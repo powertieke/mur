@@ -284,7 +284,11 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 			# print("Got go: playing")
 			insync = 0
 			while True:
-				syncmessage = syncqueue.get()
+				try:
+					syncmessage = syncqueue.get(True, 10)
+				except queue.Empty:
+					print("Message timed out. Ending it")
+					syncmessage == "end"
 				print(syncmessage)
 				if (syncmessage == "end") or (syncmessage == "go"):
 					player.stop()
