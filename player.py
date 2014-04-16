@@ -343,6 +343,10 @@ def sync_listener(udpport_sync, syncqueue):
 			syncqueue.put(data)
 			s.close()
 			break
+	syncqueue.put("end")
+	s.close()
+	break
+	
 	
 class StatThread(threading.Thread):
 	def __init__(self, name, statsocket):
