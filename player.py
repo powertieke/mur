@@ -29,44 +29,45 @@ def kill_all_omxplayers():
 
 def ready_player(moviefile, stopqueue, duration):
 	outerretry = 0
-	try:
-		retry = 0
-		while True:
-			try:
-				player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
-			except:
-				print("Failed loading: Retry %s" % retry)
-				if retry < 2:
-					retry = retry + 1
-					try:
-						kill_all_omxplayers()
-					except:
-						pass
+	while True:
+		try:
+			retry = 0
+			while True:
+				try:
+					player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
+				except:
+					print("Failed loading: Retry %s" % retry)
+					if retry < 2:
+						retry = retry + 1
+						try:
+							kill_all_omxplayers()
+						except:
+							pass
+					else:
+						raise RuntimeError("Failed to open OMXplayer. Filename: %s" % moviefile)
+						status = "-1"
 				else:
-					raise RuntimeError("Failed to open OMXplayer. Filename: %s" % moviefile)
-					status = "-1"
-			else:
-				break
-		position = 200000
-		while player.position < position:
-			pass
-		overshoot = player.position - position
-		time.sleep((180000 - overshoot)/1000000)
-		player.toggle_pause()
-		time.sleep(1)
-	except IOError:
-		print("Failed loading (Because of external kill): Retry %s" % outerretry)
-		if outerretry < 2:
-			outerretry = outerretry + 1
-			try:
-				kill_all_omxplayers()
-			except:
+					break
+			position = 200000
+			while player.position < position:
 				pass
+			overshoot = player.position - position
+			time.sleep((180000 - overshoot)/1000000)
+			player.toggle_pause()
+			time.sleep(1)
+		except IOError:
+			print("Failed loading (Because of external kill): Retry %s" % outerretry)
+			if outerretry < 2:
+				outerretry = outerretry + 1
+				try:
+					kill_all_omxplayers()
+				except:
+					pass
+			else:
+				raise RuntimeError("Failed to open OMXplayer. Filename: %s" % moviefile)
+				status = "-1"
 		else:
-			raise RuntimeError("Failed to open OMXplayer. Filename: %s" % moviefile)
-			status = "-1"
-	else:
-		break		
+			break		
 	return player
 
 def show_splash_screen(image):
