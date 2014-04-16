@@ -14,7 +14,9 @@ import subprocess
 import client
 from random import shuffle
 
-
+def clearqueue(thequeue):
+	while thequeue.empty() == False:
+		thequeue.get()
 
 def set_background(color):
 	subprocess.call('sudo sh -c "TERM=linux setterm -background ' + color + ' >/dev/tty0"', shell=True)
@@ -190,6 +192,8 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			except queue.Empty:
 				print("Response timed out.")
 				connection.settimeout(None)
+				clearqueue(outgoing_to_controller)
+				clearqueue(incoming_from_controller)
 				pass
 			except socket.timeout:
 				print("Response timed out.")
