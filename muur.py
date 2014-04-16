@@ -31,7 +31,7 @@ incoming_from_controller = queue.Queue()
 outgoing_to_controller = queue.Queue()
 killqueue = queue.Queue()
 
-syncloops = {"clients": ["pitm", "pi1"], "moviefile" : "Screen", "repeats": 10, "intervalmoviefile" : "run"}
+syncloops = {"clients": ["pi2", "pi1"], "moviefile" : "Screen", "repeats": 10, "intervalmoviefile" : "run"}
 
 
 
