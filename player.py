@@ -238,6 +238,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		insync = 0
 		while True:
 			syncmessage = syncqueue.get()
+			print(syncmessage)
 			if syncmessage == "end":
 				player.stop()
 				try:
