@@ -184,7 +184,18 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			moviefile = syncre.match(message).group(1)
 			incoming_from_controller.put(["sync", moviefile])
 			# play_synced_movie(moviefile, outgoing_to_controller, udpport_sync)
-			connection.sendall(outgoing_to_controller.get().encode('utf-8'))
+			connection.settimeout(15)
+			try:
+				connection.sendall(outgoing_to_controller.get().encode('utf-8'))
+			except socket.timeout:
+				print("Response timed out.")
+				connection.settimeout(None)
+				pass
+			except socket.error:
+				print("Something is wrong with the connection, will handle later")
+				connection.settimeout(None)
+				pass
+			connection.settimeout(None)
 		elif playre.match(message):
 			moviefile = playre.match(message).group(1)
 			incoming_from_controller.put(["play", moviefile])
