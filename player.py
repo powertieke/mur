@@ -85,8 +85,6 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	status = "0"
 	playlist = [[moviefile, None, get_duration(moviefile)] for moviefile in glob.glob(moviefolder + "*.mp4")]
 	shuffle(playlist)
-	global killsyncthreadflag
-	killsyncthreadflag = 0
 	i = 0
 	nextmovieindex = 1
 	playlist[i][1] = ready_player(playlist[i][0], incoming_from_controller, playlist[i][2])
@@ -261,13 +259,9 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		
 def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
 	syncqueue = queue.Queue()
-	global killsyncthreadflag
-	while killsyncthreadflag != 0:
-		time.sleep(1)
+	
 	syncThread = SyncThread("willekeur", udpport_sync, syncqueue)
 	syncThread.start()
-		
-	
 	
 	if os.path.exists(moviefile + clientname + ".mp4"):
 		player = ready_player(moviefile + clientname + ".mp4", syncqueue, get_duration(moviefile + clientname + ".mp4"))
@@ -332,7 +326,6 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 						syncqueue.get()
 		else:
 			print("Got something else instead of go. Resuming normal play")
-			killsyncthreadflag = 2
 			try:
 				player.stop()
 				kill_all_omxplayers()
@@ -340,7 +333,6 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				pass
 	except queue.Empty:
 		print("Timed Out while waiting for the go")
-		killsyncthreadflag  = 2
 		try:
 			player.stop()
 			kill_all_omxplayers()
@@ -348,7 +340,6 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 			pass
 	except UnboundLocalError:
 		print("OMXplayer got killed before we got the go")
-		killsyncthreadflag = 2
 		try:
 			player.stop()
 			kill_all_omxplayers()
@@ -359,31 +350,18 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 def sync_listener(udpport_sync, syncqueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind(("", udpport_sync))
-	global killsyncthreadflag
-	killsyncthreadflag = 1
-	while killsyncthreadflag == 1:
+	while True:
 		s.settimeout(10)
 		try:
 			data = s.recv(1024).decode("utf-8")
 		except socket.timeout:
-			syncqueue.put("end")
-			s.close()
-			killsyncthreadflag = 0
 			break
 		if syncqueue.empty():
 			syncqueue.put(data)
 		if data == "end":
-			syncqueue.put(data)
-			s.close()
-			killsyncthreadflag = 0
 			break
-	if killsyncthreadflag == 2:
-		print("killed syncthread")
-		syncqueue.put("end")
-		s.close()
-		killsyncthreadflag = 0
-	print("syncthread stopped")
-	
+	syncqueue.put("end")
+	s.close()
 	
 class StatThread(threading.Thread):
 	def __init__(self, name, statsocket):
