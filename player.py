@@ -250,61 +250,61 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		print("flushing: %s" % syncqueue.get())
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	try:
-	if syncqueue.get(True, 10) == "go":
-		tolerance = 500000.0
-		player.toggle_pause() # Play synced movie
-		# print("Got go: playing")
-		insync = 0
-		while True:
-			syncmessage = syncqueue.get()
-			print(syncmessage)
-			if (syncmessage == "end") or (syncmessage == "go"):
-				player.stop()
-				try:
-					kill_all_omxplayers()
-				except:
-					pass
+		if syncqueue.get(True, 10) == "go":
+			tolerance = 500000.0
+			player.toggle_pause() # Play synced movie
+			# print("Got go: playing")
+			insync = 0
+			while True:
+				syncmessage = syncqueue.get()
+				print(syncmessage)
+				if (syncmessage == "end") or (syncmessage == "go"):
+					player.stop()
+					try:
+						kill_all_omxplayers()
+					except:
+						pass
 					
-				# incoming_from_controller.put("end")
-				break
-			elif insync > 6:
-				pass # Stayed in sync for three seconds
-				masterposition = float(syncmessage)
-				localposition = player.position
-			else:
-				masterposition = float(syncmessage)
-				localposition = player.position
-				syncqueue.put(True)
-				if masterposition + tolerance < localposition:
-					adjustment = (localposition - masterposition) / 1000000.
-					delay = adjustment - 0.05
-					player.toggle_pause()
-					if delay < 0.2:
-						delay = 0
-					time.sleep(delay)
-					player.toggle_pause()
-					insync = 0
-					syncqueue.get()
-				elif masterposition - tolerance > localposition:
-					player.increase_speed()
-					adjustment = (masterposition - localposition) / 1000000.
-					delay = (adjustment * 2.0)
-					if delay < 0.1:
-						 delay = 0.1
-					time.sleep(delay)
-					player.decrease_speed()
-					insync = 0
-					syncqueue.get()
-				else :
-					insync = insync + 1
-					syncqueue.get()
-	else:
-		print("Got something else instead of go. Resuming normal play")
-		player.stop()
-		try:
-			kill_all_omxplayers()
-		except:
-			pass
+					# incoming_from_controller.put("end")
+					break
+				elif insync > 6:
+					pass # Stayed in sync for three seconds
+					masterposition = float(syncmessage)
+					localposition = player.position
+				else:
+					masterposition = float(syncmessage)
+					localposition = player.position
+					syncqueue.put(True)
+					if masterposition + tolerance < localposition:
+						adjustment = (localposition - masterposition) / 1000000.
+						delay = adjustment - 0.05
+						player.toggle_pause()
+						if delay < 0.2:
+							delay = 0
+						time.sleep(delay)
+						player.toggle_pause()
+						insync = 0
+						syncqueue.get()
+					elif masterposition - tolerance > localposition:
+						player.increase_speed()
+						adjustment = (masterposition - localposition) / 1000000.
+						delay = (adjustment * 2.0)
+						if delay < 0.1:
+							 delay = 0.1
+						time.sleep(delay)
+						player.decrease_speed()
+						insync = 0
+						syncqueue.get()
+					else :
+						insync = insync + 1
+						syncqueue.get()
+		else:
+			print("Got something else instead of go. Resuming normal play")
+			player.stop()
+			try:
+				kill_all_omxplayers()
+			except:
+				pass
 	except queue.Empty:
 		print("Timed Out while waiting for the go")
 		player.stop()
