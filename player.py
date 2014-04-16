@@ -345,7 +345,7 @@ def sync_listener(udpport_sync, syncqueue):
 			break
 	syncqueue.put("end")
 	s.close()
-	break
+	
 	
 	
 class StatThread(threading.Thread):
