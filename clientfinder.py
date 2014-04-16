@@ -34,6 +34,7 @@ def discovery_server(discovered, port):
 	s.bind(('', port))
 	while True:
 		data, sender_addr = s.recvfrom(1024)
+		print("found %s" % data.decode('UTF-8'))
 		discovered.put([data.decode('UTF-8'), sender_addr])
 		
 def make_control_socket(socketdict, discovered, port, statport):
