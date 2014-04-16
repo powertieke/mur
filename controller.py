@@ -89,6 +89,8 @@ def message_to_pi(pi, message):
 		result = pi[0].recv(1024).decode("utf-8")
 	except socket.timeout:
 		result = "TIMEOUT"
+	except socket.error:
+		result = "DISCONN"
 	pi[0].settimeout(None)
 	return result
 
