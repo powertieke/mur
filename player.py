@@ -181,18 +181,19 @@ def interruptor(message, argument=None):
 		messagequeue.put((message, argument))
 
 def stat(statsocket):
+	global status
 	while True:
 		try:
 			message = statsocket.recv(1024).decode("utf-8")
 			print("Statsocket in : %s" % message)
-		except:
+		except socket.error::
 			status = "-1"
 			print("Error on reading from statsocket. Closing.")
 			statsocket.close()
 			break
 		try:
 			statsocket.sendall(status.encode("utf-8"))
-		except:
+		except socket.error:
 			status = "-1"
 			print("Error on writing to statsocket. Closing")
 			statsocket.close()
