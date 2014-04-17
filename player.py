@@ -71,8 +71,8 @@ def ready_player(moviefile, stopqueue, duration):
 					status = "-1"
 			else:
 				break
-		except RuntimeError:
-			reboot()
+	except RuntimeError:
+		reboot()
 	return player
 
 def show_splash_screen(image):
