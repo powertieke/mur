@@ -45,15 +45,19 @@ def webinterface(clients, udpport_sync, moviefolder, killqueue):
 		elif stopre.match(command):
 			client = stopre.match(command).group(1)
 			clients[client][1] = message_to_pi(client, 'shutdown')
+			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif bootre.match(command):
 			client = bootre.match(command).group(1)
 			clients[client][1] = message_to_pi(client, 'reboot')
+			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif command == "updateall":
 			for client in clients:
 				client[1] = message_to_pi(client, 'update')
+			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif command == "quit":
 			for client in clients:
 				client[1] = message_to_pi(client, 'shutdown')
+			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif command == "status":
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		else:
