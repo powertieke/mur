@@ -262,8 +262,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 				connection.close()
 				raise RuntimeError("Failed loading moviefile. Stopping")
 		elif message == '':
-			print("lostconnection to empty get")
-			break
+			pass
 		else:
 			connection.sendall("error".encode('utf-8'))
 	
