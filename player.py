@@ -204,7 +204,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			message = connection.recv(1024).decode("utf-8")
 			print("This just in: %s" % message)
 		except:
-			print("lostconnection")
+			print("lostconnection to error")
 			break
 		if message == "skip":
 			incoming_from_controller.put(message)
@@ -258,7 +258,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 				connection.close()
 				raise RuntimeError("Failed loading moviefile. Stopping")
 		elif message == '':
-			print("lostconnection")
+			print("lostconnection to empty get")
 			break
 		else:
 			connection.sendall("error".encode('utf-8'))
