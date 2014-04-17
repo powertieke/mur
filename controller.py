@@ -14,10 +14,11 @@ moviefolder = "/media/usb"
 
 """Holds all of the functions used if the app is ran with the -m (master) flag. Uses the network connections supplied by the clientfinder module to tell the screens what to do. Also yells out it's own playing position so the screens can time-correct themselves"""
 
-def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats, intervalmovie, clientselection):
-	clientselection = {x : clients[x] for x in clientselection}
+def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats, intervalmovie, clientselectionlist):
+	
 	if repeats == 0:
 		while True:
+			clientselection = {x : clients[x] for x in clientselectionlist if x in clients}
 			result = play_sync(moviefolder + "/sync/" + moviefile, clientselection, UDPPort_sync, killqueue)
 			try:
 				player.kill_all_omxplayers()
@@ -32,6 +33,7 @@ def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats
 	else:
 		while True:
 			for _ in range(repeats):
+				clientselection = {x : clients[x] for x in clientselectionlist if x in clients}
 				result = play_sync(moviefolder + "/sync/" + moviefile, clientselection, UDPPort_sync, killqueue)
 				print(result)
 				try:
