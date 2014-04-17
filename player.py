@@ -403,7 +403,7 @@ class SyncThread(threading.Thread):
 	def run(self):
 		sync_listener(self.udpport, self.syncqueue, self.killsyncqueue)
 
-def restart(update=False):
+def reboot(update=False):
 	if update == True:
 		thecommand = "cd /home/mur; git pull; reboot"
 	else:
