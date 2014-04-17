@@ -262,12 +262,6 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			break
 		else:
 			connection.sendall("error".encode('utf-8'))
-	connection.close()
-	clientsocket, statsocket = client.find_controller(clientname, udpport_discovery, tcpport, statport)
-	statThread = StatThread("statthread", statsocket)
-	statThread.daemon = True
-	statThread.start()
-	controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport, clientname)
 	
 	
 	
