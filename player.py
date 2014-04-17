@@ -139,7 +139,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			play_synced_movie(message[1], incoming_from_controller, outgoing_to_controller, udpport_sync, clientname)
 			i = nextmovieindex
 		elif message[0] == "play":
-			status 2
+			status = 2
 			try:
 				playlist[i][1].stop()
 			except:
