@@ -335,12 +335,16 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 						syncqueue.get()
 		else:
 			print("Got something else instead of go. Resuming normal play")
+			clearqueue(outgoing_to_controller)
+			clearqueue(incoming_from_controller)
 			try:
 				player.stop()
 				kill_all_omxplayers()
 			except:
 				pass
 	except queue.Empty:
+		clearqueue(outgoing_to_controller)
+		clearqueue(incoming_from_controller)
 		print("Timed Out while waiting for the go")
 		try:
 			player.stop()
@@ -348,6 +352,8 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		except:
 			pass
 	except UnboundLocalError:
+		clearqueue(outgoing_to_controller)
+		clearqueue(incoming_from_controller)
 		print("OMXplayer got killed before we got the go")
 		try:
 			player.stop()
