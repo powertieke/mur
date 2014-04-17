@@ -105,6 +105,13 @@ $( document ).ready(function() {
 		});
 		updatescreens();
 	});
+	$("#shutdown").click(function () {
+		$(this).fadeOut().fadeIn();
+		$.getJSON("communicate.py", {"command": "quit"}).done(function( json ) {
+			screenstatus = json;
+		});
+		updatescreens();
+	});
 	
 })
 
@@ -185,7 +192,7 @@ $( document ).ready(function() {
 <div id="menu">
 <a href="javascript:void(0);" id="runsync">Run synced animation on all screens</a> <br />
 <a href="javascript:void(0);">blackout all screens</a> <br />
-<a href="javascript:void(0);">shutdown </a> <br />
+<a href="javascript:void(0);" id="shutdown">shutdown </a> <br />
 </div>
 </body>
 </html>
