@@ -282,7 +282,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		player = ready_player(moviefile + ".mp4", syncqueue, get_duration(moviefile + ".mp4"))
 		
 	while syncqueue.empty() == False:
-		# print("flushing: %s" % syncqueue.get())
+		syncqueue.get()
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	try:
 		if syncqueue.get(True, 10) == "go":
