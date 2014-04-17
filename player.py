@@ -186,7 +186,7 @@ def stat(statsocket):
 		try:
 			message = statsocket.recv(1024).decode("utf-8")
 			print("Statsocket in : %s" % message)
-		except socket.error::
+		except socket.error:
 			status = "-1"
 			print("Error on reading from statsocket. Closing.")
 			statsocket.close()
