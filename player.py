@@ -201,7 +201,11 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 	playre = re.compile(r'^play:(.*)$')
 	while (True):
 		try:
-			message = connection.recv(1024).decode("utf-8")
+			data = connection.recv(1024)
+			if data == '':
+				print("lostconnection to broken connection")
+				break
+			message = data.decode("utf-8")
 			print("This just in: %s" % message)
 		except:
 			print("lostconnection to error")
