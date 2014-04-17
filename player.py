@@ -186,12 +186,14 @@ def stat(statsocket):
 			message = statsocket.recv(1024).decode("utf-8")
 		except:
 			status = "-1"
+			print("Error on reading from statsocket. Closing.")
 			statsocket.close()
 			break
 		try:
 			statsocket.sendall(status.encode("utf-8"))
 		except:
 			status = "-1"
+			print("Error on writing to statsocket. Closing")
 			statsocket.close()
 			break
 
@@ -202,10 +204,9 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 	while (True):
 		try:
 			data = connection.recv(1024)
-			if data == '':
+			if data == b'':
 				print("lostconnection to broken connection")
 				break
-			print(str(data))
 			message = data.decode("utf-8")
 		except:
 			print("lostconnection to error")
@@ -259,7 +260,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		elif message == "status":
 			connection.sendall(status.encode('utf-8'))
 		elif message == '':
-			break
+			pass
 		else:
 			connection.sendall("error".encode('utf-8'))
 	
