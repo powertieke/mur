@@ -14,7 +14,7 @@ import subprocess
 import client
 from random import shuffle
 
-status = 0
+status = "0"
 
 def clearqueue(thequeue):
 	while thequeue.empty() == False:
