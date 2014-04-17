@@ -52,11 +52,11 @@ def webinterface(clients, udpport_sync, moviefolder, killqueue):
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif command == "updateall":
 			for client in clients.keys():
-				client[1] = controller.message_to_pi(clients[client], 'update')
+				clients[client][1] = controller.message_to_pi(clients[client], 'update')
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif command == "quit":
 			for client in clients.keys():
-				client[1] = controller.message_to_pi(clients[client], 'shutdown')
+				clients[client][1] = controller.message_to_pi(clients[client], 'shutdown')
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif command == "status":
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
