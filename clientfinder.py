@@ -15,11 +15,11 @@ def check_clients(socketdict):
 			clientSocket.sendall('status'.encode('UTF-8'))
 			#except:
 			#	removefromdict.append(pi)
-			else:
-				#try:
-					socketdict[pi][1] = clientSocket.recv(1024).decode('UTF-8')
-				#except:
-				#	removefromdict.append(pi)
+			#else:
+			#try:
+			socketdict[pi][1] = clientSocket.recv(1024).decode('UTF-8')
+			#except:
+			#	removefromdict.append(pi)
 		for pi in removefromdict:
 			try:
 				print("bad response from check. Close sockets on %s and remove from list" % pi)
