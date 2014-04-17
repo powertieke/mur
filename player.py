@@ -30,46 +30,49 @@ def kill_all_omxplayers():
 	subprocess.call("sudo killall omxplayer omxplayer.bin 2>>  /dev/null", shell=True)
 
 def ready_player(moviefile, stopqueue, duration):
-	outerretry = 0
-	while True:
-		try:
-			retry = 0
-			while True:
-				try:
-					player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
-				except:
-					print("Failed loading: Retry %s" % retry)
-					if retry < 2:
-						retry = retry + 1
-						try:
-							kill_all_omxplayers()
-						except:
-							pass
+	try:
+		outerretry = 0
+		while True:
+			try:
+				retry = 0
+				while True:
+					try:
+						player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
+					except:
+						print("Failed loading: Retry %s" % retry)
+						if retry < 2:
+							retry = retry + 1
+							try:
+								kill_all_omxplayers()
+							except:
+								pass
+						else:
+							raise RuntimeError("Failed to open OMXplayer. Filename: %s" % moviefile)
+							status = "-1"
 					else:
-						raise RuntimeError("Failed to open OMXplayer. Filename: %s" % moviefile)
-						status = "-1"
-				else:
-					break
-			position = 200000
-			while player.position < position:
-				pass
-			overshoot = player.position - position
-			time.sleep((180000 - overshoot)/1000000)
-			player.toggle_pause()
-			time.sleep(1)
-		except IOError:
-			print("Failed loading (Because of external kill): Retry %s" % outerretry)
-			if outerretry < 2:
-				outerretry = outerretry + 1
-				try:
-					kill_all_omxplayers()
-				except:
+						break
+				position = 200000
+				while player.position < position:
 					pass
+				overshoot = player.position - position
+				time.sleep((180000 - overshoot)/1000000)
+				player.toggle_pause()
+				time.sleep(1)
+			except IOError:
+				print("Failed loading (Because of external kill): Retry %s" % outerretry)
+				if outerretry < 2:
+					outerretry = outerretry + 1
+					try:
+						kill_all_omxplayers()
+					except:
+						pass
+				else:
+					raise RuntimeError("Failed to open OMXplayer. Filename: %s" % moviefile)
+					status = "-1"
 			else:
-				raise RuntimeError("Failed to open OMXplayer. Filename: %s" % moviefile)
-				status = "-1"
-		else:
-			break		
+				break
+		except RuntimeError:
+			reboot()
 	return player
 
 def show_splash_screen(image):
@@ -243,6 +246,15 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		elif message == "pause":
 			incoming_from_controller.put(message)
 			connection.sendall("ready".encode('utf-8'))
+		elif message == "reboot":
+			connection.sendall("-1".encode('utf-8'))
+			reboot()
+		elif message == "update":
+			connection.sendall("-1".encode('utf-8'))
+			reboot(True)
+		elif message == "shutdown":
+			connection.sendall("-1".encode('utf-8'))
+			shutdown()
 		elif message == "status":
 			connection.sendall(status.encode('utf-8'))
 			if status == "-1":
@@ -395,6 +407,21 @@ class SyncThread(threading.Thread):
 		self.killsyncqueue = killsyncqueue
 	def run(self):
 		sync_listener(self.udpport, self.syncqueue, self.killsyncqueue)
+
+def restart(update=False):
+	if update == True:
+		thecommand = "cd /home/mur; git pull; reboot"
+	else:
+		thecommand = "reboot"
+	subprocess.call(thecommand, shell=True)
+	
+def shutdown(update=False):
+	if update == True:
+		thecommand = "cd /home/mur; git pull; shutdown -h now"
+	else:
+		thecommand = "shutdown -h now"
+	subprocess.call(thecommand, shell=True)
+
 
 def test(moviefolder):
 	loop_single_movies(moviefolder)

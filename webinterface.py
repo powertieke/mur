@@ -19,6 +19,8 @@ def webinterface(clients, udpport_sync, moviefolder, killqueue):
 	syncre = re.compile(r'^sync:(.*)$')
 	playre = re.compile(r'^play:(.*)$')
 	statre = re.compile(r'^stat:(.*)$')
+	stopre = re.compile(r'^stop:(.*)$')
+	bootre = re.compile(r'^boot:(.*)$')
 	while True:
 		command = getmessage(inpipe_path)
 		if command == '':
@@ -40,8 +42,18 @@ def webinterface(clients, udpport_sync, moviefolder, killqueue):
 				clientrecord = []
 				for client in clients.keys():
 					clientrecord.append("/".join([client, clients[client][1]]))
+		elif stopre.match(command):
+			client = stopre.match(command).group(1)
+			clients[client][1] = message_to_pi(client, 'shutdown')
+		elif bootre.match(command):
+			client = bootre.match(command).group(1)
+			clients[client][1] = message_to_pi(client, 'reboot')
+		elif command == "updateall":
+			for client in clients:
+				client[1] = message_to_pi(client, 'update')
 		elif command == "quit":
-			break
+			for client in clients:
+				client[1] = message_to_pi(client, 'shutdown')
 		elif command == "status":
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		else:
