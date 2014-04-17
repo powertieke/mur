@@ -11,10 +11,10 @@ def check_clients(socketdict):
 		removefromdict = []
 		for pi in list(socketdict.keys()):
 			clientSocket = socketdict[pi][3]
-			try:
+			#try:
 				clientSocket.sendall('status'.encode('UTF-8'))
-			except:
-				removefromdict.append(pi)
+			#except:
+			#	removefromdict.append(pi)
 			else:
 				#try:
 					socketdict[pi][1] = clientSocket.recv(1024).decode('UTF-8')
