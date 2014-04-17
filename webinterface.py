@@ -61,7 +61,7 @@ def webinterface(clients, udpport_sync, moviefolder, killqueue):
 		elif command == "status":
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		else:
-			print(command)
+			# print(command)
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 			pass
 		

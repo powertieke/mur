@@ -39,7 +39,7 @@ def ready_player(moviefile, stopqueue, duration):
 					try:
 						player = pyomxplayer.OMXPlayer('"' + moviefile + '"', stopqueue, duration, "-o hdmi", True)
 					except:
-						print("Failed loading: Retry %s" % retry)
+						# print("Failed loading: Retry %s" % retry)
 						if retry < 2:
 							retry = retry + 1
 							try:
@@ -59,7 +59,7 @@ def ready_player(moviefile, stopqueue, duration):
 				player.toggle_pause()
 				time.sleep(1)
 			except IOError:
-				print("Failed loading (Because of external kill): Retry %s" % outerretry)
+				# print("Failed loading (Because of external kill): Retry %s" % outerretry)
 				if outerretry < 2:
 					outerretry = outerretry + 1
 					try:
@@ -128,7 +128,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			else:
 				nextmovieindex = i + 1
 			
-			print("got sync")
+			# print("got sync")
 			try:
 				playlist[i][1].stop()
 			except:
@@ -185,17 +185,17 @@ def stat(statsocket):
 	while True:
 		try:
 			message = statsocket.recv(1024).decode("utf-8")
-			print("Statsocket in : %s" % message)
+			# print("Statsocket in : %s" % message)
 		except socket.error:
 			status = "-1"
-			print("Error on reading from statsocket. Closing.")
+			# print("Error on reading from statsocket. Closing.")
 			statsocket.close()
 			break
 		try:
 			statsocket.sendall(status.encode("utf-8"))
 		except socket.error:
 			status = "-1"
-			print("Error on writing to statsocket. Closing")
+			# print("Error on writing to statsocket. Closing")
 			statsocket.close()
 			break
 
@@ -207,11 +207,11 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 		try:
 			data = connection.recv(1024)
 			if data == b'':
-				print("lostconnection to broken connection")
+				# print("lostconnection to broken connection")
 				break
 			message = data.decode("utf-8")
 		except:
-			print("lostconnection to error")
+			# print("lostconnection to error")
 			break
 		if message == "skip":
 			incoming_from_controller.put(message)
@@ -224,17 +224,17 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			try:
 				connection.sendall(outgoing_to_controller.get(True, 15).encode('utf-8'))
 			except queue.Empty:
-				print("Response timed out on Player side.")
+				# print("Response timed out on Player side.")
 				connection.settimeout(None)
 				clearqueue(outgoing_to_controller)
 				pass
 			except socket.timeout:
-				print("Response timed out while sending.")
+				# print("Response timed out while sending.")
 				connection.settimeout(None)
 				clearqueue(outgoing_to_controller)
 				pass
 			except socket.error:
-				print("Something is wrong with the connection, will handle later")
+				# print("Something is wrong with the connection, will handle later")
 				connection.settimeout(None)
 				clearqueue(outgoing_to_controller)
 				break
@@ -282,7 +282,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		player = ready_player(moviefile + ".mp4", syncqueue, get_duration(moviefile + ".mp4"))
 		
 	while syncqueue.empty() == False:
-		print("flushing: %s" % syncqueue.get())
+		# print("flushing: %s" % syncqueue.get())
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	try:
 		if syncqueue.get(True, 10) == "go":
@@ -294,9 +294,9 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				try:
 					syncmessage = syncqueue.get(True, 10)
 				except queue.Empty:
-					print("Message timed out. Ending it")
+					# print("Message timed out. Ending it")
 					syncmessage == "end"
-				print(syncmessage)
+				# print(syncmessage)
 				if (syncmessage == "end") or (syncmessage == "go"):
 					player.stop()
 					try:
@@ -338,7 +338,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 						insync = insync + 1
 						syncqueue.get()
 		else:
-			print("Got something else instead of go. Resuming normal play")
+			# print("Got something else instead of go. Resuming normal play")
 			clearqueue(outgoing_to_controller)
 			try:
 				player.stop()
@@ -347,7 +347,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				pass
 	except queue.Empty:
 		clearqueue(outgoing_to_controller)
-		print("Timed Out while waiting for the go")
+		# print("Timed Out while waiting for the go")
 		try:
 			player.stop()
 			kill_all_omxplayers()
@@ -355,7 +355,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 			pass
 	except UnboundLocalError:
 		clearqueue(outgoing_to_controller)
-		print("OMXplayer got killed before we got the go")
+		# print("OMXplayer got killed before we got the go")
 		try:
 			player.stop()
 			kill_all_omxplayers()
@@ -385,7 +385,7 @@ def sync_listener(udpport_sync, syncqueue, killsyncqueue):
 			break
 	syncqueue.put("end")
 	s.close()
-	print("syncthread finished")
+	# print("syncthread finished")
 	
 class StatThread(threading.Thread):
 	def __init__(self, name, statsocket):

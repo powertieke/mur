@@ -84,7 +84,7 @@ def main():
 			statThread.daemon = True
 			statThread.start()
 			player.controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport, args.clientname)
-			print("controller ended on error. Closing sockets and starting over.")
+			# print("controller ended on error. Closing sockets and starting over.")
 			clientsocket.close()
 			statsocket.close()
 		
