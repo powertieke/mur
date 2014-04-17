@@ -186,11 +186,13 @@ def stat(statsocket):
 			message = statsocket.recv(1024).decode("utf-8")
 		except:
 			status = "-1"
+			statsocket.close()
 			break
 		try:
 			statsocket.sendall(status.encode("utf-8"))
 		except:
 			status = "-1"
+			statsocket.close()
 			break
 
 def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync, udpport_discovery, tcpport, statport, clientname):
@@ -203,6 +205,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			print("This just in: %s" % message)
 		except:
 			print("lostconnection")
+			connection.close()
 			clientsocket, statsocket = client.find_controller(clientname, udpport_discovery, tcpport, statport)
 			statThread = StatThread("statthread", statsocket)
 			statThread.daemon = True
