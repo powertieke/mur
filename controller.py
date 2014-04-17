@@ -100,9 +100,7 @@ def message_to_pi(pi, message):
 
 def play_single(moviefile, client):
 	"""Tell a single client that you want it to play a single movie, blanking out any adjacent screens"""
-	if (message_to_pi(client, "play:" + moviefile) == "playing"):
-		# wait for interruption by interface or message of Pi
-		return "Playing"
+	client[1] = message_to_pi(client, "play:" + moviefile)
 
 class PlaySyncThread(threading.Thread):
 	def __init__(self, name, moviefile, clients, UDPPort_sync, killqueue):
@@ -190,7 +188,7 @@ def syncscreamer(udpport_sync, syncmessage):
 
 def tell_client_to_sync(pi, movie, waitforitqueue):
 	waitforitqueue.get()
-	print(message_to_pi(pi, ("sync:" + movie)))
+	pi[1] = message_to_pi(pi, ("sync:" + movie))
 	waitforitqueue.task_done()
 	
 			

@@ -27,7 +27,7 @@ def webinterface(clients, udpport_sync, moviefolder, killqueue):
 			putmessage(outpipe_path, "")
 		elif playre.match(command):
 			client, moviename = playre.match(command).group(1).split(",")
-			response = controller.play_single(moviefolder + "/single/" + moviename + ".mp4", clients[client])
+			controller.play_single(moviefolder + "/single/" + moviename + ".mp4", clients[client])
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 			
 		elif syncre.match(command):
