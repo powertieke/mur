@@ -205,12 +205,6 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			print("This just in: %s" % message)
 		except:
 			print("lostconnection")
-			connection.close()
-			clientsocket, statsocket = client.find_controller(clientname, udpport_discovery, tcpport, statport)
-			statThread = StatThread("statthread", statsocket)
-			statThread.daemon = True
-			statThread.start()
-			controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport, clientname)
 			break
 		if message == "skip":
 			incoming_from_controller.put(message)
@@ -264,16 +258,17 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 				connection.close()
 				raise RuntimeError("Failed loading moviefile. Stopping")
 		elif message == '':
-			connection.close()
 			print("lostconnection")
-			clientsocket, statsocket = client.find_controller(clientname, udpport_discovery, tcpport, statport)
-			statThread = StatThread("statthread", statsocket)
-			statThread.daemon = True
-			statThread.start()
-			controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport, clientname)
 			break
 		else:
 			connection.sendall("error".encode('utf-8'))
+	connection.close()
+	clientsocket, statsocket = client.find_controller(clientname, udpport_discovery, tcpport, statport)
+	statThread = StatThread("statthread", statsocket)
+	statThread.daemon = True
+	statThread.start()
+	controller(incoming_from_controller, outgoing_to_controller, clientsocket, udpport_sync, udpport_discovery, tcpport, statport, clientname)
+	
 	
 	
 		
