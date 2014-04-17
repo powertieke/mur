@@ -61,6 +61,13 @@ function bindclickstoscreen(thescreen) {
 	}
 }
 
+function autoupdate() {
+	$.getJSON("communicate.py", {"command": "status"}).done(function( json ) {
+		screenstatus = json;
+	});
+	updatescreens();
+}
+
 function updatescreens() {
 	$("td.screen").each(function(index) {
 		if ($(this).attr("id") in screenstatus) {
@@ -112,7 +119,7 @@ $( document ).ready(function() {
 		});
 		updatescreens();
 	});
-	
+	setInterval(autoupdate, 1000);
 })
 
 </script> 
