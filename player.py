@@ -97,7 +97,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	while True: ## Main movie playing loop - Listens on incoming_from_controller queue
 		message = incoming_from_controller.get() # Wait for currently playing movie to end or for an incoming servermessage
 		if message == "end":
-			status = 0
+			status = "0"
 			if i == 0:
 				nextmovieindex = 1
 			elif i == len(playlist) - 1:
@@ -120,7 +120,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 		elif message == "status":
 			outgoing_to_controller.put(status)
 		elif message[0] == "sync":
-			status = 1
+			status = "1"
 			if i == 0:
 				nextmovieindex = 1
 			elif i == len(playlist) - 1:
@@ -142,7 +142,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			play_synced_movie(message[1], incoming_from_controller, outgoing_to_controller, udpport_sync, clientname)
 			i = nextmovieindex
 		elif message[0] == "play":
-			status = 2
+			status = "2"
 			try:
 				playlist[i][1].stop()
 			except:
