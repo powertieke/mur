@@ -10,6 +10,22 @@
 td.screen {
 	background-color : #FF0000;
 }
+
+td.off {
+	background-color : #FF0000;
+}
+td.on {
+	background-color : #00FF00;
+}
+td.play {
+	background-color : #44FF44;
+}
+td.sync {
+	background-color : #444400;
+}
+
+
+
 </style>
 <script language="javascript" type="text/javascript">
 var syncmovie = "run";
@@ -18,27 +34,54 @@ var singlemovies = [];
 var screenstatus = [];
 var changed = {};
 
+var stat = {
+	"-1" : "off",
+	"0" : "on",
+	"1" : "play", 
+	"2" : "sync" 
+};
+	
+function bindclickstoscreen(thescreen) {
+	if (thescreen.hasClass(stat["-1"])) {
+		thescreen.unbind();
+	} else if (thescreen.hasClass(stat["0"])) {
+		thescreen.click(function() {
+			$(this).fadeOut().fadeIn();
+		});
+	} else if (thescreen.hasClass(stat["1"])) {
+		thescreen.click(function() {
+			$(this).fadeOut().fadeIn();
+		});
+		
+	} else if (thescreen.hasClass(stat["2"])) {
+		thescreen.click(function() {
+			$(this).fadeOut().fadeIn();
+		});
+		
+	}
+}
+
 function updatescreens() {
-	var change = {};
-	for (var client in screenstatus) {
-		if (client in changed) {
-			if (screenstatus[client] != changed[client]) {
-				change[client] = screenstatus[client];
+	$("td.screen").each(function(index) {
+		if ($(this).attr("id") in screenstatus) {
+			currentstatus = screenstatus[$(this).attr("id")];
+			if ($(this).hasClass(stat[currentstatus])) {
+				// Do the magic staythesamey
+			} else {
+				for (key in stat) {
+					$(this).removeClass(stat[key]);
+				}
+				$(this).addClass(stat[currentstatus]);
+				bindclickstoscreen($(this));
 			}
 		} else {
-			change[client] = screenstatus[client];
+			for (key in stat) {
+				$(this).removeClass(stat[key]);
+			}
+			$(this).addClass("off");
+			bindclickstoscreen($(this));
 		}
-	}
-	for (var client in screenstatus) {
-		if (screenstatus[client] == "0") {
-			$("#" + client).css("background-color", "#00FF00");
-			$("#" + client).click(function () {
-				$(this).fadeOut().fadeIn();
-			}); 
-		} else if (screenstatus[client] == "2"){
-			$("#" + client).unbind("click");
-		}
-	}
+	});
 }
 
 
@@ -54,9 +97,13 @@ $( document ).ready(function() {
 		screenstatus = json;
 	});
 	updatescreens();
+	
 	$("#runsync").click(function () {
 		$(this).fadeOut().fadeIn();
-		$("div#loadstatus").load("communicate.py", {"command": "sync:" + syncmovie });	
+		$.getJSON("communicate.py", {"command": "sync:" + syncmovie}).done(function( json ) {
+			screenstatus = json;
+		});
+		updatescreens();
 	});
 	
 })
@@ -81,14 +128,14 @@ $( document ).ready(function() {
 	<td>&nbsp;</td>
 </tr>
 <tr>
-	<td class="screen" id="pi1">pi1</td>
-	<td class="screen" id="pi2">pi2</td>
-	<td class="screen" id="pi3">pi3</td>
-	<td class="screen" id="pi4">pi4</td>
-	<td class="screen" id="pi5">pi5</td>
-	<td class="screen" id="pi6">pi6</td>
-	<td class="screen" id="pi7">pi7</td>
-	<td class="screen" id="pi8">pi8</td>
+	<td class="screen off" id="pi1">pi1</td>
+	<td class="screen off" id="pi2">pi2</td>
+	<td class="screen off" id="pi3">pi3</td>
+	<td class="screen off" id="pi4">pi4</td>
+	<td class="screen off" id="pi5">pi5</td>
+	<td class="screen off" id="pi6">pi6</td>
+	<td class="screen off" id="pi7">pi7</td>
+	<td class="screen off" id="pi8">pi8</td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
@@ -102,35 +149,35 @@ $( document ).ready(function() {
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td class="screen" id="pilb">pilb</td>
+	<td class="screen off" id="pitlb">pilb</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td class="screen" id="pirb">pirb</td>
+	<td class="screen off" id="pitrb">pirb</td>
 	<td>&nbsp;</td>
 </tr>
 <tr>
-	<td class="screen" id="pill">pill</td>
+	<td class="screen off" id="pitll">pill</td>
 	<td>&nbsp;</td>
-	<td class="screen" id="pilr">pilr</td>
+	<td class="screen off" id="pitlr">pilr</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td class="screen" id="pirl">pirl</td>
+	<td class="screen off" id="pitrl">pirl</td>
 	<td>&nbsp;</td>
-	<td class="screen" id="pirr">pirr</td>
+	<td class="screen off" id="pitrr">pirr</td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td class="screen" id="pilf">pilf</td>
+	<td class="screen off" id="pitlf">pilf</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td class="screen" id="pirf">pirf</td>
+	<td class="screen off" id="pitrf">pirf</td>
 	<td>&nbsp;</td>
 </tr>
 </table>
