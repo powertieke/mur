@@ -205,6 +205,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			if data == '':
 				print("lostconnection to broken connection")
 				break
+			print(str(data))
 			message = data.decode("utf-8")
 		except:
 			print("lostconnection to error")
