@@ -17,7 +17,7 @@ def check_clients(socketdict):
 				removefromdict.append(pi)
 			else:
 				try:
-					pi[1] = clientSocket.recv(1024).decode('UTF-8')
+					socketdict[pi][1] = clientSocket.recv(1024).decode('UTF-8')
 				except:
 					removefromdict.append(pi)
 		for pi in removefromdict:

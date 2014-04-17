@@ -184,6 +184,7 @@ def stat(statsocket):
 	while True:
 		try:
 			message = statsocket.recv(1024).decode("utf-8")
+			print("Statsocket in : %s" % message)
 		except:
 			status = "-1"
 			print("Error on reading from statsocket. Closing.")
