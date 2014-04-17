@@ -206,7 +206,6 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 				print("lostconnection to broken connection")
 				break
 			message = data.decode("utf-8")
-			print("This just in: %s" % message)
 		except:
 			print("lostconnection to error")
 			break
@@ -221,12 +220,12 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			try:
 				connection.sendall(outgoing_to_controller.get(True, 15).encode('utf-8'))
 			except queue.Empty:
-				print("Response timed out.")
+				print("Response timed out on Player side.")
 				connection.settimeout(None)
 				clearqueue(outgoing_to_controller)
 				pass
 			except socket.timeout:
-				print("Response timed out.")
+				print("Response timed out while sending.")
 				connection.settimeout(None)
 				clearqueue(outgoing_to_controller)
 				pass
@@ -234,7 +233,7 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 				print("Something is wrong with the connection, will handle later")
 				connection.settimeout(None)
 				clearqueue(outgoing_to_controller)
-				pass
+				break
 			connection.settimeout(None)
 		elif playre.match(message):
 			moviefile = playre.match(message).group(1)
@@ -258,11 +257,8 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			shutdown()
 		elif message == "status":
 			connection.sendall(status.encode('utf-8'))
-			if status == "-1":
-				connection.close()
-				raise RuntimeError("Failed loading moviefile. Stopping")
 		elif message == '':
-			pass
+			break
 		else:
 			connection.sendall("error".encode('utf-8'))
 	
