@@ -220,19 +220,16 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 				print("Response timed out.")
 				connection.settimeout(None)
 				clearqueue(outgoing_to_controller)
-				clearqueue(incoming_from_controller)
 				pass
 			except socket.timeout:
 				print("Response timed out.")
 				connection.settimeout(None)
 				clearqueue(outgoing_to_controller)
-				clearqueue(incoming_from_controller)
 				pass
 			except socket.error:
 				print("Something is wrong with the connection, will handle later")
 				connection.settimeout(None)
 				clearqueue(outgoing_to_controller)
-				clearqueue(incoming_from_controller)
 				pass
 			connection.settimeout(None)
 		elif playre.match(message):
@@ -336,7 +333,6 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		else:
 			print("Got something else instead of go. Resuming normal play")
 			clearqueue(outgoing_to_controller)
-			clearqueue(incoming_from_controller)
 			try:
 				player.stop()
 				kill_all_omxplayers()
@@ -344,7 +340,6 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				pass
 	except queue.Empty:
 		clearqueue(outgoing_to_controller)
-		clearqueue(incoming_from_controller)
 		print("Timed Out while waiting for the go")
 		try:
 			player.stop()
@@ -353,7 +348,6 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 			pass
 	except UnboundLocalError:
 		clearqueue(outgoing_to_controller)
-		clearqueue(incoming_from_controller)
 		print("OMXplayer got killed before we got the go")
 		try:
 			player.stop()
