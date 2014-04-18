@@ -60,6 +60,11 @@ def webinterface(clients, udpport_sync, moviefolder, killqueue):
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif command == "status":
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
+		elif command == "quit_c":
+			putmessage(outpipe_path, json.dumps({"shutdown":True}))
+			while os.path.exists("/home/pi/mur/webpage/locked") :
+				time.sleep(0.2)
+			player.shutdown()
 		else:
 			# print(command)
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))

@@ -33,6 +33,7 @@ var syncmovies = [];
 var singlemovies = [];
 var screenstatus = [];
 var changed = {};
+var shutdown = {"shutdown":false};
 
 var stat = {
 	"-1" : "off",
@@ -62,10 +63,12 @@ function bindclickstoscreen(thescreen) {
 }
 
 function autoupdate() {
-	$.getJSON("communicate.py", {"command": "status"}).done(function( json ) {
-		screenstatus = json;
-	});
-	updatescreens();
+	while (shutdown["shutdown"] == false) {
+		$.getJSON("communicate.py", {"command": "status"}).done(function( json ) {
+			screenstatus = json;
+		});
+		updatescreens();
+	}
 }
 
 function updatescreens() {
@@ -112,13 +115,21 @@ $( document ).ready(function() {
 		});
 		updatescreens();
 	});
-	$("#shutdown").click(function () {
+	$("#shutdown_screens").click(function () {
 		$(this).fadeOut().fadeIn();
 		$.getJSON("communicate.py", {"command": "quit"}).done(function( json ) {
 			screenstatus = json;
 		});
 		updatescreens();
 	});
+	$("#shutdown_controller").click(function () {
+		$(this).fadeOut().fadeIn();
+		$.getJSON("communicate.py", {"command": "quit_c"}).done(function( json ) {
+			shutdown = json;
+		});
+		updatescreens();
+	});
+
 	setInterval(autoupdate, 1000);
 })
 
@@ -198,8 +209,8 @@ $( document ).ready(function() {
 </div>
 <div id="menu">
 <a href="javascript:void(0);" id="runsync">Run synced animation on all screens</a> <br />
-<a href="javascript:void(0);">blackout all screens</a> <br />
-<a href="javascript:void(0);" id="shutdown">shutdown </a> <br />
+<a href="javascript:void(0);" id="shutdown_screens">Shutdown screens</a> <br />
+<a href="javascript:void(0);" id="shutdown_controller">Shutdown controller</a> <br />
 </div>
 </body>
 </html>
