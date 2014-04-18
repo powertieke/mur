@@ -80,10 +80,21 @@ def show_splash_screen(image):
 	return subprocess.Popen(command, shell = True)
 	
 def get_duration(moviefile):
-	proc = subprocess.Popen('/usr/bin/mediainfo --Inform="General;%Duration%" "' + moviefile + '"', shell=True, stdout=subprocess.PIPE)
-	duration, rest = proc.communicate()
-	# print(duration)
-	duration = int(duration) * 1000
+	retry = 0
+	while True:
+		try:
+			proc = subprocess.Popen('/usr/bin/mediainfo --Inform="General;%Duration%" "' + moviefile + '"', shell=True, stdout=subprocess.PIPE)
+			duration, rest = proc.communicate()
+			# print(duration)
+			duration = int(duration) * 1000
+		except ValueError:
+			if retry < 2:
+				retry = retry + 1
+				time.sleep(0.5)
+			else:
+				reboot()
+		else:
+			break
 	return duration
 
 def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
