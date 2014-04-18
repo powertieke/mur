@@ -13,17 +13,18 @@ import json
 
 form = cgi.FieldStorage()
 
-while os.path.exists("locked") :
-	time.sleep(0.3)
-
-open("locked", "a")
-outpipe = open("fromwebapp", "w")
-outpipe.writelines(form["command"].value)
-outpipe.close()
-inpipe = open("towebapp", "r")
-response = inpipe.read()
-inpipe.close()
-print(response)
-
-
-os.remove("locked")
+if os.path.exists("running") :
+	while os.path.exists("locked") :
+		time.sleep(0.3)
+		
+	open("locked", "a")
+	outpipe = open("fromwebapp", "w")
+	outpipe.writelines(form["command"].value)
+	outpipe.close()
+	inpipe = open("towebapp", "r")
+	response = inpipe.read()
+	inpipe.close()
+	print(response)
+	os.remove("locked")
+else:
+	print(json.dumps(False))

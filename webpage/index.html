@@ -31,7 +31,7 @@ td.sync {
 var syncmovie = "run";
 var syncmovies = [];
 var singlemovies = [];
-var screenstatus = [];
+var screenstatus = false;
 var changed = {};
 var shutdown = {"shutdown":false};
 
@@ -72,26 +72,28 @@ function autoupdate() {
 }
 
 function updatescreens() {
-	$("td.screen").each(function(index) {
-		if ($(this).attr("id") in screenstatus) {
-			currentstatus = screenstatus[$(this).attr("id")];
-			if ($(this).hasClass(stat[currentstatus])) {
-				// Do the magic staythesamey
+	if (screenstatus == false) {
+		$("td.screen").each(function(index) {
+			if ($(this).attr("id") in screenstatus) {
+				currentstatus = screenstatus[$(this).attr("id")];
+				if ($(this).hasClass(stat[currentstatus])) {
+					// Do the magic staythesamey
+				} else {
+					for (key in stat) {
+						$(this).removeClass(stat[key]);
+					}
+					$(this).addClass(stat[currentstatus]);
+					bindclickstoscreen($(this));
+				}
 			} else {
 				for (key in stat) {
 					$(this).removeClass(stat[key]);
 				}
-				$(this).addClass(stat[currentstatus]);
+				$(this).addClass("off");
 				bindclickstoscreen($(this));
 			}
-		} else {
-			for (key in stat) {
-				$(this).removeClass(stat[key]);
-			}
-			$(this).addClass("off");
-			bindclickstoscreen($(this));
-		}
-	});
+		});
+	}
 }
 
 

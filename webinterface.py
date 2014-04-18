@@ -5,10 +5,19 @@ import re
 import os
 import json
 import queue
+import time
 
 def webinterface(clients, udpport_sync, moviefolder, killqueue):
 	inpipe_path = "/home/pi/mur/webpage/fromwebapp"
 	outpipe_path = "/home/pi/mur/webpage/towebapp"
+	lockfile_path = "/home/pi/mur/webpage/locked"
+	runningfile_path = "/home/pi/mur/webpage/running"
+	
+	if os.path.exists(lockfile_path):
+		os.remove(lockfile_path)
+	
+	if not os.path.exists(runningfile_path):
+		open(runningfile_path, "a")
 	
 	if not os.path.exists(inpipe_path):
 		os.mkfifo(inpipe_path)
@@ -62,8 +71,12 @@ def webinterface(clients, udpport_sync, moviefolder, killqueue):
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif command == "quit_c":
 			putmessage(outpipe_path, json.dumps({"shutdown":True}))
-			while os.path.exists("/home/pi/mur/webpage/locked") :
+			while os.path.exists(lockedfile_path) :
 				time.sleep(0.2)
+			if os.path.exists(runningfile_path) :
+				os.remove(runningfile_path)
+				
+			os.remove(runningfile_path)
 			player.shutdown()
 		else:
 			# print(command)
