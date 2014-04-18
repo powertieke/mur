@@ -72,7 +72,7 @@ function autoupdate() {
 }
 
 function updatescreens() {
-	if (screenstatus == false) {
+	if (screenstatus != false) {
 		$("td.screen").each(function(index) {
 			if ($(this).attr("id") in screenstatus) {
 				currentstatus = screenstatus[$(this).attr("id")];

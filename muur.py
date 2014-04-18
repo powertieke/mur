@@ -37,6 +37,13 @@ syncloops = {"clients": ["pi8", "pi1", "pitm"], "moviefile" : "Screen", "repeats
 
 def cleanup():
 	subprocess.call('sudo sh -c "TERM=linux setterm -cursor on >/dev/tty0"', shell=True)
+	if os.path.exists("/home/pi/mur/webpage/locked") :
+		os.remove("/home/pi/mur/webpage/locked")
+	if os.path.exists("/home/pi/mur/webpage/running") :
+		os.remove("/home/pi/mur/webpage/running")
+		
+	os.remove(runningfile_path)
+	
 	player.kill_all_omxplayers()
 	
 
