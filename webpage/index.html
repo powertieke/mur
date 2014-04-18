@@ -63,7 +63,7 @@ function bindclickstoscreen(thescreen) {
 }
 
 function autoupdate() {
-	while (shutdown["shutdown"] == false) {
+	if (shutdown["shutdown"] == false) {
 		$.getJSON("communicate.py", {"command": "status"}).done(function( json ) {
 			screenstatus = json;
 		});
