@@ -73,7 +73,7 @@ def webinterface(clients, udpport_sync, moviefolder, killqueue):
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif command == "quit_c":
 			putmessage(outpipe_path, json.dumps({"shutdown":True}))
-			while os.path.exists(lockedfile_path) :
+			while os.path.exists(lockfile_path) :
 				time.sleep(0.2)
 			if os.path.exists(runningfile_path) :
 				os.remove(runningfile_path)
