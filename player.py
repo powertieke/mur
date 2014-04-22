@@ -195,11 +195,18 @@ def stat(statsocket):
 	global status
 	while True:
 		try:
+			statsocket.settimeout(5)
 			message = statsocket.recv(1024).decode("utf-8")
 			# print("Statsocket in : %s" % message)
+			statsocket.settimeout(None)
 		except socket.error:
 			status = "-1"
 			# print("Error on reading from statsocket. Closing.")
+			statsocket.close()
+			break
+		except socket.timeout:
+			status = "-1"
+			# print("Timeout on reading from statsocket. Closing.")
 			statsocket.close()
 			break
 		try:
@@ -209,6 +216,12 @@ def stat(statsocket):
 			# print("Error on writing to statsocket. Closing")
 			statsocket.close()
 			break
+		if message == b'':
+			status = "-1"
+			# print("Timeout on reading from statsocket. Closing.")
+			statsocket.close()
+			break
+			
 
 def controller(incoming_from_controller, outgoing_to_controller, connection, udpport_sync, udpport_discovery, tcpport, statport, clientname):
 	syncre = re.compile(r'^sync:(.*)$')

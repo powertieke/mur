@@ -14,7 +14,19 @@ import queue
 def listener(port, outqueue):
 	"""Listens for incoming TCP connection requests and returns the connection"""
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	s.bind(("", port))
+	retry = 0
+	while True:
+		try:
+			s.bind(("", port))
+		except socket.error:
+			if retry < 2:
+				retry = retry + 1
+				time.sleep(5)
+			else:
+				raise RuntimeError("Unable to create socket on port %s" % port)
+		else:
+			break
+	
 	s.listen(1)
 	conn, addr = s.accept()
 	conn.recv(1024)
