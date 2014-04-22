@@ -74,11 +74,11 @@ def webinterface(clients, udpport_sync, moviefolder, killqueue):
 		elif command == "quit_c":
 			putmessage(outpipe_path, json.dumps({"shutdown":True}))
 			while os.path.exists(lockfile_path) :
-				time.sleep(0.2)
+				time.sleep(0.1)
 			if os.path.exists(runningfile_path) :
 				os.remove(runningfile_path)
 				
-			os.remove(runningfile_path)
+			# os.remove(runningfile_path)
 			player.shutdown()
 		else:
 			# print(command)
