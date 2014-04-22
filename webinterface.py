@@ -6,6 +6,8 @@ import os
 import json
 import queue
 import time
+import subprocess
+import player
 
 def webinterface(clients, udpport_sync, moviefolder, killqueue):
 	inpipe_path = "/home/pi/mur/webpage/fromwebapp"
