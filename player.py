@@ -196,7 +196,8 @@ def stat(statsocket):
 	while True:
 		try:
 			statsocket.settimeout(5)
-			message = statsocket.recv(1024).decode("utf-8")
+			data = statsocket.recv(1024)
+			message = data.decode("utf-8")
 			# print("Statsocket in : %s" % message)
 			statsocket.settimeout(None)
 		except socket.error:
@@ -216,7 +217,7 @@ def stat(statsocket):
 			# print("Error on writing to statsocket. Closing")
 			statsocket.close()
 			break
-		if message == b'':
+		if data == b'':
 			status = "-1"
 			# print("Timeout on reading from statsocket. Closing.")
 			statsocket.close()
