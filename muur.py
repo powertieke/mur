@@ -8,6 +8,7 @@ import socket
 import pprint
 import queue
 import time
+import subprocess
 
 import player
 import client
