@@ -42,7 +42,6 @@ def cleanup():
 	if os.path.exists("/home/pi/mur/webpage/running") :
 		os.remove("/home/pi/mur/webpage/running")
 		
-	os.remove(runningfile_path)
 	
 	player.kill_all_omxplayers()
 	
@@ -75,6 +74,7 @@ def main():
 	# pprint.pprint(args)
 	
 	if args.master :
+		cleanup() # Remove all of the crap left behind after the reboot
 		foundclients = clientfinder.clientfinder(udpport_discovery, tcpport, statport) # Listens to discovery broadcasts from unconnected pi's in the same network and sets up a control connection over TCP.
 		# interface.interface(foundclients, udpport_sync, args.moviepath)
 		controller.startSyncLoop(syncloops, foundclients, udpport_sync, killqueue)
