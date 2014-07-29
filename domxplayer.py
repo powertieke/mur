@@ -5,19 +5,35 @@ import threading
 import subprocess
 import time
 import uuid
+import queue
 
+class PlayerProcessThread(threading.Thread):
+	def __init__(self, parent, name='playerThread'):
+		threading.Thread.__init__(self, name=name)
+		self.parent = parent
+	def run(self):
+		position_loop(self.parent)
+
+def player_process(parent):
+	subprocess.call("omxplayer %s --dbus_name %s" % (parent.moviefile, parent.dbusname), shell=True)
+	if parent.stopped == false:
+		parent.outQueue.put("localend")
+	
 class OMXPlayer(object):
-	def __init__(self, moviefile):
+	def __init__(self, moviefile, outQueue, parent):
 		self.paused = False
 		self.moviefile = moviefile
 		self.dbusname
 		self.dbusIfaceProp
 		self.dbusIfaceKey
+		self.outQueue
+		self.stopped = False
 		self.overshoot = 32000 # very inscientifically defined delay when pause() is called
 		self.go()
 		
 	def go(self):
-		subprocess.Popen("omxplayer %s --dbus_name %s" % (self.moviefile, self.dbusname), shell=True)
+		playerProcessThread = PlayerProcessThread(self)
+		PlayerProcessThread.start()
 		omxplayerdbus = open('/tmp/omxplayerdbus').read().strip()
 		bus = dbus.bus.BusConnection(omxplayerdbus)
 		# Trying to make a connection to the dbus. Fail until ready.
@@ -43,6 +59,10 @@ class OMXPlayer(object):
 		
 	def generate_dbusname(self):
 		self.dbusname = "org.mpris.MediaPlayer2.omxplayer" + str(uuid.uuid4())
+	
+	def stop(self):
+		self.stopped = True
+		self.dbusIfaceKey.stop()
 		
 	def toggle_pause(self):
 		self.dbusIfaceKey.pause()
