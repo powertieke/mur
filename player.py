@@ -66,7 +66,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], incoming_from_controller)
 	while True: ## Main movie playing loop - Listens on incoming_from_controller queue
 		message = incoming_from_controller.get() # Wait for currently playing movie to end or for an incoming servermessage
-		if message == ("end" or "localend":
+		if message == ("end" or "localend"):
 			status = "0"
 			playlist[nextmovieindex][1].toggle_pause() #play next movie
 			if i == 0:
