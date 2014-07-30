@@ -16,7 +16,7 @@ class PlayerProcessThread(threading.Thread):
 
 def player_process(parent):
 	print("DBUSNAME = " + parent.dbusname)
-	subprocess.call("omxplayer %s --dbus_name %s" % (parent.moviefile, parent.dbusname), shell=True)
+	subprocess.call("omxplayer %s --dbus_name '%s'" % (parent.moviefile, parent.dbusname), shell=True)
 	if parent.stopped == False:
 		parent.outQueue.put("localend")
 	
