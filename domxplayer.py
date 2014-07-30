@@ -20,7 +20,7 @@ def player_process(parent):
 		parent.outQueue.put("localend")
 	
 class OMXPlayer(object):
-	def __init__(self, moviefile, outQueue, parent):
+	def __init__(self, moviefile, outQueue):
 		self.paused = False
 		self.moviefile = moviefile
 		self.dbusname
