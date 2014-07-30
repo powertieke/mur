@@ -65,7 +65,7 @@ class OMXPlayer(object):
 		
 		
 	def generate_dbusname(self):
-		self.dbusname = "org.mpris.MediaPlayer2.omxplayer" + str(uuid.uuid4())
+		return("org.mpris.MediaPlayer2.omxplayer" + str(uuid.uuid4()))
 	
 	def stop(self):
 		self.stopped = True
