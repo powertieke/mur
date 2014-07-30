@@ -12,7 +12,7 @@ class PlayerProcessThread(threading.Thread):
 		threading.Thread.__init__(self, name=name)
 		self.parent = parent
 	def run(self):
-		position_loop(self.parent)
+		player_process(self.parent)
 
 def player_process(parent):
 	subprocess.call("omxplayer %s --dbus_name %s" % (parent.moviefile, parent.dbusname), shell=True)
