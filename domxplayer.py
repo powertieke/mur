@@ -39,10 +39,12 @@ class OMXPlayer(object):
 			try:
 				omxplayerdbus = open('/tmp/omxplayerdbus').read().strip()
 				break
-			except IOError:
+			except:
 				pass
-			
+		
+		print("OMXPLAYERDBUS = " + omxplayerdbus)	
 		bus = dbus.bus.BusConnection(omxplayerdbus)
+		
 		# Trying to make a connection to the dbus. Fail until ready.
 		while True:
 			try:
