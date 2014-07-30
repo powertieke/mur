@@ -23,10 +23,10 @@ class OMXPlayer(object):
 	def __init__(self, moviefile, outQueue):
 		self.paused = False
 		self.moviefile = moviefile
-		self.dbusname
-		self.dbusIfaceProp
-		self.dbusIfaceKey
-		self.outQueue
+		self.dbusname = self.generate_dbusname()
+		self.dbusIfaceProp = None
+		self.dbusIfaceKey = None
+		self.outQueue = outQueue
 		self.stopped = False
 		self.overshoot = 32000 # very inscientifically defined delay when pause() is called
 		self.go()
