@@ -33,7 +33,7 @@ class OMXPlayer(object):
 		
 	def go(self):
 		playerProcessThread = PlayerProcessThread(self)
-		PlayerProcessThread.start()
+		playerProcessThread.start()
 		omxplayerdbus = open('/tmp/omxplayerdbus').read().strip()
 		bus = dbus.bus.BusConnection(omxplayerdbus)
 		# Trying to make a connection to the dbus. Fail until ready.
