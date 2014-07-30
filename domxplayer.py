@@ -72,10 +72,10 @@ class OMXPlayer(object):
 	
 	def stop(self):
 		self.stopped = True
-		self.dbusIfaceKey.stop()
+		self.dbusIfaceKey.Stop()
 		
 	def toggle_pause(self):
-		self.dbusIfaceKey.pause()
+		self.dbusIfaceKey.Pause()
 		self.paused = not self.paused
 		
 	def get_position(self):
