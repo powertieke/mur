@@ -3,6 +3,7 @@
 import sys
 import os
 import pyomxplayer
+import domxplayer
 import threading
 import collections
 import glob
