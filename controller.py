@@ -139,7 +139,7 @@ def play_sync(moviefile, clients, UDPPort_sync, killqueue):
 	waitforitqueue = queue.Queue()
 	syncmessage = queue.Queue()
 	syncqueue = queue.Queue()
-	syncplayer = player.ready_player(moviefile + ".mp4", syncqueue, player.get_duration(moviefile + ".mp4"))
+	syncplayer = player.ready_player(moviefile + ".mp4", syncqueue)
 	# print(clients)
 	for client in clients:
 		waitforitqueue.put(True)
@@ -164,7 +164,7 @@ def play_sync(moviefile, clients, UDPPort_sync, killqueue):
 			syncmessage.put(msg)
 			break
 		except queue.Empty:
-			syncmessage.put(syncplayer.position)
+			syncmessage.put(syncplayer.get_position())
 		else:
 			break
 	for client in clients.keys():

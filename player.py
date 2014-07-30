@@ -63,10 +63,12 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	nextmovieindex = 1
 	playlist[i][1] = ready_player(playlist[i][0], incoming_from_controller)
 	playlist[i][1].toggle_pause()
+	playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], incoming_from_controller)
 	while True: ## Main movie playing loop - Listens on incoming_from_controller queue
 		message = incoming_from_controller.get() # Wait for currently playing movie to end or for an incoming servermessage
-		if message == "end":
+		if message == ("end" or "localend":
 			status = "0"
+			playlist[nextmovieindex][1].toggle_pause() #play next movie
 			if i == 0:
 				nextmovieindex = 1
 			elif i == len(playlist) - 1:
@@ -79,12 +81,6 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			except:
 				pass
 			playlist[i][1] = None
-			try:
-				kill_all_omxplayers()
-			except:
-				pass
-			playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], incoming_from_controller, playlist[nextmovieindex][2])
-			playlist[nextmovieindex][1].toggle_pause() #play next movie
 			i = nextmovieindex
 		elif message == "status":
 			outgoing_to_controller.put(status)
@@ -109,6 +105,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 				pass
 				
 			play_synced_movie(message[1], incoming_from_controller, outgoing_to_controller, udpport_sync, clientname)
+			playlist[nextmovieindex][1].toggle_pause() #play next movie
 			i = nextmovieindex
 		elif message[0] == "play":
 			status = "2"
@@ -260,9 +257,9 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 	syncThread.start()
 	
 	if os.path.exists(moviefile + clientname + ".mp4"):
-		player = ready_player(moviefile + clientname + ".mp4", syncqueue, get_duration(moviefile + clientname + ".mp4"))
+		player = ready_player(moviefile + clientname + ".mp4", syncqueue)
 	elif os.path.exists(moviefile + ".mp4"):
-		player = ready_player(moviefile + ".mp4", syncqueue, get_duration(moviefile + ".mp4"))
+		player = ready_player(moviefile + ".mp4", syncqueue)
 		
 	while syncqueue.empty() == False:
 		syncqueue.get()
@@ -282,20 +279,14 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				# print(syncmessage)
 				if (syncmessage == "end") or (syncmessage == "go"):
 					player.stop()
-					try:
-						kill_all_omxplayers()
-					except:
-						pass
-					
-					# incoming_from_controller.put("end")
 					break
 				elif insync > 6:
 					pass # Stayed in sync for three seconds
 					masterposition = float(syncmessage)
-					localposition = player.position
+					localposition = player.get_position()
 				else:
 					masterposition = float(syncmessage)
-					localposition = player.position
+					localposition = player.get_position()
 					syncqueue.put(True)
 					if masterposition + tolerance < localposition:
 						adjustment = (localposition - masterposition) / 1000000.
@@ -325,7 +316,6 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 			clearqueue(outgoing_to_controller)
 			try:
 				player.stop()
-				kill_all_omxplayers()
 			except:
 				pass
 	except queue.Empty:
@@ -333,7 +323,6 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		# print("Timed Out while waiting for the go")
 		try:
 			player.stop()
-			kill_all_omxplayers()
 		except:
 			pass
 	except UnboundLocalError:
@@ -341,7 +330,6 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		# print("OMXplayer got killed before we got the go")
 		try:
 			player.stop()
-			kill_all_omxplayers()
 		except:
 			pass
 	killsyncqueue.put(True)
