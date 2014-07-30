@@ -38,7 +38,8 @@ class OMXPlayer(object):
 		while True:
 			try:
 				omxplayerdbus = open('/tmp/omxplayerdbus').read().strip()
-				break
+				if omxplayerdbus != "":
+					break
 			except:
 				pass
 		
