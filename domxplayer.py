@@ -18,7 +18,6 @@ def kill_process(parent):
 	time.sleep((parent.get_duration()/1000000)-0.3)
 	try:
 		parent.stop()
-		self.outQueue.put("end")
 	except:
 		pass
 
@@ -35,8 +34,8 @@ def player_process(parent):
 	print(parent.stopped)
 	if parent.stopped == False:
 		parent.stopped = True
-		print("I got trough to the end")
-		parent.outQueue.put("end")
+	print("I got trough to the end")
+	parent.outQueue.put("end")
 	
 class OMXPlayer(object):
 	def __init__(self, moviefile, outQueue):
