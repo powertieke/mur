@@ -85,8 +85,8 @@ class OMXPlayer(object):
 		delay = (-self.get_position() - self.overshoot)/1000000
 		time.sleep(delay)
 		self.toggle_pause()
-		killProcessOnStallThread = KillProcessOnStallThread(self)
-		killProcessOnStallThread.start()
+		## killProcessOnStallThread = KillProcessOnStallThread(self)
+		## killProcessOnStallThread.start()
 		
 		
 	def generate_dbusname(self):
