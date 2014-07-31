@@ -18,6 +18,7 @@ def kill_process(parent):
 	time.sleep((parent.get_duration()/1000000)-0.3)
 	try:
 		parent.stop()
+		parent.outQueue.put("end")
 	except:
 		pass
 
@@ -34,8 +35,8 @@ def player_process(parent):
 	print(parent.stopped)
 	if parent.stopped == False:
 		parent.stopped = True
-	print("I got trough to the end")
-	parent.outQueue.put("end")
+		print("I got trough to the end")
+		parent.outQueue.put("end")
 	
 class OMXPlayer(object):
 	def __init__(self, moviefile, outQueue):
@@ -96,8 +97,13 @@ class OMXPlayer(object):
 		self.dbusIfaceKey.Stop()
 		
 	def toggle_pause(self):
-		self.dbusIfaceKey.Pause()
-		self.paused = not self.paused
+		try:
+			self.dbusIfaceKey.Pause()
+			self.paused = not self.paused
+		except:
+			if self.stopped:
+				pass
+		
 		
 	def get_position(self):
 		return self.dbusIfaceProp.Position()
