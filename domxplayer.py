@@ -17,6 +17,7 @@ class KillProcessOnStallThread(threading.Thread):
 def kill_process(parent):
 	time.sleep(parent.get_duration()/1000000)
 	try:
+		self.outQueue.put("localend")
 		parent.stop()
 	except:
 		pass
