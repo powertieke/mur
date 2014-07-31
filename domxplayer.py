@@ -15,10 +15,10 @@ class KillProcessOnStallThread(threading.Thread):
 		kill_process(self.parent)
 		
 def kill_process(parent):
-	time.sleep(parent.get_duration()/1000000)
+	time.sleep((parent.get_duration()/1000000)-0.3)
 	try:
-		self.outQueue.put("end")
 		parent.stop()
+		self.outQueue.put("end")
 	except:
 		pass
 
