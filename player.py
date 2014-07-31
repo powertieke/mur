@@ -79,10 +79,6 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			else:
 				nextmovieindex = i + 1
 			
-			try:
-				playlist[i][1].stop()
-			except:
-				pass
 			playlist[i][1] = None
 			i = nextmovieindex
 		elif message == "status":
