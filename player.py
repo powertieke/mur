@@ -68,7 +68,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 	while True: ## Main movie playing loop - Listens on incoming_from_controller queue
 		message = incoming_from_controller.get() # Wait for currently playing movie to end or for an incoming servermessage
 		if message == "end":
-			print("I ARE ENDED")
+			# print("I ARE ENDED")
 			status = "0"
 			if not playlist[i][1].stopped:
 				playlist[i][1].stop()

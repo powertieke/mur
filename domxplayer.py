@@ -31,14 +31,13 @@ class PlayerProcessThread(threading.Thread):
 		player_process(self.parent)
 
 def player_process(parent):
-	print("DBUSNAME = " + parent.dbusname)
+	## print("DBUSNAME = " + parent.dbusname)
 	retcode = subprocess.call(["/usr/bin/omxplayer", "-o", "hdmi", parent.moviefile, "--dbus_name", parent.dbusname, "--win", '"0 0 1919 1079"', "--no-osd"], stdout=open(os.devnull, 'wb'), shell=False)
 	if retcode != 0:
 		print(retcode)
-	print(parent.stopped)
 	if parent.stopped == False:
 		parent.stopped = True
-		print("I got trough to the end")
+		## print("I got trough to the end")
 		parent.outQueue.put("end")
 	
 class OMXPlayer(object):
@@ -64,7 +63,7 @@ class OMXPlayer(object):
 			except:
 				pass
 		
-		print("OMXPLAYERDBUS = " + omxplayerdbus)	
+		## print("OMXPLAYERDBUS = " + omxplayerdbus)	
 		bus = dbus.bus.BusConnection(omxplayerdbus)
 		
 		# Trying to make a connection to the dbus. Fail until ready.
