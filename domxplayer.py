@@ -31,7 +31,7 @@ class PlayerProcessThread(threading.Thread):
 
 def player_process(parent):
 	print("DBUSNAME = " + parent.dbusname)
-	subprocess.call("/usr/bin/omxplayer -o hdmi %s --dbus_name %s --win 0 0 1919 1079" % (parent.moviefile, parent.dbusname), shell=False)
+	subprocess.call(["/usr/bin/omxplayer", "-o", "hdmi", parent.moviefile, "--dbus_name", parent.dbusname, "--win", "0", "0", "1919", "1079"], shell=False)
 	print(parent.stopped)
 	if parent.stopped == False:
 		parent.stopped = True
