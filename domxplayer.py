@@ -6,6 +6,7 @@ import subprocess
 import time
 import uuid
 import queue
+import os
 
 class KillProcessOnStallThread(threading.Thread):
 	def __init__(self, parent, name="Diewhendone"):
@@ -31,7 +32,9 @@ class PlayerProcessThread(threading.Thread):
 
 def player_process(parent):
 	print("DBUSNAME = " + parent.dbusname)
-	subprocess.call(["/usr/bin/omxplayer", "-o", "hdmi", parent.moviefile, "--dbus_name", parent.dbusname, "--win", "0", "0", "1919", "1079"], shell=False)
+	retcode = subprocess.call(["/usr/bin/omxplayer", "-o", "hdmi", parent.moviefile, "--dbus_name", parent.dbusname, "--win", '"0 0 1919 1079"', "--no-osd"], stdout=open(os.devnull, 'wb'), shell=False)
+	if retcode != 0:
+		print(retcode)
 	print(parent.stopped)
 	if parent.stopped == False:
 		parent.stopped = True
@@ -97,6 +100,7 @@ class OMXPlayer(object):
 	
 	def stop(self):
 		self.stopped = True
+		print("Stop called")
 		self.dbusIfaceKey.Stop()
 		
 	def toggle_pause(self):
