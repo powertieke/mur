@@ -77,14 +77,17 @@ class OMXPlayer(object):
 		self.dbusIfaceKey = dbus.Interface(dbusobject, 'org.mpris.MediaPlayer2.Player')
 		
 		# position will hang on 0 for a moment. Check until value changes.
-		startpos = self.get_position()
-		while True:
-			if startpos != self.get_position():
-				break
+		try:
+			startpos = self.get_position()
+			while True:
+				if startpos != self.get_position():
+					break
 		# Try to get as close to pts 0 as possible. Try to guess when we need to press pause.
-		delay = (-self.get_position() - self.overshoot)/1000000
-		time.sleep(delay)
-		self.toggle_pause()
+			delay = (-self.get_position() - self.overshoot)/1000000
+			time.sleep(delay)
+			self.toggle_pause()
+		except:
+			pass
 		## killProcessOnStallThread = KillProcessOnStallThread(self)
 		## killProcessOnStallThread.start()
 		
@@ -107,7 +110,7 @@ class OMXPlayer(object):
 		
 	def get_position(self):
 		return self.dbusIfaceProp.Position()
-		
+			
 	def get_duration(self): 
 		return self.dbusIfaceProp.Duration()
 		
