@@ -61,6 +61,8 @@ class OMXPlayer(object):
 				if omxplayerdbus != "":
 					break
 			except:
+				if self.stopped:
+					break
 				pass
 		
 		## print("OMXPLAYERDBUS = " + omxplayerdbus)	
