@@ -68,6 +68,8 @@ class OMXPlayer(object):
 				dbusobject = bus.get_object(self.dbusname, '/org/mpris/MediaPlayer2', introspect=False)
 				break
 			except:
+				if self.stopped:
+					break
 				pass
 		self.dbusIfaceProp = dbus.Interface(dbusobject, 'org.freedesktop.DBus.Properties')
 		self.dbusIfaceKey = dbus.Interface(dbusobject, 'org.mpris.MediaPlayer2.Player')
