@@ -18,7 +18,7 @@ def kill_process(parent):
 	time.sleep(parent.get_duration()/1000000)
 	try:
 		parent.stop()
-	else:
+	except:
 		pass
 
 class PlayerProcessThread(threading.Thread):
