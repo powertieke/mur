@@ -7,6 +7,20 @@ import time
 import uuid
 import queue
 
+class KillProcessOnStallThread(threading.Thread):
+	def __init__(self, parent, name="Diewhendone"):
+		threading.Thread.__init__(self, name=name)
+		self.parent = parent
+	def run(self):
+		kill_process(self.parent)
+		
+def kill_process(parent):
+	time.sleep(parent.get_duration()/1000000)
+	try:
+		parent.stop()
+	else:
+		pass
+
 class PlayerProcessThread(threading.Thread):
 	def __init__(self, parent, name='playerThread'):
 		threading.Thread.__init__(self, name=name)
@@ -18,6 +32,7 @@ def player_process(parent):
 	print("DBUSNAME = " + parent.dbusname)
 	subprocess.call("omxplayer -o hdmi %s --dbus_name '%s'" % (parent.moviefile, parent.dbusname), shell=True)
 	if parent.stopped == False:
+		print("I got trough to the end")
 		parent.outQueue.put("localend")
 	
 class OMXPlayer(object):
@@ -65,6 +80,8 @@ class OMXPlayer(object):
 		delay = (-self.get_position() - self.overshoot)/1000000
 		time.sleep(delay)
 		self.toggle_pause()
+		killProcessOnStallThread = KillProcessOnStallThread(self)
+		killProcessOnStallThread.start()
 		
 		
 	def generate_dbusname(self):
