@@ -70,15 +70,16 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 		if message == "end":
 			print("I ARE ENDED")
 			status = "0"
-			playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], incoming_from_controller)
-			playlist[nextmovieindex][1].toggle_pause() #play next movie
 			if i == 0:
 				nextmovieindex = 1
 			elif i == len(playlist) - 1:
 				nextmovieindex = 0
 			else:
 				nextmovieindex = i + 1
-			
+			playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], incoming_from_controller)
+			playlist[nextmovieindex][1].toggle_pause() #play next movie
+			if not playlist[i][1].stopped:
+				playlist[i][1].stop()
 			playlist[i][1] = None
 			i = nextmovieindex
 		elif message == "status":

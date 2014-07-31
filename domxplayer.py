@@ -34,6 +34,7 @@ def player_process(parent):
 	subprocess.call("sudo omxplayer -o hdmi %s --dbus_name %s --win 0 0 1919 1079" % (parent.moviefile, parent.dbusname), shell=True, executable="/bin/bash")
 	print(parent.stopped)
 	if parent.stopped == False:
+		parent.stopped = True
 		print("I got trough to the end")
 		parent.outQueue.put("end")
 	
