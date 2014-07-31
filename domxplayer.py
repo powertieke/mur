@@ -17,7 +17,7 @@ class KillProcessOnStallThread(threading.Thread):
 def kill_process(parent):
 	time.sleep(parent.get_duration()/1000000)
 	try:
-		self.outQueue.put("localend")
+		self.outQueue.put("end")
 		parent.stop()
 	except:
 		pass
@@ -34,7 +34,7 @@ def player_process(parent):
 	subprocess.call("omxplayer -o hdmi %s --dbus_name '%s'" % (parent.moviefile, parent.dbusname), shell=True, executable="/bin/bash")
 	if parent.stopped == False:
 		print("I got trough to the end")
-		parent.outQueue.put("localend")
+		parent.outQueue.put("end")
 	
 class OMXPlayer(object):
 	def __init__(self, moviefile, outQueue):
