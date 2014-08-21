@@ -53,6 +53,7 @@ class OMXPlayer(object):
 	def go(self):
 		playerProcessThread = PlayerProcessThread(self)
 		playerProcessThread.start()
+		print("Started process")
 		while True:
 			try:
 				omxplayerdbus = open('/tmp/omxplayerdbus').read().strip()
@@ -65,6 +66,7 @@ class OMXPlayer(object):
 		
 		## print("OMXPLAYERDBUS = " + omxplayerdbus)	
 		if not self.stopped:
+			print("Opening busconnection")
 			bus = dbus.bus.BusConnection(omxplayerdbus)
 		
 			# Trying to make a connection to the dbus. Fail until ready.
@@ -76,20 +78,27 @@ class OMXPlayer(object):
 					break
 				except:
 					if self.stopped:
+						print("Stopped at dbusloop")
 						break
+						
 					pass
 		
 		# position will hang on 0 for a moment. Check until value changes.
 		if not self.stopped:
+			print("Starting loop to get to zero.")
 			try:
 				startpos = self.get_position()
 				while True:
+					if self.stopped:
+						print("Stopped while getting start position")
+						break
 					if startpos != self.get_position():
 						break
 			# Try to get as close to pts 0 as possible. Try to guess when we need to press pause.
-				delay = (-self.get_position() - self.overshoot)/1000000
-				time.sleep(delay)
-				self.toggle_pause()
+				if not self.stopped:
+					delay = (-self.get_position() - self.overshoot)/1000000
+					time.sleep(delay)
+					self.toggle_pause()
 			except:
 				pass
 			## killProcessOnStallThread = KillProcessOnStallThread(self)
