@@ -103,6 +103,7 @@ class OMXPlayer(object):
 					delay = (-self.get_position() - self.overshoot)/1000000
 					time.sleep(delay)
 					self.toggle_pause()
+					print("Hit pause")
 			except:
 				pass
 			## killProcessOnStallThread = KillProcessOnStallThread(self)
