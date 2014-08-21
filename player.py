@@ -83,7 +83,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 				playlist[i][1].stop()
 			playlist[i][1] = None
 			playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], incoming_from_controller)
-			 playlist[nextmovieindex][1].toggle_pause() #play next movie
+			playlist[nextmovieindex][1].toggle_pause() #play next movie
 			i = nextmovieindex
 			if i == 0:
 				nextmovieindex = 1
