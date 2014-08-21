@@ -32,8 +32,17 @@ def kill_all_omxplayers():
 	subprocess.call("sudo killall omxplayer omxplayer.bin 2>>  /dev/null", shell=True)
 
 def ready_player(moviefile, stopqueue):
-	player = domxplayer.OMXPlayer(moviefile, stopqueue)
-	return player
+	if os.path.isfile(moviefile):
+		player = domxplayer.OMXPlayer(moviefile, stopqueue)
+		return player
+	elif os.path.isfile('/dev/sda1'):
+		subprocess.call("mount -t vfat /dev/sda1 /media/usb")
+		player = domxplayer.OMXPlayer(moviefile, stopqueue)
+		return player
+	else:
+		print("Lost connection to USB device. Rebooting and hope for the best.")
+		reboot()
+		
 
 def show_splash_screen(image):
 	command = "fbi \"%s\"" % image
@@ -74,7 +83,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 				playlist[i][1].stop()
 			playlist[i][1] = None
 			playlist[nextmovieindex][1] = ready_player(playlist[nextmovieindex][0], incoming_from_controller)
-			playlist[nextmovieindex][1].toggle_pause() #play next movie
+			 playlist[nextmovieindex][1].toggle_pause() #play next movie
 			i = nextmovieindex
 			if i == 0:
 				nextmovieindex = 1

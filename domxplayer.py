@@ -35,10 +35,8 @@ def player_process(parent):
 	retcode = subprocess.call(["/usr/bin/omxplayer", "-o", "hdmi", parent.moviefile, "--dbus_name", parent.dbusname, "--win", '"0 0 1919 1079"', "--no-osd"], stdout=open(os.devnull, 'wb'), shell=False)
 	if retcode != 0:
 		print(retcode)
-	if parent.stopped == False:
-		parent.stopped = True
-		## print("I got trough to the end")
-		parent.outQueue.put("end")
+	parent.stopped = True
+	parent.outQueue.put("end")
 	
 class OMXPlayer(object):
 	def __init__(self, moviefile, outQueue):
@@ -66,41 +64,42 @@ class OMXPlayer(object):
 				pass
 		
 		## print("OMXPLAYERDBUS = " + omxplayerdbus)	
-		bus = dbus.bus.BusConnection(omxplayerdbus)
+		if not self.stopped:
+			bus = dbus.bus.BusConnection(omxplayerdbus)
 		
-		# Trying to make a connection to the dbus. Fail until ready.
-		while True:
-			try:
-				dbusobject = bus.get_object(self.dbusname, '/org/mpris/MediaPlayer2', introspect=False)
-				self.dbusIfaceProp = dbus.Interface(dbusobject, 'org.freedesktop.DBus.Properties')
-				self.dbusIfaceKey = dbus.Interface(dbusobject, 'org.mpris.MediaPlayer2.Player')
-				break
-			except:
-				if self.stopped:
+			# Trying to make a connection to the dbus. Fail until ready.
+			while True:
+				try:
+					dbusobject = bus.get_object(self.dbusname, '/org/mpris/MediaPlayer2', introspect=False)
+					self.dbusIfaceProp = dbus.Interface(dbusobject, 'org.freedesktop.DBus.Properties')
+					self.dbusIfaceKey = dbus.Interface(dbusobject, 'org.mpris.MediaPlayer2.Player')
 					break
-				pass
+				except:
+					if self.stopped:
+						break
+					pass
 		
 		# position will hang on 0 for a moment. Check until value changes.
-		try:
-			startpos = self.get_position()
-			while True:
-				if startpos != self.get_position():
-					break
-		# Try to get as close to pts 0 as possible. Try to guess when we need to press pause.
-			delay = (-self.get_position() - self.overshoot)/1000000
-			time.sleep(delay)
-			self.toggle_pause()
-		except:
-			pass
-		## killProcessOnStallThread = KillProcessOnStallThread(self)
-		## killProcessOnStallThread.start()
+		if not self.stopped:
+			try:
+				startpos = self.get_position()
+				while True:
+					if startpos != self.get_position():
+						break
+			# Try to get as close to pts 0 as possible. Try to guess when we need to press pause.
+				delay = (-self.get_position() - self.overshoot)/1000000
+				time.sleep(delay)
+				self.toggle_pause()
+			except:
+				pass
+			## killProcessOnStallThread = KillProcessOnStallThread(self)
+			## killProcessOnStallThread.start()
 		
 		
 	def generate_dbusname(self):
 		return("org.mpris.MediaPlayer2.omxplayer" + str(uuid.uuid4()))
 	
 	def stop(self):
-		self.stopped = True
 		print("Stop called")
 		self.dbusIfaceKey.Stop()
 		
@@ -114,7 +113,10 @@ class OMXPlayer(object):
 		
 		
 	def get_position(self):
-		return self.dbusIfaceProp.Position()
+		if not self.stopped:
+			return self.dbusIfaceProp.Position()
+		else:
+			return "end"
 			
 	def get_duration(self): 
 		return self.dbusIfaceProp.Duration()
