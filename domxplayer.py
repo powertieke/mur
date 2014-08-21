@@ -32,9 +32,13 @@ class PlayerProcessThread(threading.Thread):
 
 def player_process(parent):
 	## print("DBUSNAME = " + parent.dbusname)
-	retcode = subprocess.call(["/usr/bin/omxplayer", "-o", "hdmi", parent.moviefile, "--dbus_name", parent.dbusname, "--win", '"0 0 1919 1079"', "--no-osd"], stdout=open(os.devnull, 'wb'), shell=False)
-	if retcode != 0:
-		print(retcode)
+	try:
+		retcode = subprocess.call(["/usr/bin/omxplayer", "-o", "hdmi", parent.moviefile, "--dbus_name", parent.dbusname, "--win", '"0 0 1919 1079"', "--no-osd"], stdout=open(os.devnull, 'wb'), shell=False)
+		if retcode != 0:
+			print(retcode)
+	except:
+		pass
+	print("Process stopped!")
 	parent.stopped = True
 	parent.outQueue.put("end")
 	
@@ -88,7 +92,7 @@ class OMXPlayer(object):
 			print("Starting loop to get to zero.")
 			try:
 				startpos = self.get_position()
-				while True:
+				while startpos != "end":
 					if self.stopped:
 						print("Stopped while getting start position")
 						break
