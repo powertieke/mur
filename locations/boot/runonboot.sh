@@ -13,5 +13,5 @@ if [ -e /dev/sda1 ];
 	then
 	mount -t vfat /dev/sda1 /media/usb
 	cd /home/pi/mur
-	python3 muur.py -s pi4 /media/usb/
+	python3 muur.py -s $HOSTNAME /media/usb/
 fi
