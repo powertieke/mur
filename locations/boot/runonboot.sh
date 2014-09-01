@@ -11,7 +11,7 @@ fi
 
 if [ -e /dev/sda1 ];
 	then
-		if [ ! -d /media/usb];
+		if [ ! -d /media/usb ];
 		then
 			cd /media
 			mkdir usb
