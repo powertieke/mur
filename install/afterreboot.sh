@@ -8,6 +8,6 @@ apt-get install python3-dbus -y
 apt-get install python-dbus -y
 apt-get install lighttpd -y
 cp ../locations/boot/runonboot.sh /boot/
-cp ../locations/etc/lighttpd /etc/lighttpd
+cp -r ../locations/etc/lighttpd/* /etc/lighttpd/
 cp ../locations/etc/rc.local /etc/rc.local
 reboot
