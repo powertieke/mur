@@ -2,7 +2,7 @@
 
 import sys
 import os
-import pyomxplayer
+## import pyomxplayer
 import domxplayer
 
 import threading

@@ -3,7 +3,7 @@
 import sys
 import os
 import argparse
-import pyomxplayer
+import domxplayer
 import socket
 import pprint
 import queue
