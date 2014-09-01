@@ -17,6 +17,7 @@ if [ "$_IP" ]; then
   printf "My IP address is %s\n" "$_IP"
 fi
 
-./home/pi/mur/install/afterreboot.sh &
+cd /home/pi/mur/install
+./afterreboot.sh &
 
 exit 0
