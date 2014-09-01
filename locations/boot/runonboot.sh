@@ -13,7 +13,8 @@ if [ -e /dev/sda1 ];
 	then
 		if [ ! -d /media/usb];
 		then
-			mkdir /media/usb
+			cd /media
+			mkdir usb
 		fi
 	mount -t vfat /dev/sda1 /media/usb
 	cd /home/pi/mur
