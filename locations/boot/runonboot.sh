@@ -11,6 +11,10 @@ fi
 
 if [ -e /dev/sda1 ];
 	then
+		if [ ! -d /media/usb];
+		then
+			mkdir /media/usb
+		fi
 	mount -t vfat /dev/sda1 /media/usb
 	cd /home/pi/mur
 	python3 muur.py -s $HOSTNAME /media/usb/
