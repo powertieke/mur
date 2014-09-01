@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 # install mur on clean raspberry pi
 
 apt-get update -y
