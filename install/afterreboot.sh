@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 mv /etc/rc.local.bak /etc/rc.local
 apt-get update -y
 apt-get upgrade -y
