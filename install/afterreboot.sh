@@ -13,6 +13,10 @@ apt-get install lighttpd -y
 cp ../locations/boot/runonboot.sh /boot/
 cp -r ../locations/etc/lighttpd/* /etc/lighttpd/
 cp ../locations/etc/rc.local /etc/rc.local
+if [ ! -e /media/usb ]; then
+mkdir -p /media/usb
+fi
+
 if [ ! -e readonly_on ];
 then
 	./make_fs_readonly.sh
