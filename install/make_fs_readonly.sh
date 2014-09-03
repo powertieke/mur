@@ -1,3 +1,4 @@
+#!/bin/bash
 # make system readonly
 
 # disable swap
