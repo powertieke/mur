@@ -1,3 +1,4 @@
+#!/bin/bash
 # update
 if [ -e install/readonly_on ];
 then
