@@ -7,7 +7,7 @@ import datetime
 def writestatus(theObject):
 	tempfile = "/tmp/status.now"
 	of = open(tempfile, 'w')
-	of.write(datetime.datetime.utcnow())
+	of.write(str(datetime.datetime.utcnow()))
 	pprint.pprint(theObject, of)
 	of.close()
 
