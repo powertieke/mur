@@ -2,6 +2,7 @@
 if [ -e readonly_on ];
 then
 	mount -o remount,rw /
+	mount -o remount,rw /boot
 fi
 mv /etc/rc.local.bak /etc/rc.local
 apt-get update -y
