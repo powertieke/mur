@@ -18,5 +18,10 @@ if [ -e /dev/sda1 ];
 		fi
 	mount -t vfat /dev/sda1 /media/usb
 	cd /home/pi/mur
-	python3 muur.py -s $HOSTNAME /media/usb/
+	if [ "$HOSTNAME" == "picontroller" ];
+		then
+			python3 muur.py -m $HOSTNAME /media/usb/
+		else
+			python3 muur.py -s $HOSTNAME /media/usb/
+	fi
 fi
