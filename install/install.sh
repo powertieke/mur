@@ -3,6 +3,7 @@
 if [ -e readonly_on ];
 then
 	mount -o remount,rw /
+	mount -o remount,rw /boot
 fi
 apt-get update -y
 apt-get upgrade -y
