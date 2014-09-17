@@ -10,10 +10,10 @@ import subprocess
 import player
 
 def webinterface(clients, udpport_sync, moviefolder, killqueue):
-	inpipe_path = "/home/pi/mur/webpage/fromwebapp"
-	outpipe_path = "/home/pi/mur/webpage/towebapp"
-	lockfile_path = "/home/pi/mur/webpage/locked"
-	runningfile_path = "/home/pi/mur/webpage/running"
+	inpipe_path = "/tmp/fromwebapp"
+	outpipe_path = "/tmp/towebapp"
+	lockfile_path = "/tmp/locked"
+	runningfile_path = "/tmp/running"
 	
 	if os.path.exists(lockfile_path):
 		os.remove(lockfile_path)
