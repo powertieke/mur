@@ -284,7 +284,10 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					syncmessage == "end"
 				# print(syncmessage)
 				if (syncmessage == "end") or (syncmessage == "go"):
-					player.stop()
+					try:
+						player.stop()
+					except:
+						pass
 					break
 				elif insync > 6:
 					pass # Stayed in sync for three seconds
