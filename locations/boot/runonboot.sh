@@ -17,11 +17,15 @@ if [ -e /dev/sda1 ];
 			mkdir usb
 		fi
 	mount -t vfat /dev/sda1 /media/usb
-	cd /home/pi/mur
-	if [ "$HOSTNAME" == "picontroller" ];
-		then
-			python3 muur.py -m $HOSTNAME /media/usb/
-		else
-			python3 muur.py -s $HOSTNAME /media/usb/
+	if [ ! -e /home/pi/movies ]; then
+		mkdir -p /home/pi/movies
 	fi
+	rsync -va --delete /media/usb/ /home/pi/movies/
+	cd /home/pi/mur
+fi
+if [ "$HOSTNAME" == "picontroller" ];
+	then
+		python3 muur.py -m $HOSTNAME /home/pi/movies/
+	else
+		python3 muur.py -s $HOSTNAME /home/pi/movies/
 fi

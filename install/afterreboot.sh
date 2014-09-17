@@ -17,7 +17,9 @@ cp ../locations/etc/rc.local /etc/rc.local
 if [ ! -e /media/usb ]; then
 mkdir -p /media/usb
 fi
-
+if [ ! -e /home/pi/movies ]; then
+	mkdir -p /home/pi/movies
+fi
 if [ ! -e readonly_on ];
 then
 	./make_fs_readonly.sh
