@@ -50,6 +50,7 @@ class OMXPlayer(object):
 		self.dbusIfaceProp = None
 		self.dbusIfaceKey = None
 		self.outQueue = outQueue
+		self.failed = False
 		self.stopped = False
 		self.overshoot = 32000 # very inscientifically defined delay when pause() is called
 		self.go()
@@ -74,35 +75,34 @@ class OMXPlayer(object):
 			bus = dbus.bus.BusConnection(omxplayerdbus)
 		
 			# Trying to make a connection to the dbus. Fail until ready.
-			while True:
+			while not self.stopped:
 				try:
 					dbusobject = bus.get_object(self.dbusname, '/org/mpris/MediaPlayer2', introspect=False)
 					self.dbusIfaceProp = dbus.Interface(dbusobject, 'org.freedesktop.DBus.Properties')
 					self.dbusIfaceKey = dbus.Interface(dbusobject, 'org.mpris.MediaPlayer2.Player')
 					break
 				except:
-					if self.stopped:
-						print("Stopped at dbusloop")
-						break
-						
 					pass
 		
 		# position will hang on 0 for a moment. Check until value changes.
-		if not self.stopped:
-			print("Starting loop to get to zero.")
-			startpos = self.get_position()
-			while startpos != "end":
-				if self.stopped:
-					print("Stopped while getting start position")
-					break
-				if startpos != self.get_position():
-					break
-		# Try to get as close to pts 0 as possible. Try to guess when we need to press pause.
 			if not self.stopped:
-				delay = (-self.get_position() - self.overshoot)/1000000
-				time.sleep(delay)
-				self.toggle_pause()
-				print("Hit pause")
+				print("Starting loop to get to zero.")
+				startpos = self.get_position()
+				while startpos != "end":
+					if self.stopped:
+						print("Stopped while getting start position")
+						self.failed = True
+						break
+					if startpos != self.get_position():
+						break
+			# Try to get as close to pts 0 as possible. Try to guess when we need to press pause.
+				if not self.stopped:
+					delay = (-self.get_position() - self.overshoot)/1000000
+					time.sleep(delay)
+					self.toggle_pause()
+					print("Hit pause")
+		else:
+			self.failed = True
 
 			## killProcessOnStallThread = KillProcessOnStallThread(self)
 			## killProcessOnStallThread.start()
@@ -116,12 +116,9 @@ class OMXPlayer(object):
 		self.dbusIfaceKey.Stop()
 		
 	def toggle_pause(self):
-		try:
-			self.dbusIfaceKey.Pause()
-			self.paused = not self.paused
-		except:
-			if self.stopped:
-				pass
+			if not self.stopped:
+				self.dbusIfaceKey.Pause()
+				self.paused = not self.paused
 		
 		
 	def get_position(self):
@@ -130,8 +127,12 @@ class OMXPlayer(object):
 		else:
 			return "end"
 			
-	def get_duration(self): 
-		return self.dbusIfaceProp.Duration()
+	def get_duration(self):
+		if not self.stopped:
+			return self.dbusIfaceProp.Duration()
+		else:
+			return 0
 		
 	def seek(self, microseconds):
-		self.dbusIfaceKey.Seek(dbus.Int64(str(microseconds)))
+		if not self.stopped:
+			self.dbusIfaceKey.Seek(dbus.Int64(str(microseconds)))
