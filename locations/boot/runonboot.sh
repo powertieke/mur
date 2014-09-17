@@ -11,6 +11,12 @@ fi
 
 if [ -e /dev/sda1 ];
 	then
+		if [ -e /home/pi/mur/install/readonly_on ];
+		then
+			mount -o remount,rw /
+			mount -o remount,rw /boot
+		fi
+		
 		if [ ! -d /media/usb ];
 		then
 			cd /media
@@ -21,8 +27,15 @@ if [ -e /dev/sda1 ];
 		mkdir -p /home/pi/movies
 	fi
 	rsync -va --delete /media/usb/ /home/pi/movies/
-	cd /home/pi/mur
+	if [ -e /home/pi/mur/install/readonly_on ];
+	then
+		mount -o remount,ro /
+		mount -o remount,ro /boot
+	fi
 fi
+
+cd /home/pi/mur
+
 if [ "$HOSTNAME" == "picontroller" ];
 	then
 		python3 muur.py -m $HOSTNAME /home/pi/movies/
