@@ -36,6 +36,8 @@ fi
 
 cd /home/pi/mur
 
+tvservice -e "CEA 31"
+
 if [ "$HOSTNAME" == "picontroller" ];
 	then
 		python3 muur.py -m $HOSTNAME /home/pi/movies/
