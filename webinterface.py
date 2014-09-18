@@ -38,13 +38,13 @@ def webinterface(clients, udpport_sync, moviefolder, killqueue):
 			putmessage(outpipe_path, "")
 		elif playre.match(command):
 			client, moviename = playre.match(command).group(1).split(",")
-			controller.play_single(moviefolder + "/single/" + moviename + ".mp4", clients[client])
+			controller.play_single(moviefolder + "/Single/" + moviename + ".mp4", clients[client])
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 			
 		elif syncre.match(command):
 			moviename = syncre.match(command).group(1)
 			killqueue.put("kill")
-			controller.startSyncThread(moviefolder + "/sync/" + moviename, clients, udpport_sync, killqueue)
+			controller.startSyncThread(moviefolder + "/Sync/" + moviename, clients, udpport_sync, killqueue)
 			putmessage(outpipe_path, json.dumps({x : clients[x][1] for x in clients.keys()}))
 		elif statre.match(command): # here for fun, not used yet
 			piname = statre.match(command).group(1)

@@ -19,7 +19,7 @@ def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats
 	if repeats == 0:
 		while True:
 			clientselection = {x : clients[x] for x in clientselectionlist if x in clients}
-			result = play_sync(moviefolder + "/sync/" + moviefile, clientselection, UDPPort_sync, killqueue)
+			result = play_sync(moviefolder + "/Sync/" + moviefile, clientselection, UDPPort_sync, killqueue)
 			try:
 				player.kill_all_omxplayers()
 			except:
@@ -34,7 +34,7 @@ def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats
 		while True:
 			for _ in range(repeats):
 				clientselection = {x : clients[x] for x in clientselectionlist if x in clients}
-				result = play_sync(moviefolder + "/sync/" + moviefile, clientselection, UDPPort_sync, killqueue)
+				result = play_sync(moviefolder + "/Sync/" + moviefile, clientselection, UDPPort_sync, killqueue)
 				# print(result)
 				try:
 					player.kill_all_omxplayers()
@@ -47,7 +47,7 @@ def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats
 						pass
 					# print("wait for another kill")
 					killqueue.get()
-			result = play_sync(moviefolder + "/sync/" + intervalmovie, clients, UDPPort_sync, killqueue)
+			result = play_sync(moviefolder + "/Sync/" + intervalmovie, clients, UDPPort_sync, killqueue)
 			if result == "kill":
 				try:
 					player.kill_all_omxplayers()

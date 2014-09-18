@@ -21,7 +21,7 @@ def interface(clients, udpport_sync, moviefolder):
 			while True:
 				client = input("--> Type the name of the screen you would like to show the presentation on or type cancel:")
 				if client in clients.keys():
-					controller.play_single(moviefolder + "/single/" + moviename + ".mp4", clients[client])
+					controller.play_single(moviefolder + "/Single/" + moviename + ".mp4", clients[client])
 					break
 				elif client == "cancel":
 					break
@@ -30,7 +30,7 @@ def interface(clients, udpport_sync, moviefolder):
 			
 		elif syncre.match(command):
 			moviename = syncre.match(command).group(1)
-			print(controller.play_sync(moviefolder + "/sync/" + moviename, clients, udpport_sync))
+			print(controller.play_sync(moviefolder + "/Sync/" + moviename, clients, udpport_sync))
 		elif command == "quit":
 			break
 		else:
