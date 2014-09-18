@@ -30,6 +30,7 @@ def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats
 				except:
 					pass
 				killqueue.get()
+				print("Got to the end of loop")
 	else:
 		while True:
 			for _ in range(repeats):
@@ -47,6 +48,7 @@ def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats
 						pass
 					# print("wait for another kill")
 					killqueue.get()
+					print("Got to the end of inner loop")
 			result = play_sync(moviefolder + "/Sync/" + intervalmovie, clients, UDPPort_sync, killqueue)
 			if result == "kill":
 				try:
@@ -140,18 +142,20 @@ def play_sync(moviefile, clients, UDPPort_sync, killqueue):
 	syncmessage = queue.Queue()
 	syncqueue = queue.Queue()
 	syncplayer = player.ready_player(moviefile + ".mp4", syncqueue)
-	# print(clients)
+	print(clients)
 	for client in clients:
 		waitforitqueue.put(True)
 	for client in clients:
 		tellClientsToSyncThread = TellClientsToSyncThread(client[0], clients[client], moviefile, waitforitqueue)
 		tellClientsToSyncThread.start()
 	waitforitqueue.join()
-	# print('everyone on board')
+	print('everyone on board')
 	time.sleep(1)
 	syncScreamerThread = SyncScreamerThread("SCREAMFORME", UDPPort_sync, syncmessage)
 	syncScreamerThread.start()
+	print("Screamer started")
 	syncplayer.toggle_pause()
+	print("Unpaused movie")
 	while True:
 		try:
 			killmessage = killqueue.get(False)
@@ -162,11 +166,14 @@ def play_sync(moviefile, clients, UDPPort_sync, killqueue):
 		try:
 			msg = syncqueue.get(True, 0.5)
 			syncmessage.put(msg)
+			print("syncmessage: " + msg)
 			break
 		except queue.Empty:
 			try:
 				syncmessage.put(syncplayer.get_position())
+				print("Sucessfully got position")
 			except:
+				print("Could not get position for file: " + moviefile)
 				pass
 		else:
 			break
@@ -174,6 +181,7 @@ def play_sync(moviefile, clients, UDPPort_sync, killqueue):
 		clients[client][1] = "0"
 	if killmessage != False:
 		msg = killmessage
+		print("Got Killmessage")
 	return msg
 
 def syncscreamer(udpport_sync, syncmessage):

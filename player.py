@@ -98,6 +98,7 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			outgoing_to_controller.put(status)
 		elif message[0] == "sync":
 			status = "1"
+			print("got sync")
 			if i == 0:
 				nextmovieindex = 1
 			elif i == len(playlist) - 1:
@@ -105,14 +106,18 @@ def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_contro
 			else:
 				nextmovieindex = i + 1
 			
-			# print("got sync")
 			try:
 				playlist[i][1].stop()
+				print("Successfully stopped movie")
 			except:
+				print("Error on stopping movie")				
 				pass
 			playlist[i][1] = None
-				
+			print("Cleared movie")
+			
+			print("Starting sync")	
 			play_synced_movie(message[1], incoming_from_controller, outgoing_to_controller, udpport_sync, clientname)
+			print("Reached end of sync. Resuming")
 		elif message[0] == "play":
 			status = "2"
 			try:
@@ -210,17 +215,17 @@ def controller(incoming_from_controller, outgoing_to_controller, connection, udp
 			try:
 				connection.sendall(outgoing_to_controller.get(True, 15).encode('utf-8'))
 			except queue.Empty:
-				# print("Response timed out on Player side.")
+				print("Response timed out on Player side.")
 				connection.settimeout(None)
 				clearqueue(outgoing_to_controller)
 				pass
 			except socket.timeout:
-				# print("Response timed out while sending.")
+				print("Response timed out while sending.")
 				connection.settimeout(None)
 				clearqueue(outgoing_to_controller)
 				pass
 			except socket.error:
-				# print("Something is wrong with the connection, will handle later")
+				print("Something is wrong with the connection, will handle later")
 				connection.settimeout(None)
 				clearqueue(outgoing_to_controller)
 				break
@@ -261,28 +266,31 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 	
 	syncThread = SyncThread("willekeur", udpport_sync, syncqueue, killsyncqueue)
 	syncThread.start()
+	print("Syncthread Running")
 	
 	if os.path.exists(moviefile + clientname + ".mp4"):
 		player = ready_player(moviefile + clientname + ".mp4", syncqueue)
 	elif os.path.exists(moviefile + ".mp4"):
 		player = ready_player(moviefile + ".mp4", syncqueue)
+	print("Player ready and paused for movie: " + moviefile + ".mp4")
 		
 	while syncqueue.empty() == False:
 		syncqueue.get()
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
+	print("Sent out go")
 	try:
 		if syncqueue.get(True, 10) == "go":
 			tolerance = 500000.0
 			player.toggle_pause() # Play synced movie
-			# print("Got go: playing")
+			 print("Got go: playing")
 			insync = 0
 			while True:
 				try:
 					syncmessage = syncqueue.get(True, 10)
 				except queue.Empty:
-					# print("Message timed out. Ending it")
+					print("Message timed out. Ending it")
 					syncmessage == "end"
-				# print(syncmessage)
+				print("Syncmessage: " + syncmessage)
 				if (syncmessage == "end") or (syncmessage == "go"):
 					try:
 						player.stop()
@@ -295,6 +303,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					try:
 						localposition = player.get_position()
 					except:
+						print("Failed getting localposition, but in sync so we do not care")
 						pass
 				else:
 					masterposition = float(syncmessage)
@@ -327,26 +336,31 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 						else :
 							insync = insync + 1
 							syncqueue.get()
+					else:
+						print("Failed on get position. Moviefile: " + moviefile)
 		else:
-			# print("Got something else instead of go. Resuming normal play")
+			print("Got something else instead of go. Resuming normal play")
 			clearqueue(outgoing_to_controller)
 			try:
 				player.stop()
 			except:
+				print("Tried to stop, but hey...")
 				pass
 	except queue.Empty:
 		clearqueue(outgoing_to_controller)
-		# print("Timed Out while waiting for the go")
+		print("Timed Out while waiting for the go")
 		try:
 			player.stop()
 		except:
+			print("Tried to stop on timeout, but hey...")
 			pass
 	except UnboundLocalError:
 		clearqueue(outgoing_to_controller)
-		# print("OMXplayer got killed before we got the go")
+		print("OMXplayer got killed before we got the go")
 		try:
 			player.stop()
 		except:
+			print("Tried to stop because OMXplayer got killed before we got the go")
 			pass
 	killsyncqueue.put(True)
 		
