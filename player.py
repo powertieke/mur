@@ -279,7 +279,8 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 	outgoing_to_controller.put("ready") # let the controlling pi know we're ready to go
 	print("Sent out go")
 	try:
-		if syncqueue.get(True, 10) == "go":
+		go = syncqueue.get(True, 10)
+		if go == "go":
 			tolerance = 500000.0
 			player.toggle_pause() # Play synced movie
 			print("Got go: playing")
@@ -339,7 +340,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 					else:
 						print("Failed on get position. Moviefile: " + moviefile)
 		else:
-			print("Got something else instead of go. Resuming normal play")
+			print("Got something else instead of go. Got: " + go + " Resuming normal play")
 			clearqueue(outgoing_to_controller)
 			try:
 				player.stop()
