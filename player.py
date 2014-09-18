@@ -292,34 +292,41 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 				elif insync > 6:
 					pass # Stayed in sync for three seconds
 					masterposition = float(syncmessage)
-					localposition = player.get_position()
+					try:
+						localposition = player.get_position()
+					except:
+						pass
 				else:
 					masterposition = float(syncmessage)
-					localposition = player.get_position()
+					try:
+						localposition = player.get_position()
+					except:
+						localposition = False
 					syncqueue.put(True)
-					if masterposition + tolerance < localposition:
-						adjustment = (localposition - masterposition) / 1000000.
-						delay = adjustment - 0.05
-						player.toggle_pause()
-						if delay < 0.2:
-							delay = 0
-						time.sleep(delay)
-						player.toggle_pause()
-						insync = 0
-						syncqueue.get()
-					elif masterposition - tolerance > localposition:
-						player.increase_speed()
-						adjustment = (masterposition - localposition) / 1000000.
-						delay = (adjustment * 2.0)
-						if delay < 0.1:
-							 delay = 0.1
-						time.sleep(delay)
-						player.decrease_speed()
-						insync = 0
-						syncqueue.get()
-					else :
-						insync = insync + 1
-						syncqueue.get()
+					if localposition != False:
+						if masterposition + tolerance < localposition:
+							adjustment = (localposition - masterposition) / 1000000.
+							delay = adjustment - 0.05
+							player.toggle_pause()
+							if delay < 0.2:
+								delay = 0
+							time.sleep(delay)
+							player.toggle_pause()
+							insync = 0
+							syncqueue.get()
+						elif masterposition - tolerance > localposition:
+							player.increase_speed()
+							adjustment = (masterposition - localposition) / 1000000.
+							delay = (adjustment * 2.0)
+							if delay < 0.1:
+								 delay = 0.1
+							time.sleep(delay)
+							player.decrease_speed()
+							insync = 0
+							syncqueue.get()
+						else :
+							insync = insync + 1
+							syncqueue.get()
 		else:
 			# print("Got something else instead of go. Resuming normal play")
 			clearqueue(outgoing_to_controller)

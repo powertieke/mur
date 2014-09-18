@@ -164,7 +164,10 @@ def play_sync(moviefile, clients, UDPPort_sync, killqueue):
 			syncmessage.put(msg)
 			break
 		except queue.Empty:
-			syncmessage.put(syncplayer.get_position())
+			try:
+				syncmessage.put(syncplayer.get_position())
+			except:
+				pass
 		else:
 			break
 	for client in clients.keys():
