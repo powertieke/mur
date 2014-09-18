@@ -92,7 +92,7 @@ def message_to_pi(pi, message):
 	except socket.error:
 		result = "UNREACH"
 		
-	pi[0].settimeout(10)
+	pi[0].settimeout(5)
 	try:
 		result = pi[0].recv(1024).decode("utf-8")
 	except socket.timeout:
