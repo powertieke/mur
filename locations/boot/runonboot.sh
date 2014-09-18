@@ -36,7 +36,7 @@ fi
 
 cd /home/pi/mur
 
-tvservice -e "CEA 20"
+tvservice -e "CEA 34"
 
 if [ "$HOSTNAME" == "picontroller" ];
 	then
