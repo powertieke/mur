@@ -282,7 +282,7 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 		if syncqueue.get(True, 10) == "go":
 			tolerance = 500000.0
 			player.toggle_pause() # Play synced movie
-			 print("Got go: playing")
+			print("Got go: playing")
 			insync = 0
 			while True:
 				try:

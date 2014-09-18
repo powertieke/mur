@@ -36,7 +36,7 @@ def play_threaded_sync_loop(moviefile, clients, UDPPort_sync, killqueue, repeats
 			for _ in range(repeats):
 				clientselection = {x : clients[x] for x in clientselectionlist if x in clients}
 				result = play_sync(moviefolder + "/Sync/" + moviefile, clientselection, UDPPort_sync, killqueue)
-				# print(result)
+				print(result)
 				try:
 					player.kill_all_omxplayers()
 				except:
@@ -187,12 +187,12 @@ def play_sync(moviefile, clients, UDPPort_sync, killqueue):
 def syncscreamer(udpport_sync, syncmessage):
 	syncscreamer = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	syncscreamer.sendto("go".encode('utf-8'), ("224.0.0.1", udpport_sync))
-	# print("Sent: %s" % "go")
+	print("Sent: %s" % "go")
 	while True:
 		message = syncmessage.get()
-		# print(message)
+		print(message)
 		syncscreamer.sendto(str(message).encode('utf-8'), ("224.0.0.1", udpport_sync))
-		# print("Sent: %s" % message)
+		print("Sent: %s" % message)
 		if message == "end":
 			while syncmessage.empty() == False:
 				syncmessage.get()
