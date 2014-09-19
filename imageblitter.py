@@ -16,7 +16,7 @@ def main():
 	w = 0
 	h = 0
 	size = (w, h)
-	screen = pygame.display.set_mode(size)
+	screen = pygame.display.set_mode(size, FULLSCREEN)
 	
 	image = pygame.image.load(glob.glob(args.imagefolder + "*.png")[0])
 	screen.blit(image, (0,0))
