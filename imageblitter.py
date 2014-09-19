@@ -20,9 +20,9 @@ def main():
 	screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 	
 	image = pygame.image.load(glob.glob(args.imagefolder + "*.png")[0])
-	screen.blit(image, (0,0))
-	pygame.display.flip()
-	time.sleep(30)
+	for i in range(1000):
+		screen.blit(image, (0,0))
+		pygame.display.flip()
 	
 	
 	
