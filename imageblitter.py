@@ -18,7 +18,7 @@ def main():
 	screen = pygame.display.set_mode(size)
 	
 	image = pygame.image.load(glob.glob(args.imagefolder + "*.png")[0])
-	screen.blit(img,(0,0))
+	screen.blit(image, (0,0))
 	pygame.display.flip()
 	
 	
