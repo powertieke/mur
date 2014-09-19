@@ -3,6 +3,7 @@
 import pygame
 import argparse
 import glob
+import time
 
 def main():
 	parser = argparse.ArgumentParser(description='utillity for overlaying an image')
@@ -20,7 +21,7 @@ def main():
 	image = pygame.image.load(glob.glob(args.imagefolder + "*.png")[0])
 	screen.blit(image, (0,0))
 	pygame.display.flip()
-	
+	time.sleep(30)
 	
 	
 	
