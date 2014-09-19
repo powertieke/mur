@@ -12,8 +12,8 @@ def main():
 	args = parser.parse_args()
 	
 	pygame.init()
-	w = 1980
-	h = 1020
+	w = 0
+	h = 0
 	size = (w, h)
 	screen = pygame.display.set_mode(size)
 	
