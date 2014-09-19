@@ -12,8 +12,8 @@ def main():
 	
 	args = parser.parse_args()
 	
-	print pygame.list_modes()
 	pygame.init()
+	print pygame.display.list_modes()
 	w = 0
 	h = 0
 	size = (w, h)
