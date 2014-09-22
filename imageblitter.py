@@ -18,12 +18,14 @@ def main():
 	h = 0
 	size = (w, h)
 	screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
-	
-	image = pygame.image.load(glob.glob(args.imagefolder + "*.png")[0])
-	for i in range(1000):
+	try:
+		image = pygame.image.load(glob.glob(args.imagefolder + "*.png")[0]).convert()
 		screen.blit(image, (0,0))
 		pygame.display.flip()
+	except:
+		pass
 	
+	input()
 	
 	
 if __name__ == "__main__":
