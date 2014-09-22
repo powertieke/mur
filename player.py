@@ -268,11 +268,11 @@ def play_synced_movie(moviefile, incoming_from_controller, outgoing_to_controlle
 	syncThread.start()
 	print("Syncthread Running")
 	
-	if os.path.exists(moviefile + clientname + ".mp4"):
-		player = ready_player(moviefile + clientname + ".mp4", syncqueue)
-	elif os.path.exists(moviefile + ".mp4"):
-		player = ready_player(moviefile + ".mp4", syncqueue)
-	print("Player ready and paused for movie: " + moviefile + ".mp4")
+	if os.path.exists(moviefile + clientname + ".m4v"):
+		player = ready_player(moviefile + clientname + ".m4v", syncqueue)
+	elif os.path.exists(moviefile + ".m4v"):
+		player = ready_player(moviefile + ".m4v", syncqueue)
+	print("Player ready and paused for movie: " + moviefile + ".m4v")
 		
 	while syncqueue.empty() == False:
 		syncqueue.get()

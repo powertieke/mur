@@ -21,7 +21,7 @@ def interface(clients, udpport_sync, moviefolder):
 			while True:
 				client = input("--> Type the name of the screen you would like to show the presentation on or type cancel:")
 				if client in clients.keys():
-					controller.play_single(moviefolder + "/Single/" + moviename + ".mp4", clients[client])
+					controller.play_single(moviefolder + "/Single/" + moviename + ".m4v", clients[client])
 					break
 				elif client == "cancel":
 					break
