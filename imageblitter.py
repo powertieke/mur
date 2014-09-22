@@ -13,6 +13,7 @@ def main():
 	args = parser.parse_args()
 	
 	pygame.init()
+	pygame.mouse.set_visible(False)
 	print pygame.display.list_modes()
 	w = 0
 	h = 0
