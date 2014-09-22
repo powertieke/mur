@@ -69,7 +69,7 @@ def get_duration(moviefile):
 
 def loop_single_movies(moviefolder, incoming_from_controller, outgoing_to_controller, udpport_sync, clientname):
 	global status
-	playlist = [[moviefile, None] for moviefile in glob.glob(moviefolder + "*.mp4")]
+	playlist = [[moviefile, None] for moviefile in glob.glob(moviefolder + "*.m4v")]
 	shuffle(playlist)
 	i = 0
 	nextmovieindex = 1
