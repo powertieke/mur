@@ -25,7 +25,7 @@ def main():
 	except:
 		pass
 	
-	input()
+	raw_input()
 	
 	
 if __name__ == "__main__":
