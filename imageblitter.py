@@ -27,6 +27,7 @@ def main():
 			theImage = glob.glob(args.imagefolder + "*.png")[0]
 		
 		image = pygame.image.load(theImage).convert()
+		image = pygame.transform.scale(image, (1920,1080))
 		screen.blit(image, (0,0))
 		pygame.display.flip()
 	except:
