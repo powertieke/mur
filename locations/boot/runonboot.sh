@@ -36,8 +36,8 @@ fi
 
 cd /home/pi/mur
 
-## tvservice -e "CEA 4"
-## fbset -depth 8 && fbset -depth 16
+tvservice -e "CEA 31"
+fbset -depth 8 && fbset -depth 16
 
 if [ "$HOSTNAME" == "picontroller" ];
 	then
