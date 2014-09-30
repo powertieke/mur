@@ -88,20 +88,23 @@ class OMXPlayer(object):
 		# position will hang on 0 for a moment. Check until value changes.
 			if not self.stopped:
 				print("Starting loop to get to zero.")
-				startpos = self.get_position()
-				while startpos != "end":
-					if self.stopped:
-						print("Stopped while getting start position")
-						self.failed = True
-						break
-					if startpos != self.get_position():
-						break
-			# Try to get as close to pts 0 as possible. Try to guess when we need to press pause.
-				if not self.stopped:
-					delay = (-self.get_position() - self.overshoot)/1000000
-					time.sleep(delay)
-					self.toggle_pause()
-					print("Hit pause")
+				try:
+					startpos = self.get_position()
+					while startpos != "end":
+						if self.stopped:
+							print("Stopped while getting start position")
+							self.failed = True
+							break
+						if startpos != self.get_position():
+							break
+				# Try to get as close to pts 0 as possible. Try to guess when we need to press pause.
+					if not self.stopped:
+						delay = (-self.get_position() - self.overshoot)/1000000
+						time.sleep(delay)
+						self.toggle_pause()
+						print("Hit pause")
+				except:
+					self.failed = True
 		else:
 			self.failed = True
 
