@@ -85,7 +85,7 @@ def main():
 	if args.slave :
 		player.set_background('black')
 		bgImage = subprocess.Popen(["/usr/bin/python", "imageblitter.py", args.moviepath, args.clientname], stdin=subprocess.PIPE)
-		time.sleep(2)
+		time.sleep(5)
 		loopSingleMoviesThread = player.LoopSingleMoviesThread(args.moviepath, incoming_from_controller, outgoing_to_controller, udpport_sync, args.clientname)
 		loopSingleMoviesThread.start()
 		while True:
