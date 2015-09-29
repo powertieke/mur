@@ -34,7 +34,7 @@ def player_process(parent):
 	## print("DBUSNAME = " + parent.dbusname)
 	try:
 		## retcode = subprocess.call(["/usr/bin/omxplayer", "-o", "hdmi", parent.moviefile, "--dbus_name", parent.dbusname, "--win", '"0 0 1919 1079"', "--no-osd"], stdout=open(os.devnull, 'wb'), shell=False)
-		retcode = subprocess.call(["/usr/bin/omxplayer", "-o", "local", "--vol", "-1000", parent.moviefile, "--dbus_name", parent.dbusname, "--win", '"0 0 1919 1079"', "--no-osd"], stdout=open(os.devnull, 'wb'), shell=False)
+		retcode = subprocess.call(["/usr/bin/omxplayer", "-o", "both", "--vol", "-500", parent.moviefile, "--dbus_name", parent.dbusname, "--win", '"0 0 1919 1079"', "--no-osd"], stdout=open(os.devnull, 'wb'), shell=False)
 		if retcode != 0:
 			print(retcode)
 	except:
