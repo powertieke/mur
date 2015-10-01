@@ -7,7 +7,7 @@ dphys-swapfile uninstall
 update-rc.d dphys-swapfile disable
 
 # install UnionFS
-aptitude install unionfs-fuse
+apt-get install unionfs-fuse -y
 
 cp mount_unionfs /usr/local/bin/
 chmod +x /usr/local/bin/mount_unionfs
