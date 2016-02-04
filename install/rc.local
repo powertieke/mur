@@ -18,6 +18,6 @@ if [ "$_IP" ]; then
 fi
 
 cd /home/pi/mur/install
-./afterreboot.sh &
+sudo ./afterreboot.sh &
 
 exit 0

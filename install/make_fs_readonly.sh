@@ -12,6 +12,7 @@ apt-get install unionfs-fuse -y
 cp mount_unionfs /usr/local/bin/
 chmod +x /usr/local/bin/mount_unionfs
 
+mv /etc/fstab /etc/fstab.bak 
 cp fstab /etc/
 
 cp -al /etc /etc_org
