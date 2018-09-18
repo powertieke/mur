@@ -9,7 +9,7 @@ if [ -f /boot/update_now ];
 	reboot
 fi
 
-if [ -e /dev/sda1 ];
+if [ -e /dev/sda ];
 	then
 		if [ -e /home/pi/mur/install/readonly_on ];
 		then
@@ -22,7 +22,7 @@ if [ -e /dev/sda1 ];
 			cd /media
 			mkdir usb
 		fi
-	mount -t vfat /dev/sda1 /media/usb
+	mount -t vfat /dev/sda /media/usb
 	if [ ! -e /home/pi/movies ]; then
 		mkdir -p /home/pi/movies
 	fi
@@ -36,8 +36,8 @@ fi
 
 cd /home/pi/mur
 
-tvservice -e "CEA 31"
-fbset -depth 8 && fbset -depth 16
+## tvservice -e "CEA 31"
+## fbset -depth 8 && fbset -depth 16
 
 if [ "$HOSTNAME" == "picontroller" ];
 	then
