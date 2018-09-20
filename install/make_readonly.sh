@@ -17,7 +17,12 @@ ln -s /tmp /var/lock
 touch /tmp/dhcpcd.resolv.conf
 ln -s /tmp/dhcpcd.resolv.conf /etc/resolv.conf
 
-sed 's/PIDFile=\/run\/dhcpcd\.pid/PIDFile=\/var\/run\/dhcpcd.pid/' /etc/systemd/system/dhcpcd5 > /etc/systemd/system/dhcpcd5
+
+if ! [ -e /etc/systemd/system/dhcpcd5.service.bak ];
+then
+	cp /etc/systemd/system/dhcpcd5.service /etc/systemd/system/dhcpcd5.service.bak
+fi
+sed 's/PIDFile=\/run\/dhcpcd\.pid/PIDFile=\/var\/run\/dhcpcd.pid/' /etc/systemd/system/dhcpcd5.service > /etc/systemd/system/dhcpcd5.service
 
 rm /var/lib/systemd/random-seed
 
