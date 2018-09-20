@@ -22,13 +22,19 @@ if ! [ -e /etc/systemd/system/dhcpcd5.service.bak ];
 then
 	cp /etc/systemd/system/dhcpcd5.service /etc/systemd/system/dhcpcd5.service.bak
 fi
-sed 's/PIDFile=\/run\/dhcpcd\.pid/PIDFile=\/var\/run\/dhcpcd.pid/' /etc/systemd/system/dhcpcd5.service > /etc/systemd/system/dhcpcd5.service
+sed 's/PIDFile=\/run\/dhcpcd\.pid/PIDFile=\/var\/run\/dhcpcd.pid/' /etc/systemd/system/dhcpcd5.service > /etc/systemd/system/dhcpcd5.service.new
+mv /etc/systemd/system/dhcpcd5.service.new /etc/systemd/system/dhcpcd5.service
 
 rm /var/lib/systemd/random-seed
 
 ln -s /tmp/random-seed /var/lib/systemd/random-seed
 
-sed 's/RemainAfterExit=yes/RemainAfterExit=yes\nExecStartPre=\/bin\/echo "" >\/tmp\/tandom-seed/' /lib/systemd/system/systemd-random-seed.service > /lib/systemd/system/systemd-random-seed.service
+if ! [ -e /lib/systemd/system/systemd-random-seed.service.bak ];
+then
+	cp /lib/systemd/system/systemd-random-seed.service /lib/systemd/system/systemd-random-seed.service.bak
+fi
+sed 's/RemainAfterExit=yes/RemainAfterExit=yes\nExecStartPre=\/bin\/echo "" >\/tmp\/tandom-seed/' /lib/systemd/system/systemd-random-seed.service > /lib/systemd/system/systemd-random-seed.service.new
+mv /lib/systemd/system/systemd-random-seed.service.new /lib/systemd/system/systemd-random-seed.service
 
 apt-get install ntp -y
 
