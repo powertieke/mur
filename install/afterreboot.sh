@@ -7,6 +7,7 @@ fi
 mv /etc/rc.local.bak /etc/rc.local
 apt-get update -y
 apt-get upgrade -y
+apt-get install libdbus-glib-1-dev
 apt-get install dbus-x11 -y
 apt-get install python-pygame -y
 apt-get install python3-pygame -y
@@ -26,6 +27,6 @@ if [ ! -e /home/pi/movies ]; then
 fi
 if [ ! -e readonly_on ];
 then
-	./make_fs_readonly.sh
+	./make_readonly.sh
 fi
 reboot
