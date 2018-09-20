@@ -7,7 +7,7 @@ fi
 mv /etc/rc.local.bak /etc/rc.local
 apt-get update -y
 apt-get upgrade -y
-apt-get install libdbus-glib-1-dev
+apt-get install libdbus-glib-1-dev -y
 apt-get install dbus-x11 -y
 apt-get install python-pygame -y
 apt-get install python3-pygame -y
