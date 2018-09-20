@@ -35,6 +35,7 @@ then
 fi
 sed 's/RemainAfterExit=yes/RemainAfterExit=yes\nExecStartPre=\/bin\/echo "" >\/tmp\/tandom-seed/' /lib/systemd/system/systemd-random-seed.service > /lib/systemd/system/systemd-random-seed.service.new
 mv /lib/systemd/system/systemd-random-seed.service.new /lib/systemd/system/systemd-random-seed.service
+systemctl daemon-reload
 
 apt-get install ntp -y
 
