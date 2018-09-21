@@ -1,9 +1,12 @@
 #!/bin/bash
 
 # turn off swap.
-
-sed 's/$/ fastboot noswap ro/' /boot/cmdline.txt > /boot/cmdline.txt
-
+if ![ -e /boot/cmdline.txt.bak ];
+then
+	cp /boot/cmdline.txt /boot/cmdline.txt.bak
+fi
+sed 's/$/ fastboot noswap ro/' /boot/cmdline.txt > /boot/cmdline.txt.new
+mv /boot/cmdline.txt.new /boot/cmdline.txt
 # move some files because Charles said so
 
 apt-get install busybox-syslogd -y; dpkg --purge rsyslog
